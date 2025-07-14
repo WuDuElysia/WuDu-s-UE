@@ -3,19 +3,39 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
-# 如果支持，请为 MSVC 编译器启用热重载。
-if (POLICY CMP0141)
-  cmake_policy(SET CMP0141 NEW)
-  set(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "$<IF:$<AND:$<C_COMPILER_ID:MSVC>,$<CXX_COMPILER_ID:MSVC>>,$<$<CONFIG:Debug,RelWithDebInfo>:EditAndContinue>,$<$<CONFIG:Debug,RelWithDebInfo>:ProgramDatabase>>")
+project(WuDu's_UE)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+add_definitions(-DAD_DEFINE_RES_ROOT_DIR=\"${CMAKE_SOURCE_DIR}/Resource/\")
+
+if(WIN32)
+	message("Platform: WIndows")
+	add_definitions(-DAD_ENGINE_PLATFORM_WIN32)
+elseif(UNIX)
+	if(APPLE)
+		message("Platform: MacOS")
+		add_definitions(-DAD_ENGINE_PLATFORM_MACOS)
+		else()
+		message("Platform: Linux")
+		add_definitions(-DAD_ENGINE_PLATFORM_LINUX)
+	endif()
+else()
+	message("Unsupported platform!")
 endif()
 
-project ("WuDu's UE")
-
-# 将源代码添加到此项目的可执行文件。
-add_executable (CMakeTarget "WuDu's UE.cpp" "WuDu's UE.h")
-
-if (CMAKE_VERSION VERSION_GREATER 3.12)
-  set_property(TARGET CMakeTarget PROPERTY CXX_STANDARD 20)
+#vulkan
+find_package(Vulkan REQUIRED)
+if(Vulkan_FOUND)
+	message("Vulkan found: ${Vulkan_INCLUDE_DIRS}")
+	include_directories(${Vulkan_INCLUDE_DIRS})
 endif()
 
-# TODO: 如有需要，请添加测试并安装目标。
+add_subdirectory(Editor)
+add_subdirectory(Platform)
+add_subdirectory(Core)
+add_subdirectory(sample)
