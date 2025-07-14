@@ -35,7 +35,11 @@ if(Vulkan_FOUND)
 	include_directories(${Vulkan_INCLUDE_DIRS})
 endif()
 
+include_directories(
+	Platform/public
+	Core/public
+)
 add_subdirectory(Editor)
 add_subdirectory(Platform)
 add_subdirectory(Core)
-add_subdirectory(sample)
+add_subdirectory(Sample)
