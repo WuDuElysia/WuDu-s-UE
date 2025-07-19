@@ -5,6 +5,8 @@ cmake_minimum_required (VERSION 3.8)
 
 project(WuDu's_UE)
 
+add_compile_options("/utf-8")
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR}/bin)
@@ -35,11 +37,9 @@ if(Vulkan_FOUND)
 	include_directories(${Vulkan_INCLUDE_DIRS})
 endif()
 
-include_directories(
-	Platform/public
-	Core/public
-)
+add_definitions(-DAD_ENGINE_GRAPHIC_API_VULKAN)
 add_subdirectory(Editor)
 add_subdirectory(Platform)
 add_subdirectory(Core)
 add_subdirectory(Sample)
+
