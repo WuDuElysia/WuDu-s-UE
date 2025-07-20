@@ -58,6 +58,12 @@ namespace ade {
 		// 准备队列创建信息
 		VkDeviceQueueCreateInfo queueInfos[2] = {
 		    {
+			//VkStructureType             sType;
+			// const void* pNext;
+			 // VkDeviceQueueCreateFlags    flags;
+			 // uint32_t                    queueFamilyIndex;
+			 // uint32_t                    queueCount;
+			// const float* pQueuePriorities;
 			VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
 			nullptr,
 			0,
@@ -144,43 +150,43 @@ namespace ade {
 		vkDestroyDevice(mHandle, nullptr);
 	}
 
-	// 创建管道缓存
-	void AdVKDevice::CreatePipelineCache() {
-		// 初始化管道缓存创建信息
-		VkPipelineCacheCreateInfo pipelineCacheInfo = {
-			pipelineCacheInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
-			pipelineCacheInfo.pNext = nullptr,
-			pipelineCacheInfo.flags = 0
-		};
-		// 调用vkCreatePipelineCache创建管道缓存
-		CALL_VK(vkCreatePipelineCache(mHandle, &pipelineCacheInfo, nullptr, &mPipelineCache));
-	}
+	//// 创建管道缓存
+	//void AdVKDevice::CreatePipelineCache() {
+	//	// 初始化管道缓存创建信息
+	//	VkPipelineCacheCreateInfo pipelineCacheInfo = {
+	//		pipelineCacheInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
+	//		pipelineCacheInfo.pNext = nullptr,
+	//		pipelineCacheInfo.flags = 0
+	//	};
+	//	// 调用vkCreatePipelineCache创建管道缓存
+	//	CALL_VK(vkCreatePipelineCache(mHandle, &pipelineCacheInfo, nullptr, &mPipelineCache));
+	//}
 
-	// 创建默认命令池
-	void AdVKDevice::CreateDefaultCmdPool() {
-		// 使用 Adele库的 AdVKCommandPool类创建默认命令池
-		mDefaultCmdPool = std::make_shared<ade::AdVKCommandPool>(this, mContext->GetGraphicQueueFamilyInfo().queueFamilyIndex);
-	}
+	//// 创建默认命令池
+	//void AdVKDevice::CreateDefaultCmdPool() {
+	//	// 使用 Adele库的 AdVKCommandPool类创建默认命令池
+	//	mDefaultCmdPool = std::make_shared<ade::AdVKCommandPool>(this, mContext->GetGraphicQueueFamilyInfo().queueFamilyIndex);
+	//}
 
-	// 获取内存类型索引
-	int32_t AdVKDevice::GetMemoryIndex(VkMemoryPropertyFlags memProps, uint32_t memoryTypeBits) const {
-		// 获取物理设备内存属性
-		VkPhysicalDeviceMemoryProperties phyDeviceMemProps = mContext->GetPhyDeviceMemProperties();
-		// 检查内存类型数量是否为0
-		if (phyDeviceMemProps.memoryTypeCount == 0) {
-			LOG_E("Physical device memory type count is 0");
-			return -1;
-		}
-		// 遍历所有内存类型，寻找匹配的内存类型索引
-		for (int i = 0; i < phyDeviceMemProps.memoryTypeCount; i++) {
-			if (memoryTypeBits & (1 << i) && (phyDeviceMemProps.memoryTypes[i].propertyFlags & memProps) == memProps) {
-				return i;
-			}
-		}
-		// 如果找不到匹配的内存类型，记录错误并返回0
-		LOG_E("Can not find memory type index: type bit: {0}", memoryTypeBits);
-		return 0;
-	}
+	//// 获取内存类型索引
+	//int32_t AdVKDevice::GetMemoryIndex(VkMemoryPropertyFlags memProps, uint32_t memoryTypeBits) const {
+	//	// 获取物理设备内存属性
+	//	VkPhysicalDeviceMemoryProperties phyDeviceMemProps = mContext->GetPhyDeviceMemProperties();
+	//	// 检查内存类型数量是否为0
+	//	if (phyDeviceMemProps.memoryTypeCount == 0) {
+	//		LOG_E("Physical device memory type count is 0");
+	//		return -1;
+	//	}
+	//	// 遍历所有内存类型，寻找匹配的内存类型索引
+	//	for (int i = 0; i < phyDeviceMemProps.memoryTypeCount; i++) {
+	//		if (memoryTypeBits & (1 << i) && (phyDeviceMemProps.memoryTypes[i].propertyFlags & memProps) == memProps) {
+	//			return i;
+	//		}
+	//	}
+	//	// 如果找不到匹配的内存类型，记录错误并返回0
+	//	LOG_E("Can not find memory type index: type bit: {0}", memoryTypeBits);
+	//	return 0;
+	//}
 
 	//VkCommandBuffer AdVKDevice::CreateAndBeginOneCmdBuffer() {
 	//        VkCommandBuffer cmdBuffer = mDefaultCmdPool->AllocateOneCommandBuffer();
@@ -195,43 +201,43 @@ namespace ade {
 	//        queue->WaitIdle();
 	//}
 
-	/**
-	 * 创建一个简单的采样器对象。
-	 *
-	 * 该函数根据指定的滤波器和地址模式创建一个VkSampler对象，用于纹理采样。
-	 * 它配置了采样器的常见属性，如纹理滤波、地址模式等，并通过 Vulkan 的
-	 * vkCreateSampler 函数创建采样器对象。
-	 *
-	 * @param filter 指定用于magFilter和minFilter的滤波器类型，控制纹理采样时的滤波方式。
-	 * @param addressMode 指定纹理坐标超出[0, 1]范围时的处理方式。
-	 * @param outSampler 指向一个VkSampler对象的指针，用于接收创建的采样器对象。
-	 *
-	 * @return 返回VkResult值，指示创建操作的结果。VK_SUCCESS表示成功，其他值表示不同的错误情况。
-	 */
-	VkResult AdVKDevice::CreateSimpleSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSampler* outSampler) {
-		// 初始化VkSamplerCreateInfo结构体，设置采样器的属性。
-		VkSamplerCreateInfo samplerInfo = {
-		    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO, // 指定结构体类型
-		    samplerInfo.pNext = nullptr, // 指向下一个结构体的指针，通常为nullptr
-		    samplerInfo.flags = 0, // 保留字段，用于未来使用，目前应设置为0
-		    samplerInfo.magFilter = filter, // 指定放大滤波器
-		    samplerInfo.minFilter = filter, // 指定缩小滤波器
-		    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR, // 指定 mip 映射的滤波方式
-		    samplerInfo.addressModeU = addressMode, // 指定 U 轴的地址模式
-		    samplerInfo.addressModeV = addressMode, // 指定 V 轴的地址模式
-		    samplerInfo.addressModeW = addressMode, // 指定 W 轴的地址模式
-		    samplerInfo.mipLodBias = 0, // mip LOD 偏差，这里设置为0
-		    samplerInfo.anisotropyEnable = VK_FALSE, // 是否启用各向异性过滤，这里禁用
-		    samplerInfo.maxAnisotropy = 0, // 最大各向异性程度，由于上一项禁用，这里设置为0
-		    samplerInfo.compareEnable = VK_FALSE, // 是否启用深度比较，这里禁用
-		    samplerInfo.compareOp = VK_COMPARE_OP_NEVER, // 深度比较操作，由于上一项禁用，这里设置为从不比较
-		    samplerInfo.minLod = 0, // 允许的最小LOD级别
-		    samplerInfo.maxLod = 1, // 允许的最大LOD级别
-		    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK, // 边框颜色，用于地址模式为边框时
-		    samplerInfo.unnormalizedCoordinates = VK_FALSE // 是否使用非标准化坐标，这里禁用
-		};
+	///**
+	// * 创建一个简单的采样器对象。
+	// *
+	// * 该函数根据指定的滤波器和地址模式创建一个VkSampler对象，用于纹理采样。
+	// * 它配置了采样器的常见属性，如纹理滤波、地址模式等，并通过 Vulkan 的
+	// * vkCreateSampler 函数创建采样器对象。
+	// *
+	// * @param filter 指定用于magFilter和minFilter的滤波器类型，控制纹理采样时的滤波方式。
+	// * @param addressMode 指定纹理坐标超出[0, 1]范围时的处理方式。
+	// * @param outSampler 指向一个VkSampler对象的指针，用于接收创建的采样器对象。
+	// *
+	// * @return 返回VkResult值，指示创建操作的结果。VK_SUCCESS表示成功，其他值表示不同的错误情况。
+	// */
+	//VkResult AdVKDevice::CreateSimpleSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSampler* outSampler) {
+	//	// 初始化VkSamplerCreateInfo结构体，设置采样器的属性。
+	//	VkSamplerCreateInfo samplerInfo = {
+	//	    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO, // 指定结构体类型
+	//	    samplerInfo.pNext = nullptr, // 指向下一个结构体的指针，通常为nullptr
+	//	    samplerInfo.flags = 0, // 保留字段，用于未来使用，目前应设置为0
+	//	    samplerInfo.magFilter = filter, // 指定放大滤波器
+	//	    samplerInfo.minFilter = filter, // 指定缩小滤波器
+	//	    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR, // 指定 mip 映射的滤波方式
+	//	    samplerInfo.addressModeU = addressMode, // 指定 U 轴的地址模式
+	//	    samplerInfo.addressModeV = addressMode, // 指定 V 轴的地址模式
+	//	    samplerInfo.addressModeW = addressMode, // 指定 W 轴的地址模式
+	//	    samplerInfo.mipLodBias = 0, // mip LOD 偏差，这里设置为0
+	//	    samplerInfo.anisotropyEnable = VK_FALSE, // 是否启用各向异性过滤，这里禁用
+	//	    samplerInfo.maxAnisotropy = 0, // 最大各向异性程度，由于上一项禁用，这里设置为0
+	//	    samplerInfo.compareEnable = VK_FALSE, // 是否启用深度比较，这里禁用
+	//	    samplerInfo.compareOp = VK_COMPARE_OP_NEVER, // 深度比较操作，由于上一项禁用，这里设置为从不比较
+	//	    samplerInfo.minLod = 0, // 允许的最小LOD级别
+	//	    samplerInfo.maxLod = 1, // 允许的最大LOD级别
+	//	    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK, // 边框颜色，用于地址模式为边框时
+	//	    samplerInfo.unnormalizedCoordinates = VK_FALSE // 是否使用非标准化坐标，这里禁用
+	//	};
 
-		// 调用Vulkan的vkCreateSampler函数，根据配置信息创建采样器对象。
-		return vkCreateSampler(mHandle, &samplerInfo, nullptr, outSampler);
-	}
+	//	// 调用Vulkan的vkCreateSampler函数，根据配置信息创建采样器对象。
+	//	return vkCreateSampler(mHandle, &samplerInfo, nullptr, outSampler);
+	//}
 }

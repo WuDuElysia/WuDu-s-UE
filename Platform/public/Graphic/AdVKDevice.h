@@ -8,13 +8,23 @@ namespace ade {
 	class AdVKQueue;
 	class AdVKCommandPool;
 
+	/**
+	* AdVkSettings结构体用于存储Vulkan渲染相关的配置设置。
+	* 这些设置对于初始化Vulkan设备、交换链以及渲染流程中非常重要。
+	*/
 	struct AdVkSettings {
+		// surfaceFormat指定表面的像素格式，这里使用的是B8G8R8A8_UNORM，意味着每个像素使用8位BGR和Alpha值，以非规范化形式存储。
 		VkFormat surfaceFormat = VK_FORMAT_B8G8R8A8_UNORM;
+
+		// depthFormat定义了深度缓冲区的格式，这里使用的是D32_SFLOAT，表示32位浮点数深度值。
 		VkFormat depthFormat = VK_FORMAT_D32_SFLOAT;
+
+		// presentMode决定了交换链呈现图像的方式，VK_PRESENT_MODE_IMMEDIATE_KHR表示图像一旦准备好就立即呈现，减少延迟。
 		VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
+
+		// swapchainImageCount表示交换链中图像的数量，这里设置为3，通常与 triple buffering（三缓冲）对应，以优化性能和减少卡顿。
 		uint32_t swapchainImageCount = 3;
 	};
-
 	class AdVKDevice {
 	public:
 		AdVKDevice(AdVKGraphicContext* context, uint32_t graphicQueueCount, uint32_t presentQueueCount, const AdVkSettings& settings = {});

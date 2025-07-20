@@ -1,29 +1,35 @@
 #ifndef ADLOG_H
 #define ADLOG_H
 
-#include"AdEngine.h"
-#define SPDLOG_ACTIVE_LEVEL SPDLOG_LEVEL_TRACE
- #include"spdlog/spdlog.h"
+#include "AdEngine.h"
 
+#include "spdlog/common.h"
 
 namespace ade {
-	class Adlog {
-	public:
-		Adlog() = delete;
-		Adlog(const Adlog&) = delete;
-		Adlog& operator=(const Adlog&) = delete;
-		static void Init();
+        class Adlog {
+        public:
+                Adlog() = delete;
+                Adlog(const Adlog&) = delete;
+                Adlog& operator=(const Adlog&) = delete;
+                static void Init();
 
-		static spdlog::logger*  GetLoggerInstance() {
-			assert(sLoggerInstance != nullptr && "Logger instance is not initialized!");
-			return sLoggerInstance.get();
-		}
-	private:
-		static std::shared_ptr<spdlog::logger> sLoggerInstance;
-	};
+                static Adlog* GetLoggerInstance() {
+                        return &sLoggerInstance;
+                }
 
+                template<typename... Args>
+                void Log(spdlog::source_loc loc, spdlog::level::level_enum lvl, spdlog::format_string_t<Args...> fmt, Args &&...args) {
+                        spdlog::memory_buf_t buf;
+                        fmt::vformat_to(fmt::appender(buf), fmt, fmt::make_format_args(args...));
+                        Log(loc, lvl, buf);
+                }
+        private:
+                void Log(spdlog::source_loc loc, spdlog::level::level_enum lvl, const spdlog::memory_buf_t& buffer);
+
+                static Adlog sLoggerInstance;
+        };
 #define AD_LOG_LOGGER_CALL(adLog, level, ...)\
-        (adLog)->log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__)
+        (adLog)->Log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__)
 
 #define LOG_T(...) AD_LOG_LOGGER_CALL(ade::Adlog::GetLoggerInstance(), spdlog::level::trace, __VA_ARGS__)
 #define LOG_D(...) AD_LOG_LOGGER_CALL(ade::Adlog::GetLoggerInstance(), spdlog::level::debug, __VA_ARGS__)
