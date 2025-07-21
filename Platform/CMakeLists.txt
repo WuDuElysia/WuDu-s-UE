@@ -8,7 +8,7 @@ add_library(WuDu_platform
     "private/Graphic/AdVKGraphicContext.cpp" 
     "private/Graphic/AdVKDevice.cpp" 
     "private/Graphic/AdVKQueue.cpp" 
-     "public/Graphic/AdVkSwapchain.h" "public/Graphic/AdVkSwapchain.cpp")
+     "private/Graphic/AdVkSwapchain.cpp")
 
 target_include_directories(WuDu_platform 
     PUBLIC 
