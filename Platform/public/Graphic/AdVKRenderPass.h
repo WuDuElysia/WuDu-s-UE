@@ -1,5 +1,5 @@
-#ifndef ADVKRENDERPASS_H
-#define ADVKRENDERPASS_H
+#ifndef AD_VKRENDERPASS_H
+#define AD_VKRENDERPASS_H
 
 #include "Graphic/AdVKCommon.h"
 

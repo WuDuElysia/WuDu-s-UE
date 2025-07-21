@@ -1,5 +1,5 @@
-#ifndef ADVKSWAPCHAIN_H
-#define ADVKSWAPCHAIN_H
+#ifndef AD_VKSWAPCHAIN_H
+#define AD_VKSWAPCHAIN_H
 
 #include "AdVKCommon.h"
 

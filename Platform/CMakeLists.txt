@@ -1,14 +1,22 @@
 cmake_minimum_required (VERSION 3.8)
 
 add_library(WuDu_platform
-	"private/Adlog.cpp"
-	"private/AdWindow.cpp"
-    "private/Window/AdGlfwWindow.cpp"
-    "private/AdGraphicContext.cpp"
-    "private/Graphic/AdVKGraphicContext.cpp" 
-    "private/Graphic/AdVKDevice.cpp" 
-    "private/Graphic/AdVKQueue.cpp" 
-     "private/Graphic/AdVkSwapchain.cpp")
+	                        "private/Adlog.cpp"
+	                        "private/AdWindow.cpp"
+                                "private/Window/AdGlfwWindow.cpp"
+                                "private/AdGraphicContext.cpp"
+                                "private/Graphic/AdVKGraphicContext.cpp" 
+                                "private/Graphic/AdVKDevice.cpp" 
+                                "private/Graphic/AdVKQueue.cpp" 
+                                "private/Graphic/AdVkSwapchain.cpp"
+                                "private/Graphic/AdVKRenderPass.cpp"
+                                "private/Graphic/AdVKFrameBuffer.cpp"
+                                "private/Graphic/AdVKImage.cpp" 
+                                "private/Graphic/AdVKImageView.cpp" 
+                                "private/Graphic/AdVKPipeline.cpp"
+                                "private/Graphic/AdVKDescriptorSet.cpp" 
+                                "private/Graphic/AdVKBuffer.cpp"
+                                "private/Graphic/AdVKCommandBuffer.cpp")
 
 target_include_directories(WuDu_platform 
     PUBLIC 
