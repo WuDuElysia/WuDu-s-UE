@@ -95,16 +95,22 @@ namespace ade {
 			// 旧的交换链，用于交换链的重建
 			swapchainInfo.oldSwapchain = oldSwapchain
 		};
+
 		// 创建交换链
 		VkResult ret = vkCreateSwapchainKHR(mDevice->GetHandle(), &swapchainInfo, nullptr, &mHandle);
 		if (ret != VK_SUCCESS) {
 			LOG_E("{0} : {1}", __FUNCTION__, vk_result_string(ret));
 			return false;
 		}
+
 		// 日志输出交换链创建信息
 		LOG_T("Swapchain {0} : old: {1}, new: {2}, image count: {3}, format: {4}, present mode : {5}", __FUNCTION__, (void*)oldSwapchain, (void*)mHandle, imageCount,
 			vk_format_string(mSurfaceInfo.surfaceFormat.format), vk_present_mode_string(mSurfaceInfo.presentMode));
-
+		// 只有在成功创建新交换链后，才销毁旧交换链
+		if (oldSwapchain != VK_NULL_HANDLE) {
+			LOG_T("Swapchain {0} : destroy old: {1}", __FUNCTION__, (void*)oldSwapchain);
+			vkDestroySwapchainKHR(mDevice->GetHandle(), oldSwapchain, nullptr);
+		}
 		// 获取交换链图像数量并调整图像数组大小
 		uint32_t swapchainImageCount;
 		ret = vkGetSwapchainImagesKHR(mDevice->GetHandle(), mHandle, &swapchainImageCount, nullptr);
@@ -210,7 +216,19 @@ namespace ade {
 		return ret;
 	}
 
+	/**
+	* @brief 提交并呈现交换链图像到屏幕
+	*
+	* 该函数负责将指定索引的交换链图像提交到呈现队列进行显示，
+	* 并等待指定的信号量确保渲染完成后再进行呈现操作。
+	*
+	* @param imageIndex 要呈现的交换链图像索引
+	* @param waitSemaphores 等待的 Vulkan 信号量列表，确保在这些信号量发出信号后才开始呈现
+	*
+	* @return VkResult Vulkan API 调用结果，VK_SUCCESS 表示成功，其他值表示呈现过程中出现错误
+	*/
 	VkResult AdVKSwapchain::Present(int32_t imageIndex, const std::vector<VkSemaphore>& waitSemaphores) {
+		// 配置呈现信息结构体
 		VkPresentInfoKHR presentInfo = {
 			presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 			presentInfo.pNext = nullptr,
@@ -220,8 +238,13 @@ namespace ade {
 			presentInfo.pSwapchains = &mHandle,
 			presentInfo.pImageIndices = reinterpret_cast<const uint32_t*>(&imageIndex)
 		};
+
+		// 提交呈现请求到队列
 		VkResult ret = vkQueuePresentKHR(mDevice->GetFirstPresentQueue()->GetHandle(), &presentInfo);
+
+		// 等待呈现队列空闲，确保呈现操作完成
 		mDevice->GetFirstPresentQueue()->WaitIdle();
+
 		return ret;
 	}
 }

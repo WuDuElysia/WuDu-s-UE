@@ -8,7 +8,7 @@
 namespace ade {
         class Adlog {
         public:
-                Adlog() = delete;
+                
                 Adlog(const Adlog&) = delete;
                 Adlog& operator=(const Adlog&) = delete;
                 static void Init();
@@ -24,6 +24,8 @@ namespace ade {
                         Log(loc, lvl, buf);
                 }
         private:
+                Adlog() = default;
+
                 void Log(spdlog::source_loc loc, spdlog::level::level_enum lvl, const spdlog::memory_buf_t& buffer);
 
                 static Adlog sLoggerInstance;
