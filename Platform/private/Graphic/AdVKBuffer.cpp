@@ -77,13 +77,18 @@ namespace ade {
         }
 
         VkResult AdVKBuffer::WriteData(void* data) {
-                if (data && bHostVisible) {
-                        void* mapping;
-                        VkResult ret = vkMapMemory(mDevice->GetHandle(), mMemory, 0, VK_WHOLE_SIZE, 0, &mapping);
-                        memcpy(mapping, data, mSize);
-                        vkUnmapMemory(mDevice->GetHandle(), mMemory);
-                        return ret;
+                size_t size = 0;
+                if (!data || !bHostVisible) {
+                        return VK_ERROR_INITIALIZATION_FAILED;
                 }
-                return VK_ERROR_INITIALIZATION_FAILED;
+                size_t copySize = (size > 0) ? min(size, mSize) : mSize;
+
+                void* mapping;
+                VkResult ret = vkMapMemory(mDevice->GetHandle(), mMemory, 0, copySize, 0, &mapping);
+                if (ret == VK_SUCCESS) {
+                        memcpy(mapping, data, copySize);
+                        vkUnmapMemory(mDevice->GetHandle(), mMemory);
+                }
+                return ret;
         }
 }

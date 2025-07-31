@@ -17,6 +17,7 @@ namespace ade {
                 VkResult WriteData(void* data);
 
                 VkBuffer GetHandle() const { return mHandle; }
+                VkDeviceMemory GetMemory() const { return mMemory; }
         private:
                 void CreateBuffer(VkBufferUsageFlags usage, void* data);
 

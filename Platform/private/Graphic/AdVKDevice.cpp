@@ -131,11 +131,11 @@ namespace ade {
 			mPresentQueues.push_back(std::make_shared<AdVKQueue>(presentQueueFamilyInfo.queueFamilyIndex, i, queue, true));
 		}
 
-		//// 创建管道缓存
-		//CreatePipelineCache();
+		// 创建管道缓存
+		CreatePipelineCache();
 
-		//// 创建默认命令池
-		//CreateDefaultCmdPool();
+		// 创建默认命令池
+		CreateDefaultCmdPool();
 	}
 
 	// AdVKDevice类的析构函数

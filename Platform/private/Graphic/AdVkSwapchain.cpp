@@ -195,7 +195,7 @@ namespace ade {
 	* @param fence 可选的围栏，用于在图像获取后发出信号
 	* @return VkResult 返回获取图像的结果，可能为VK_SUCCESS、VK_SUBOPTIMAL_KHR或其他错误代码
 	*/
-	VkResult AdVKSwapchain::AcquireImage(int32_t* outImageIndex, VkSemaphore semaphore, VkFence fence) {
+	VkResult AdVKSwapchain::AcquireImage(uint32_t& outImageIndex, VkSemaphore semaphore, VkFence fence) {
 		uint32_t imageIndex;
 		// 调用vkAcquireNextImageKHR获取下一个可用图像的索引
 		VkResult ret = vkAcquireNextImageKHR(mDevice->GetHandle(), mHandle, UINT64_MAX, semaphore, fence, &imageIndex);
@@ -208,7 +208,7 @@ namespace ade {
 
 		// 如果成功获取了图像或图像状态为次优，更新外部和内部的当前图像索引
 		if (ret == VK_SUCCESS || ret == VK_SUBOPTIMAL_KHR) {
-			*outImageIndex = imageIndex;
+			outImageIndex = imageIndex;
 			mCurrentImageIndex = imageIndex;
 		}
 

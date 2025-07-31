@@ -23,7 +23,7 @@ namespace ade {
 
 		bool ReCreate();
 
-		VkResult AcquireImage(int32_t* outImageIndex, VkSemaphore semaphore, VkFence fence = VK_NULL_HANDLE);
+		VkResult AcquireImage(uint32_t& outImageIndex, VkSemaphore semaphore, VkFence fence = VK_NULL_HANDLE);
 		VkResult Present(int32_t imageIndex, const std::vector<VkSemaphore>& waitSemaphores);
 
 		const std::vector<VkImage>& GetImages() const { return mImages; }
