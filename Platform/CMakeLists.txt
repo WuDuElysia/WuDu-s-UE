@@ -16,7 +16,7 @@ add_library(WuDu_platform
                                 "private/Graphic/AdVKPipeline.cpp"
                                 "private/Graphic/AdVKDescriptorSet.cpp" 
                                 "private/Graphic/AdVKBuffer.cpp"
-                                "private/Graphic/AdVKCommandBuffer.cpp")
+                                "private/Graphic/AdVKCommandBuffer.cpp" "public/AdGeometryUtil.h" "private/AdGeometryUtil.cpp")
 
 target_include_directories(WuDu_platform 
     PUBLIC 
@@ -32,9 +32,11 @@ option(GLFW_BUILD_EXAMPLES OFF)
 option(GLFW_INSTALL OFF)
 
 add_subdirectory(External/glfw)
+add_subdirectory(External/glm)
 
 target_link_libraries(WuDu_platform
     PRIVATE glfw
+    PRIVATE glm
 )
 
 find_package(Vulkan REQUIRED)

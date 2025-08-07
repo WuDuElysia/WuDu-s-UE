@@ -3,6 +3,14 @@
 
 #include "AdWindow.h"
 #include"AdEngine.h"
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define GLM_ENABLE_EXPERIMENTAL
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtx/quaternion.hpp"
+#include "glm/gtc/random.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 namespace ade {
 	class AdGraphicContext {
@@ -13,9 +21,7 @@ namespace ade {
 
 		static std::unique_ptr<AdGraphicContext> Create(AdWindow* window);
 
-		//virtual bool ShouldClose() = 0;
-		//virtual void PollEvents() = 0;
-		//virtual void SwapBuffer() = 0;
+
 
 	protected:
 		AdGraphicContext() = default;
