@@ -7,7 +7,7 @@ namespace ade {
         AdAppContext AdApplication::sAppContext{};
 
         void AdApplication::Start(int argc, char** argv) {
-                AdLog::Init();
+                Adlog::Init();
 
                 ParseArgs(argc, argv);
                 OnConfiguration(&mAppSettings);

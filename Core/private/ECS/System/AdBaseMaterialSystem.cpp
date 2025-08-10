@@ -41,19 +41,19 @@ namespace ade {
                         .location = 0,
                         .binding = 0,
                         .format = VK_FORMAT_R32G32B32_SFLOAT,
-                        .offset = offsetof(AdVertex, position)
+                        .offset = offsetof(AdVertex, pos)
                     },
                     {
                         .location = 1,
                         .binding = 0,
                         .format = VK_FORMAT_R32G32_SFLOAT,
-                        .offset = offsetof(AdVertex, texcoord0)
+                        .offset = offsetof(AdVertex, tex)
                     },
                     {
                         .location = 2,
                         .binding = 0,
                         .format = VK_FORMAT_R32G32B32_SFLOAT,
-                        .offset = offsetof(AdVertex, normal)
+                        .offset = offsetof(AdVertex, nor)
                     }
                 };
                 mPipeline = std::make_shared<AdVKPipeline>(device, renderPass, mPipelineLayout.get());
@@ -72,7 +72,7 @@ namespace ade {
 
                 entt::registry& reg = scene->GetEcsRegistry();
                 auto view = reg.view<AdTransformComponent, AdBaseMaterialComponent>();
-                if (view.begin() == view.end()) {
+                if (std::distance(view.begin(), view.end()) == 0) {
                         return;
                 }
                 // bind pipeline
@@ -108,7 +108,7 @@ namespace ade {
                                 }
                                 PushConstants pushConstants{
                                         .matrix = projMat * viewMat * transComp.GetTransform(),
-                                        .colorType = material->colorType
+                                        .colorType = static_cast<uint32_t>(material->colorType)
                                 };
                                 vkCmdPushConstants(cmdBuffer, mPipelineLayout->GetHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstants), &pushConstants);
 

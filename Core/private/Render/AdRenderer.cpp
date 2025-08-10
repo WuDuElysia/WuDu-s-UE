@@ -52,7 +52,10 @@ namespace ade {
                 CALL_VK(vkWaitForFences(device->GetHandle(), 1, &mFrameFences[mCurrentBuffer], VK_TRUE, UINT64_MAX));
                 CALL_VK(vkResetFences(device->GetHandle(), 1, &mFrameFences[mCurrentBuffer]));
 
-                VkResult ret = swapchain->AcquireImage(outImageIndex, mImageAvailableSemaphores[mCurrentBuffer]);
+                // 创建一个 uint32_t 变量来接收图像索引
+                uint32_t imageIndex;
+                VkResult ret = swapchain->AcquireImage(imageIndex, mImageAvailableSemaphores[mCurrentBuffer]);
+
                 if (ret == VK_ERROR_OUT_OF_DATE_KHR) {
                         CALL_VK(vkDeviceWaitIdle(device->GetHandle()));
                         VkExtent2D originExtent = { swapchain->GetWidth(), swapchain->GetHeight() };
@@ -62,11 +65,19 @@ namespace ade {
                         if (bSuc && (originExtent.width != newExtent.width || originExtent.height != newExtent.height)) {
                                 bShouldUpdateTarget = true;
                         }
-                        ret = swapchain->AcquireImage(outImageIndex, mImageAvailableSemaphores[mCurrentBuffer]);
+
+                        // 重新获取图像索引
+                        ret = swapchain->AcquireImage(imageIndex, mImageAvailableSemaphores[mCurrentBuffer]);
                         if (ret != VK_SUCCESS && ret != VK_SUBOPTIMAL_KHR) {
                                 LOG_E("Recreate swapchain error: {0}", vk_result_string(ret));
                         }
                 }
+
+                // 将结果赋值给输出参数
+                if (outImageIndex) {
+                        *outImageIndex = static_cast<int32_t>(imageIndex);
+                }
+
                 return bShouldUpdateTarget;
         }
 

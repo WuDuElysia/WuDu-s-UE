@@ -87,19 +87,19 @@ namespace ade {
                         .location = 0,
                         .binding = 0,
                         .format = VK_FORMAT_R32G32B32_SFLOAT,
-                        .offset = offsetof(AdVertex, position)
+                        .offset = offsetof(AdVertex, pos)
                     },
                     {
                         .location = 1,
                         .binding = 0,
                         .format = VK_FORMAT_R32G32_SFLOAT,
-                        .offset = offsetof(AdVertex, texcoord0)
+                        .offset = offsetof(AdVertex, tex)
                     },
                     {
                         .location = 2,
                         .binding = 0,
                         .format = VK_FORMAT_R32G32B32_SFLOAT,
-                        .offset = offsetof(AdVertex, normal)
+                        .offset = offsetof(AdVertex, nor)
                     }
                 };
                 mPipeline = std::make_shared<AdVKPipeline>(device, renderPass, mPipelineLayout.get());
