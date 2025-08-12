@@ -95,7 +95,7 @@ protected:
 
 		// 分配命令缓冲区
 		mCmdBuffers = device->GetDefaultCmdPool()->AllocateCommandBuffer(swapchain->GetImages().size());
-		/*mCmdBuffers = device->GetDefaultCmdPool()->AllocateCommandBuffer(4);*/
+		
 
 		// 创建立方体网格数据
 		std::vector<ade::AdVertex> vertices;
@@ -122,41 +122,85 @@ protected:
 		auto baseMat1 = ade::AdMaterialFactory::GetInstance()->CreateMaterial<ade::AdBaseMaterial>();
 		baseMat1->colorType = ade::COLOR_TYPE_TEXCOORD;
 
+		
 		// 创建多个立方体实体，并设置其材质和变换属性
 		{
-			ade::AdEntity* cube = scene->CreateEntity("Cube 0");
-			auto& materialComp = cube->AddComponent<ade::AdBaseMaterialComponent>();
+			mCubes.emplace_back(scene->CreateEntity("Cube 0"));
+			auto& materialComp = mCubes[0]->AddComponent<ade::AdBaseMaterialComponent>();
 			materialComp.AddMesh(mCubeMesh.get(), baseMat1);
-			auto& transComp = cube->GetComponent<ade::AdTransformComponent>();
+			auto& transComp = mCubes[0]->GetComponent<ade::AdTransformComponent>();
 			transComp.scale = { 1.f, 1.f, 1.f };
 			transComp.position = { 0.f, 0.f, 0.0f };
 			transComp.rotation = { 17.f, 30.f, 0.f };
 		}
 		{
-			ade::AdEntity* cube = scene->CreateEntity("Cube 1");
-			auto& materialComp = cube->AddComponent<ade::AdBaseMaterialComponent>();
+			mCubes.emplace_back(scene->CreateEntity("Cube 1"));
+			auto& materialComp = mCubes[1]->AddComponent<ade::AdBaseMaterialComponent>();
 			materialComp.AddMesh(mCubeMesh.get(), baseMat0);
-			auto& transComp = cube->GetComponent<ade::AdTransformComponent>();
+			auto& transComp = mCubes[1]->GetComponent<ade::AdTransformComponent>();
 			transComp.scale = { 0.5f, 0.5f, 0.5f };
 			transComp.position = { -1.f, 0.f, 0.0f };
 			transComp.rotation = { 17.f, 30.f, 0.f };
 		}
 		{
-			ade::AdEntity* cube = scene->CreateEntity("Cube 2");
-			auto& materialComp = cube->AddComponent<ade::AdBaseMaterialComponent>();
+			mCubes.emplace_back(scene->CreateEntity("Cube 2"));
+			auto& materialComp = mCubes[2]->AddComponent<ade::AdBaseMaterialComponent>();
 			materialComp.AddMesh(mCubeMesh.get(), baseMat1);
-			auto& transComp = cube->GetComponent<ade::AdTransformComponent>();
+			auto& transComp = mCubes[2]->GetComponent<ade::AdTransformComponent>();
 			transComp.scale = { 0.5f, 0.5f, 0.5f };
 			transComp.position = { 1.f, 0.f, 0.0f };
 			transComp.rotation = { 17.f, 30.f, 0.f };
-
-			/*ade::AdEntity* cube = scene->CreateEntity("Cube 3");
-			auto& materialComp = cube->AddComponent<ade::AdBaseMaterialComponent>();
-			materialComp.AddMesh(mCubeMesh.get(), baseMat0);
-			auto& transComp = cube->GetComponent<ade::AdTransformComponent>();
+		}
+		{
+			mCubes.emplace_back(scene->CreateEntity("Cube 3"));
+			auto& materialComp = mCubes[3]->AddComponent<ade::AdBaseMaterialComponent>();
+			materialComp.AddMesh(mCubeMesh.get(), baseMat1);
+			auto& transComp = mCubes[3]->GetComponent<ade::AdTransformComponent>();
 			transComp.scale = { 0.5f, 0.5f, 0.5f };
-			transComp.position = { 0.f, -1.f, 0.0f };
-			transComp.rotation = { 17.f, 30.f, 0.f };*/
+			transComp.position = { 0.f, 1.f, -1.0f };
+			transComp.rotation = { 17.f, 30.f, 0.f };
+		}
+	}
+
+	void OnUpdate(float deltaTime) override {
+		// 旋转速度（度/秒）
+		float rotationSpeed = 90.0f; // 每秒旋转90度
+
+		// 更新 Cube 0 - 绕Y轴旋转
+		if (mCubes[0] && mCubes[0]->HasComponent<ade::AdTransformComponent>()) {
+			auto& transComp = mCubes[0]->GetComponent<ade::AdTransformComponent>();
+			transComp.rotation.y += rotationSpeed * deltaTime;
+			// 保持在0-360度范围内
+			if (transComp.rotation.y >= 360.0f) {
+				transComp.rotation.y -= 360.0f;
+			}
+		}
+
+		// 更新 Cube 1 - 绕X轴旋转
+		if (mCubes[1] && mCubes[1]->HasComponent<ade::AdTransformComponent>()) {
+			auto& transComp = mCubes[1]->GetComponent<ade::AdTransformComponent>();
+			transComp.rotation.x += rotationSpeed * deltaTime;
+			if (transComp.rotation.x >= 360.0f) {
+				transComp.rotation.x -= 360.0f;
+			}
+		}
+
+		// 更新 Cube 2 - 绕Z轴旋转
+		if (mCubes[2] && mCubes[2]->HasComponent<ade::AdTransformComponent>()) {
+			auto& transComp = mCubes[2]->GetComponent<ade::AdTransformComponent>();
+			transComp.rotation.z += rotationSpeed * deltaTime;
+			if (transComp.rotation.z >= 360.0f) {
+				transComp.rotation.z -= 360.0f;
+			}
+		}
+		// 更新 Cube 3 - 绕Z轴旋转
+		if (mCubes[3] && mCubes[3]->HasComponent<ade::AdTransformComponent>()) {
+			auto& transComp = mCubes[3]->GetComponent<ade::AdTransformComponent>();
+			transComp.rotation.z += rotationSpeed * deltaTime;
+			
+			if (transComp.rotation.z >= 360.0f) {
+				transComp.rotation.z -= 360.0f;
+			}
 		}
 	}
 
@@ -221,6 +265,7 @@ private:
 
 	std::vector<VkCommandBuffer> mCmdBuffers;               ///< 命令缓冲区数组
 	std::shared_ptr<ade::AdMesh> mCubeMesh;                 ///< 立方体网格对象
+	std::vector<ade::AdEntity*> mCubes;
 };
 
 /**

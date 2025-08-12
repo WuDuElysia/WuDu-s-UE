@@ -1,7 +1,21 @@
 cmake_minimum_required (VERSION 3.8)
 
-
-
+set(SHADERS
+        00_hello_triangle.vert
+        00_hello_triangle.frag
+        02_descriptor_set.frag
+        02_descriptor_set.vert
+        03_unlit_material.frag
+        03_unlit_material.vert
+)
+spirv_shaders(
+        SHADER_HEADERS
+        SPIRV_VERSION
+        1.0 # Currently targeting Vulkan 1.0
+        SOURCES
+        ${SHADERS}
+)
+add_definitions(-DAD_RES_SHADER_DIR=\"${AD_DEFINE_RES_ROOT_DIR}/Shader/\")
 add_executable(FirstCube
 			${SHADER_HEADS}
 			Main.cpp

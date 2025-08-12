@@ -77,7 +77,16 @@ namespace ade {
 		}
 	}
 
+	/**
+ * @brief 将缓冲区数据复制到图像
+ *
+ * 该函数将指定缓冲区中的数据复制到当前图像对象中，通常用于纹理加载等场景
+ *
+ * @param cmdBuffer Vulkan命令缓冲区句柄，用于记录复制命令
+ * @param buffer 源缓冲区对象指针，包含要复制到图像的数据
+ */
 	void AdVKImage::CopyFromBuffer(VkCommandBuffer cmdBuffer, AdVKBuffer* buffer) {
+		// 配置缓冲区到图像的复制区域参数
 		VkBufferImageCopy region = {
 		    .bufferOffset = 0,
 		    .bufferRowLength = mExtent.width,
@@ -91,6 +100,7 @@ namespace ade {
 		    .imageOffset = { 0, 0, 0 },
 		    .imageExtent = { mExtent.width, mExtent.height, 1 }
 		};
+		// 执行缓冲区到图像的数据复制操作
 		vkCmdCopyBufferToImage(cmdBuffer, buffer->GetHandle(), mHandle, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 	}
 

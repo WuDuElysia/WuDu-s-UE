@@ -130,7 +130,7 @@ namespace ade {
                 entt::registry& reg = scene->GetEcsRegistry();
 
                 auto view = reg.view<AdTransformComponent, AdUnlitMaterialComponent>();
-                if (view.begin() == view.end()) {
+                if (std::distance(view.begin(), view.end()) == 0) {
                         return;
                 }
 

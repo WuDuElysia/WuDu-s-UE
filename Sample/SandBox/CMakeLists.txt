@@ -19,6 +19,6 @@ spirv_shaders(
 add_executable(SandBox
         ${SHADER_HEADERS}
         Main.cpp
-        AdEventTesting.cpp
+        
 )
 target_link_libraries(SandBox PRIVATE WuDu_core)

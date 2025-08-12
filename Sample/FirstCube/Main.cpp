@@ -122,8 +122,8 @@ int main() {
 	std::shared_ptr<ade::AdVKPipelineLayout> pipelineLayout =
 		std::make_shared<ade::AdVKPipelineLayout>(
 			vkdevice.get(),
-			AD_RES_SHADER_DIR "00_hello_buffer.vert",
-			AD_RES_SHADER_DIR "00_hello_buffer.frag",
+			AD_RES_SHADER_DIR "01_hello_buffer.vert",
+			AD_RES_SHADER_DIR "01_hello_buffer.frag",
 			shaderlayout
 		);
 
