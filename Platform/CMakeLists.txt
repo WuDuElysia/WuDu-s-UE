@@ -17,7 +17,7 @@ add_library(WuDu_platform
                                 "private/Graphic/AdVKDescriptorSet.cpp" 
                                 "private/Graphic/AdVKBuffer.cpp"
                                 "private/Graphic/AdVKCommandBuffer.cpp"
-                                "private/AdGeometryUtil.cpp")
+                                "private/AdGeometryUtil.cpp" "public/Event/AdEvent.h" "private/Event/AdEvent.cpp" "public/Event/AdInputManager.h" "public/Event/AdEventAdaper.h")
 
 target_include_directories(WuDu_platform 
     PUBLIC 
