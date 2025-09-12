@@ -15,11 +15,7 @@
 #include "Event/AdInputManager.h"
 #include "Event/AdEvent.h"
 #include "Event/AdEventAdaper.h"
-<<<<<<< HEAD
-#include "Gui/GuiSystem/AdGuiSystem.h"
-=======
 #include "Gui/AdGuiSystem.h"
->>>>>>> 瀵筭ui绯荤粺杩涜瑙ｈ�﹀彂鐜扮獥鍙ｉ噸寤哄ぇ灏忛棶棰樺嚭鍦╣ui绯荤粺涓?
 #include "AdTimeStep.h"
 #include "AdLog.h"
 
@@ -94,7 +90,7 @@ protected:
 			.sampleCount = VK_SAMPLE_COUNT_4_BIT
 		    }
 		};
-		
+
 
 		// 创建渲染通道
 		mRenderPass = std::make_shared<ade::AdVKRenderPass>(device, attachments, subpasses);
@@ -104,14 +100,14 @@ protected:
 		mRenderTarget->SetDepthStencilClearValue({ 1, 0 });
 		mRenderTarget->AddMaterialSystem<ade::AdUnlitMaterialSystem>();
 		mRenderTarget->AddMaterialSystem<ade::AdBaseMaterialSystem>();
-		
+
 
 		// 创建渲染器
 		mRenderer = std::make_shared<ade::AdRenderer>();
 
 		// 分配命令缓冲区
 		mCmdBuffers = device->GetDefaultCmdPool()->AllocateCommandBuffer(swapchain->GetImages().size());
-		
+
 
 		// 创建立方体网格数据
 		std::vector<ade::AdVertex> vertices;
@@ -132,19 +128,12 @@ protected:
 
 		mBaseMaterial->SetTextureView(0, mTexture0.get(), mSampler.get());
 		mBaseMaterial->SetBaseColor0(glm::vec3(0.5f, 0.5f, 0.5f));
-		
-		
+
+
 		// 1. 初始化GUI系统
 		mGuiSystem = std::make_shared<ade::AdGuiSystem>();
 		mGuiSystem->OnInit();
 
-		
-
-		
-
-		// 4. 添加自定义GUI函数（可选）
-		
-		
 
 	}
 
@@ -154,7 +143,7 @@ protected:
 	 * @param scene 指向当前场景对象的指针。
 	 */
 	void OnSceneInit(ade::AdScene* scene) override {
-		
+
 		// 创建摄像机实体并设置其组件
 		ade::AdEntity* camera = mScene->CreateEntity("Editor Camera");
 		auto& cameraComp = camera->AddComponent<ade::AdFirstPersonCameraComponent>();
@@ -163,7 +152,7 @@ protected:
 		m_CameraController->SetAspect(1360.0f / 768.0f);
 
 		mRenderTarget->SetCamera(camera);
-		
+
 		// 2. 设置GUI系统所需资源
 		mGuiSystem->SetResources(
 			mScene.get(),                  // 场景
@@ -171,11 +160,11 @@ protected:
 			mCubeMesh.get(),         // 立方体网格
 			mBaseMaterial.get()      // 默认材质
 		);
-		
+
 		// 3. 添加场景编辑器功能
 		mGuiSystem->AddSceneEditor();
-		
-		
+
+
 		// 创建多个立方体实体，并设置其材质和变换属性
 		{
 			mCubes.emplace_back(scene->CreateEntity("Cube 0"));
@@ -259,7 +248,7 @@ protected:
 		if (mCubes[3] && mCubes[3]->HasComponent<ade::AdTransformComponent>()) {
 			auto& transComp = mCubes[3]->GetComponent<ade::AdTransformComponent>();
 			transComp.rotation.z += rotationSpeed * deltaTime;
-			
+
 			if (transComp.rotation.z >= 360.0f) {
 				transComp.rotation.z -= 360.0f;
 			}
@@ -289,18 +278,12 @@ protected:
 	 */
 	void OnRender() override {
 
-		mGuiSystem->BeginGui();      // 开始GUI帧（内部会调用UI构建函数）
-
-		
-
-		
 		
 		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		ade::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
 		int32_t imageIndex;
-<<<<<<< HEAD
-		if (!mRenderer->Begin(&imageIndex)) {
+		if (mRenderer->Begin(&imageIndex)) {
 			mRenderTarget->SetExtent({ swapchain->GetWidth(), swapchain->GetHeight() });
 			mGuiSystem->RebuildResources();
 =======
@@ -316,10 +299,9 @@ protected:
 		// 获取3D场景渲染命令缓冲区
 		VkCommandBuffer cmdBuffer = mCmdBuffers[imageIndex];
 		ade::AdVKCommandPool::BeginCommandBuffer(cmdBuffer);
-		
-<<<<<<< HEAD
-	
-	
+
+
+
 
 		// 渲染3D场景
 =======
@@ -329,10 +311,10 @@ protected:
 		mRenderTarget->RenderMaterialSystems(cmdBuffer);
 		mRenderTarget->End(cmdBuffer);
 
-	
 
-		
-		
+
+
+
 		ade::AdVKCommandPool::EndCommandBuffer(cmdBuffer);
 
 		
@@ -342,8 +324,9 @@ protected:
 			// 如果交换链重建，再次更新资源（冗余保护）
 			mRenderTarget->SetExtent({ swapchain->GetWidth(), swapchain->GetHeight() });
 		}
-<<<<<<< HEAD
-		
+
+
+		mGuiSystem->BeginGui();      // 开始GUI帧（内部会调用UI构建函数）
 		// 3. 结束GUI帧
 =======
 		// 1. 开始GUI帧并构建UI
@@ -355,10 +338,10 @@ protected:
 
 		// 4. 渲染GUI
 		mGuiSystem->OnRender();
-		
+
 	}
 
-	
+
 	/**
 	 * @brief 应用程序销毁阶段，释放所有已创建的资源。
 	 */
@@ -366,19 +349,19 @@ protected:
 		ade::AdRenderContext* renderCxt = ade::AdApplication::GetAppContext()->renderCxt;
 		ade::AdVKDevice* device = renderCxt->GetDevice();
 		vkDeviceWaitIdle(device->GetHandle());
-		
+
 		// 关键：先清理GUI系统
-		
+
 		mGuiSystem->OnDestroy();
 		mGuiSystem.reset();
-		
+
 
 		mCubeMesh.reset();
 		mCmdBuffers.clear();
 		mRenderTarget.reset();
 		mRenderPass.reset();
 		mRenderer.reset();
-		
+
 	}
 
 private:
@@ -400,10 +383,10 @@ private:
 	std::shared_ptr<ade::AdGuiSystem>mGuiSystem;
 
 
-	
+
 
 	float m_LastTime = 0.0f;
-	
+
 
 };
 
