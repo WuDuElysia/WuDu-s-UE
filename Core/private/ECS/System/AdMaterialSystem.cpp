@@ -4,6 +4,7 @@
 #include "Render/AdRenderContext.h"
 #include "Render/AdRenderTarget.h"
 #include "ECS/Component/AdLookAtCameraComponent.h"
+#include "ECS/Component/AdFirstPersonCameraComponent.h"
 
 namespace ade {
         AdApplication* AdMaterialSystem::GetApp() const {
@@ -39,6 +40,10 @@ namespace ade {
                         auto& cameraComp = camera->GetComponent<AdLookAtCameraComponent>();
                         projMat = cameraComp.GetProjMat();
                 }
+                else if(AdEntity::HasComponent<AdFirstPersonCameraComponent>(camera)){
+                        auto& cameraComp = camera->GetComponent<AdFirstPersonCameraComponent>();
+                        projMat = cameraComp.GetProjMat();
+                }
                 return projMat;
         }
 
@@ -47,6 +52,9 @@ namespace ade {
                 AdEntity* camera = renderTarget->GetCamera();
                 if (AdEntity::HasComponent<AdLookAtCameraComponent>(camera)) {
                         auto& cameraComp = camera->GetComponent<AdLookAtCameraComponent>();
+                        viewMat = cameraComp.GetViewMat();
+                }else if(AdEntity::HasComponent<AdFirstPersonCameraComponent>(camera)){
+                        auto& cameraComp = camera->GetComponent<AdFirstPersonCameraComponent>();
                         viewMat = cameraComp.GetViewMat();
                 }
                 return viewMat;

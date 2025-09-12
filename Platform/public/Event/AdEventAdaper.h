@@ -1,8 +1,9 @@
 // EventAdapter.h
 #pragma once
 #include "AdInputManager.h"
-#include <GLFW/glfw3.h>
+#include "GLFW/glfw3.h"
 #include "AdEvent.h"
+#include "AdLog.h"
 
 namespace ade {
         class EventAdapter {
@@ -16,6 +17,7 @@ namespace ade {
                         glfwSetCursorPosCallback(window, CursorPosCallback);
                         glfwSetKeyCallback(window, KeyCallback);
                         glfwSetWindowSizeCallback(window, WindowSizeCallback);
+                        glfwSetScrollCallback(window, MouseScrollCallback);
                         // ... 其他回调
                 }
 
@@ -79,6 +81,11 @@ namespace ade {
                 static void WindowSizeCallback(GLFWwindow* window, int width, int height) {
                         auto& inputManager = InputManager::GetInstance();
                         inputManager.QueueEvent<WindowResizeEvent>(width, height);
+                }
+
+                static void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+                        auto& inputManager = InputManager::GetInstance();
+                        inputManager.QueueEvent<MouseScrollEvent>(static_cast<float>(xoffset), static_cast<float>(yoffset));
                 }
         };
 }

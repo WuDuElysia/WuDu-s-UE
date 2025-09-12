@@ -3,9 +3,10 @@
 
 #include "ECS/AdComponent.h"
 #include "AdGraphicContext.h"
+#include "ECS/System/AdCameraController.h"
 
 namespace ade {
-        class AdLookAtCameraComponent : public AdComponent {
+        class AdLookAtCameraComponent : public AdComponent , public AdCameraController {
         public:
                 const glm::mat4& GetProjMat();
                 const glm::mat4& GetViewMat();
@@ -17,6 +18,9 @@ namespace ade {
                 float GetNearPlane() const { return mNearPlane; }
                 float GetFarPlane() const { return mFarPlane; }
                 float GetRadius() const { return mRadius; }
+                float GetYaw() const;
+                float GetPitch() const;
+                float GetSensitivity() const { return mSensitivity; }
                 const glm::vec3& GetTarget() const { return mTarget; }
 
                 void SetFov(float fov) { this->mFov = fov; }
@@ -25,6 +29,25 @@ namespace ade {
                 void SetFarPlane(float farPlane) { this->mFarPlane = farPlane; }
                 void SetRadius(float radius) { this->mRadius = radius; }
                 void SetTarget(const glm::vec3& target) { this->mTarget = target; }
+                void SetYaw(float yaw);
+                void SetPitch(float pitch);
+                void SetSensitivity(float sensitivity) { mSensitivity = sensitivity; }
+                
+
+
+                void AdjustYaw(float delta);
+                void AdjustPitch(float delta);
+
+                void OnMouseMove(float deltaX, float deltaY) override;
+                void OnMouseScroll(float yOffset) override;
+                void OnMouseClick(int button) override {}
+                void OnMouseRelease(int button) override {}
+                void OnKeyPress(int key) override {}
+                void OnKeyRelease(int key) override {}
+                void Update(float deltaTime) override {}
+                
+
+
         private:
                 float mFov{ 65.f };
                 float mAspect{ 1.f };
@@ -33,10 +56,14 @@ namespace ade {
                 glm::vec3 mTarget{ 0.f, 0.f, 0.f };
                 glm::vec3 mWorldUp{ 0.f, 1.f, 0.f };
 
-                float mRadius{ 6.f };
+                float mRadius{ 4.f };
 
                 glm::mat4 mProjMat{ 1.f };
                 glm::mat4 mViewMat{ 1.f };
+
+                float mSensitivity = 0.5f;  //  Û±Í√Ù∏–∂»
+
+                bool bShouldUpdate = true;
         };
 }
 

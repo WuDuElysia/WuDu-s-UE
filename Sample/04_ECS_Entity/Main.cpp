@@ -8,7 +8,13 @@
 
 #include "ECS/AdEntity.h"
 #include "ECS/System/AdBaseMaterialSystem.h"
+#include "ECS/System/AdCameraControllerManager.h"
 #include "ECS/Component/AdLookAtCameraComponent.h"
+#include "ECS/Component/AdFirstPersonCameraComponent.h"
+#include "Event/AdInputManager.h"
+#include "Event/AdEvent.h"
+#include "Event/AdEventAdaper.h"
+#include "AdLog.h"
 
 /**
  * @brief SandBoxApp 类继承自 ade::AdApplication，用于演示基于 ECS 的实体渲染示例。
@@ -102,6 +108,9 @@ protected:
 		std::vector<uint32_t> indices;
 		ade::AdGeometryUtil::CreateCube(-0.3f, 0.3f, -0.3f, 0.3f, -0.3f, 0.3f, vertices, indices);
 		mCubeMesh = std::make_shared<ade::AdMesh>(vertices, indices);
+
+		//设置相机控制
+		SetupCameraControls();
 	}
 
 	/**
@@ -112,8 +121,11 @@ protected:
 	void OnSceneInit(ade::AdScene* scene) override {
 		// 创建摄像机实体并设置其组件
 		ade::AdEntity* camera = scene->CreateEntity("Editor Camera");
-		auto& cameraComp = camera->AddComponent<ade::AdLookAtCameraComponent>();
-		cameraComp.SetRadius(2.f);
+		auto& cameraComp = camera->AddComponent<ade::AdFirstPersonCameraComponent>();
+		// 初始化相机控制器管理器
+		m_CameraController = std::make_unique<ade::AdCameraControllerManager>(camera);
+		m_CameraController->SetAspect(1360.0f / 768.0f);
+		
 		mRenderTarget->SetCamera(camera);
 
 		// 创建两种基础材质
@@ -163,6 +175,15 @@ protected:
 	}
 
 	void OnUpdate(float deltaTime) override {
+
+		//处理队列事件
+		ade::InputManager::GetInstance().ProcessEvents();
+
+		// 更新相机控制器
+		if (m_CameraController) {
+			m_CameraController->Update(deltaTime);
+		}
+
 		// 旋转速度（度/秒）
 		float rotationSpeed = 90.0f; // 每秒旋转90度
 
@@ -266,6 +287,117 @@ private:
 	std::vector<VkCommandBuffer> mCmdBuffers;               ///< 命令缓冲区数组
 	std::shared_ptr<ade::AdMesh> mCubeMesh;                 ///< 立方体网格对象
 	std::vector<ade::AdEntity*> mCubes;
+
+	std::unique_ptr<ade::AdCameraControllerManager> m_CameraController;
+
+	bool m_MouseDragging = false;
+	glm::vec2 m_LastMousePos;
+	float m_CameraYaw = 0.0f;
+	float m_CameraPitch = 0.0f;
+	float m_CameraSensitivity = 0.1f;
+	float m_CameraRadius = 2.0f;
+	void SetupCameraControls() {
+		ade::InputManager::GetInstance().Subscribe<ade::MouseClickEvent>(
+			[this](ade::MouseClickEvent& event) {
+				HandleMouseClick(event);
+			}
+		);
+
+		ade::InputManager::GetInstance().Subscribe<ade::MouseMoveEvent>(
+			[this](ade::MouseMoveEvent& event) {
+				HandleMouseMove(event);
+			}
+		);
+
+		ade::InputManager::GetInstance().Subscribe<ade::MouseReleaseEvent>(
+			[this](ade::MouseReleaseEvent& event) {
+				HandleMouseRelease(event);
+			}
+		);
+
+		ade::InputManager::GetInstance().Subscribe<ade::MouseScrollEvent>(
+			[this](ade::MouseScrollEvent& event) {
+				HandleMouseScroll(event);
+			}
+		);
+
+		ade::InputManager::GetInstance().Subscribe<ade::KeyPressEvent>(
+			[this](ade::KeyPressEvent& event) {
+				HandleKeyPress(event);
+			}
+		);
+
+		ade::InputManager::GetInstance().Subscribe<ade::KeyReleaseEvent>(
+			[this](ade::KeyReleaseEvent& event) {
+				HandleKeyRelease(event);
+			}
+		);
+	}
+
+	void HandleMouseClick(ade::MouseClickEvent& event) {
+		if (event.GetButton() == GLFW_MOUSE_BUTTON_LEFT) {
+			m_MouseDragging = true;
+			m_LastMousePos = event.GetPosition();  // 这里设置起点
+		}
+	}
+
+	void HandleMouseRelease(ade::MouseReleaseEvent& event) {
+		if (event.GetButton() == GLFW_MOUSE_BUTTON_LEFT) {
+			m_MouseDragging = false;
+		}
+	}
+
+	void HandleMouseMove(ade::MouseMoveEvent& event) {
+		if (m_MouseDragging && m_CameraController) {
+			glm::vec2 currentPos = event.GetPosition();
+			glm::vec2 delta = currentPos - m_LastMousePos;
+
+			// 调用相机控制器处理鼠标移动
+			m_CameraController->OnMouseMove(delta.x, delta.y);
+
+			m_LastMousePos = currentPos;
+		}
+	}
+
+	void HandleMouseScroll(ade::MouseScrollEvent& event) {
+		if (m_CameraController) {
+			float delta = event.GetYOffset();
+			m_CameraController->OnMouseScroll(delta);
+		}
+	}
+
+	void HandleKeyPress(ade::KeyPressEvent& event) {
+		if (m_CameraController) {
+			ade::AdEntity* camera = m_CameraController->GetCameraEntity();
+			if (camera && camera->HasComponent<ade::AdFirstPersonCameraComponent>()) {
+				auto& fpCamera = camera->GetComponent<ade::AdFirstPersonCameraComponent>();
+
+				switch (event.GetKey()) {
+				case GLFW_KEY_W: fpCamera.SetMoveForward(true); break;
+				case GLFW_KEY_S: fpCamera.SetMoveBackward(true); break;
+				case GLFW_KEY_A: fpCamera.SetMoveLeft(true); break;
+				case GLFW_KEY_D: fpCamera.SetMoveRight(true); break;
+				}
+			}
+		}
+	}
+
+	void HandleKeyRelease(ade::KeyReleaseEvent& event) {
+		if (m_CameraController) {
+			ade::AdEntity* camera = m_CameraController->GetCameraEntity();
+			if (camera && camera->HasComponent<ade::AdFirstPersonCameraComponent>()) {
+				auto& fpCamera = camera->GetComponent<ade::AdFirstPersonCameraComponent>();
+
+				switch (event.GetKey()) {
+				case GLFW_KEY_W: fpCamera.SetMoveForward(false); break;
+				case GLFW_KEY_S: fpCamera.SetMoveBackward(false); break;
+				case GLFW_KEY_A: fpCamera.SetMoveLeft(false); break;
+				case GLFW_KEY_D: fpCamera.SetMoveRight(false); break;
+				}
+			}
+		}
+	}
+
 };
 
 /**

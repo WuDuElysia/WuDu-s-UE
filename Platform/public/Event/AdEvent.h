@@ -2,6 +2,7 @@
 #pragma once
 #include <chrono>
 #include <string>
+#include <glm/glm.hpp>
 
 namespace ade {
         enum class EventType {
@@ -49,6 +50,7 @@ namespace ade {
 
                 float GetX() const { return m_X; }
                 float GetY() const { return m_Y; }
+                glm::vec2 GetPosition() const { return glm::vec2(m_X, m_Y); }
 
         protected:
                 float m_X, m_Y;

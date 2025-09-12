@@ -1,6 +1,7 @@
 
 #pragma once
 #include"AdEngine.h"
+#include"AdEvent.h"
 
 namespace ade {
         class InputManager {
@@ -25,7 +26,7 @@ namespace ade {
                                 // 分发给所有订阅者
                                 auto it = m_Subscribers.find(event->GetType());
                                 if (it != m_Subscribers.end()) {
-                                        for (auto& callback : it->second) {
+                                        for (auto& callback : (it->second)) {
                                                 if (!event->IsHandled()) {
                                                         callback(*event);
                                                 }
@@ -39,7 +40,7 @@ namespace ade {
                 // 订阅事件
                 template<typename T>
                 void Subscribe(std::function<void(T&)> callback) {
-                        auto wrapper = [callback](Event& e) {
+                        auto wrapper = [callback](ade::Event& e) {
                                 callback(static_cast<T&>(e));
                                 };
 
@@ -55,7 +56,7 @@ namespace ade {
                 InputManager() = default;
                 ~InputManager() = default;
 
-                std::queue<std::unique_ptr<Event>> m_EventQueue;
-                std::unordered_map<EventType, std::vector<std::function<void(ade::Event&)>>> m_Subscribers;
+                std::queue<std::unique_ptr<ade::Event>> m_EventQueue;
+                std::unordered_map<ade::EventType, std::vector<std::function<void(ade::Event&)>>> m_Subscribers;
         };
 }

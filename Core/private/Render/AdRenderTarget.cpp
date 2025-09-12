@@ -3,6 +3,7 @@
 #include "Graphic/AdVKRenderPass.h"
 #include "Graphic/AdVKImage.h"
 #include "ECS/Component/AdLookAtCameraComponent.h"
+#include "ECS/Component/AdFirstPersonCameraComponent.h"
 
 namespace ade {
 
@@ -131,10 +132,7 @@ void AdRenderTarget::Begin(VkCommandBuffer cmdBuffer) {
 		bShouldUpdate = false;
 	}
 
-	// 如果相机包含LookAt组件，则更新相机的宽高比参数
-	if (AdEntity::HasComponent<AdLookAtCameraComponent>(mCamera)) {
-		mCamera->GetComponent<AdLookAtCameraComponent>().SetAspect(mExtent.width * 1.f / mExtent.height);
-	}
+	
 
 	// 根据是否为交换链目标来确定当前使用的缓冲区索引
 	if (bSwapchainTarget) {

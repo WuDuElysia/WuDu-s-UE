@@ -2,6 +2,7 @@
 #include"Adlog.h"
 #include"glfw/glfw3.h"
 #include"glfw/glfw3native.h"
+#include"Event/AdEventAdaper.h"
 
 // 命名空间ade开始
 namespace ade {
@@ -28,6 +29,7 @@ namespace ade {
 			LOG_T("faild to create glfw window!!!");
 			return;
 		}
+	
 
 		// 获取主显示器
 		GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
@@ -46,6 +48,8 @@ namespace ade {
 
 		// 显示窗口
 		glfwShowWindow(mGLFWWindow);
+
+		EventAdapter::Initialize(mGLFWWindow);
 
 	}
 

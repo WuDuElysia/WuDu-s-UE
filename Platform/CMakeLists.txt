@@ -17,7 +17,9 @@ add_library(WuDu_platform
                                 "private/Graphic/AdVKDescriptorSet.cpp" 
                                 "private/Graphic/AdVKBuffer.cpp"
                                 "private/Graphic/AdVKCommandBuffer.cpp"
-                                "private/AdGeometryUtil.cpp" "public/Event/AdEvent.h" "private/Event/AdEvent.cpp" "public/Event/AdInputManager.h" "public/Event/AdEventAdaper.h")
+                                "private/AdGeometryUtil.cpp" 
+                                
+                                )
 
 target_include_directories(WuDu_platform 
     PUBLIC 
@@ -36,8 +38,8 @@ add_subdirectory(External/glfw)
 add_subdirectory(External/glm)
 
 target_link_libraries(WuDu_platform
-    PRIVATE glfw
-    PRIVATE glm
+    PUBLIC glfw
+    PUBLIC glm
 )
 
 find_package(Vulkan REQUIRED)
