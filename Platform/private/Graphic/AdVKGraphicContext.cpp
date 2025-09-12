@@ -137,7 +137,7 @@ namespace ade {
 				VK_MAKE_VERSION(1, 0, 0),
 				"None",
 				VK_MAKE_VERSION(1, 0, 0),
-				VK_API_VERSION_1_3
+				VK_API_VERSION_1_4
 		};
 
 		// 填充调试报告回调创建信息结构体

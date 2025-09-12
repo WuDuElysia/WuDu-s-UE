@@ -17,10 +17,13 @@ add_library(WuDu_core
 	 "private/ECS/AdNode.cpp"
 	 "private/ECS/AdScene.cpp"
 	 "private/ECS/AdUUID.cpp" 
- 
 	 "private/ECS/Component/AdFirstPersonCameraComponent.cpp"
-	
-	"private/Gui/GuiSystem/AdGuiSystem.cpp")
+	 "private/Gui/AdGuiSystem.cpp"
+	 "private/Gui/AdSceneEditor.cpp"
+	 "private/Gui/AdGuiRenderer.cpp"
+	 "private/Gui/AdGuiManager.cpp"
+	 "private/Gui/AdGuiEventHandler.cpp"
+)
 
 target_include_directories(WuDu_core PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/public   

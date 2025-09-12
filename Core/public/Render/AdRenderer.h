@@ -18,6 +18,7 @@ namespace ade {
                 std::vector<VkSemaphore> mImageAvailableSemaphores;
                 std::vector<VkSemaphore> mSubmitedSemaphores;
                 std::vector<VkFence> mFrameFences;
+                bool mNeedSwapchainRecreate = false;
         };
 }
 

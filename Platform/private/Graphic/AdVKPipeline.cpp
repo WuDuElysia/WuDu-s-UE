@@ -1,26 +1,26 @@
-#include "Graphic/AdVKPipeline.h"
+ï»¿#include "Graphic/AdVKPipeline.h"
 #include "AdFileUtil.h"
 #include "Graphic/AdVKDevice.h"
 #include "Graphic/AdVKRenderPass.h"
 
 namespace ade {
 	/**
-	* @brief ¹¹Ôìº¯Êı£¬´´½¨Vulkan¹ÜÏß²¼¾Ö¶ÔÏó
+	* @brief æ„é€ å‡½æ•°ï¼Œåˆ›å»ºVulkanç®¡çº¿å¸ƒå±€å¯¹è±¡
 	*
-	* ¸Ã¹¹Ôìº¯Êı¸ºÔğ±àÒë×ÅÉ«Æ÷Ä£¿é²¢´´½¨Vulkan¹ÜÏß²¼¾Ö¡£Ëü»á¼ÓÔØ¶¥µã×ÅÉ«Æ÷ºÍÆ¬¶Î×ÅÉ«Æ÷£¬
-	* È»ºó¸ù¾İÌá¹©µÄ×ÅÉ«Æ÷²¼¾ÖĞÅÏ¢´´½¨¹ÜÏß²¼¾Ö¡£
+	* è¯¥æ„é€ å‡½æ•°è´Ÿè´£ç¼–è¯‘ç€è‰²å™¨æ¨¡å—å¹¶åˆ›å»ºVulkanç®¡çº¿å¸ƒå±€ã€‚å®ƒä¼šåŠ è½½é¡¶ç‚¹ç€è‰²å™¨å’Œç‰‡æ®µç€è‰²å™¨ï¼Œ
+	* ç„¶åæ ¹æ®æä¾›çš„ç€è‰²å™¨å¸ƒå±€ä¿¡æ¯åˆ›å»ºç®¡çº¿å¸ƒå±€ã€‚
 	*
-	* @param device Ö¸ÏòVulkanÉè±¸¶ÔÏóµÄÖ¸Õë£¬ÓÃÓÚ´´½¨Vulkan×ÊÔ´
-	* @param vertexShaderFile ¶¥µã×ÅÉ«Æ÷ÎÄ¼şÂ·¾¶£¨²»°üº¬.spvÀ©Õ¹Ãû£©
-	* @param fragShaderFile Æ¬¶Î×ÅÉ«Æ÷ÎÄ¼şÂ·¾¶£¨²»°üº¬.spvÀ©Õ¹Ãû£©
-	* @param shaderLayout ×ÅÉ«Æ÷²¼¾ÖĞÅÏ¢£¬°üº¬ÃèÊö·û¼¯²¼¾ÖºÍÍÆËÍ³£Á¿·¶Î§
+	* @param device æŒ‡å‘Vulkanè®¾å¤‡å¯¹è±¡çš„æŒ‡é’ˆï¼Œç”¨äºåˆ›å»ºVulkanèµ„æº
+	* @param vertexShaderFile é¡¶ç‚¹ç€è‰²å™¨æ–‡ä»¶è·¯å¾„ï¼ˆä¸åŒ…å«.spvæ‰©å±•åï¼‰
+	* @param fragShaderFile ç‰‡æ®µç€è‰²å™¨æ–‡ä»¶è·¯å¾„ï¼ˆä¸åŒ…å«.spvæ‰©å±•åï¼‰
+	* @param shaderLayout ç€è‰²å™¨å¸ƒå±€ä¿¡æ¯ï¼ŒåŒ…å«æè¿°ç¬¦é›†å¸ƒå±€å’Œæ¨é€å¸¸é‡èŒƒå›´
 	*/
 	AdVKPipelineLayout::AdVKPipelineLayout(AdVKDevice* device, const std::string& vertexShaderFile, const std::string& fragShaderFile, const ShaderLayout& shaderLayout) : mDevice(device) {
-		// ±àÒë×ÅÉ«Æ÷Ä£¿é
+		// ç¼–è¯‘ç€è‰²å™¨æ¨¡å—
 		CALL_VK(CreateShaderModule(vertexShaderFile + ".spv", &mVertexShaderModule));
 		CALL_VK(CreateShaderModule(fragShaderFile + ".spv", &mFragShaderModule));
 
-		// ´´½¨¹ÜÏß²¼¾Ö
+		// åˆ›å»ºç®¡çº¿å¸ƒå±€
 		VkPipelineLayoutCreateInfo pipelineLayoutInfo = {
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO,
 			.pNext = nullptr,
@@ -34,10 +34,10 @@ namespace ade {
 	}
 
 	/**
-	* @brief Îö¹¹º¯Êı£¬ÓÃÓÚÇåÀí¹ÜÏß²¼¾ÖÏà¹ØµÄ Vulkan ×ÊÔ´
+	* @brief ææ„å‡½æ•°ï¼Œç”¨äºæ¸…ç†ç®¡çº¿å¸ƒå±€ç›¸å…³çš„ Vulkan èµ„æº
 	*
-	* ¸Ãº¯Êı»áÏú»Ù¶¥µã×ÅÉ«Æ÷Ä£¿é¡¢Æ¬¶Î×ÅÉ«Æ÷Ä£¿éÒÔ¼°¹ÜÏß²¼¾Ö¶ÔÏó¡£
-	* Ê¹ÓÃºê VK_D À´µ÷ÓÃ¶ÔÓ¦µÄ Vulkan Ïú»Ùº¯Êı¡£
+	* è¯¥å‡½æ•°ä¼šé”€æ¯é¡¶ç‚¹ç€è‰²å™¨æ¨¡å—ã€ç‰‡æ®µç€è‰²å™¨æ¨¡å—ä»¥åŠç®¡çº¿å¸ƒå±€å¯¹è±¡ã€‚
+	* ä½¿ç”¨å® VK_D æ¥è°ƒç”¨å¯¹åº”çš„ Vulkan é”€æ¯å‡½æ•°ã€‚
 	*/
 	AdVKPipelineLayout::~AdVKPipelineLayout() {
 		VK_D(ShaderModule, mDevice->GetHandle(), mVertexShaderModule);
@@ -46,19 +46,19 @@ namespace ade {
 	}
 
 	/**
-	 * @brief ´´½¨ Vulkan ×ÅÉ«Æ÷Ä£¿é
+	 * @brief åˆ›å»º Vulkan ç€è‰²å™¨æ¨¡å—
 	 *
-	 * ´ÓÖ¸¶¨ÎÄ¼şÂ·¾¶¶ÁÈ¡×ÅÉ«Æ÷´úÂë£¬²¢´´½¨¶ÔÓ¦µÄ Vulkan ×ÅÉ«Æ÷Ä£¿é¶ÔÏó¡£
+	 * ä»æŒ‡å®šæ–‡ä»¶è·¯å¾„è¯»å–ç€è‰²å™¨ä»£ç ï¼Œå¹¶åˆ›å»ºå¯¹åº”çš„ Vulkan ç€è‰²å™¨æ¨¡å—å¯¹è±¡ã€‚
 	 *
-	 * @param filePath ×ÅÉ«Æ÷´úÂëÎÄ¼şµÄÂ·¾¶
-	 * @param outShaderModule Ö¸ÏòÓÃÓÚ´æ´¢´´½¨µÄ×ÅÉ«Æ÷Ä£¿é¾ä±úµÄÖ¸Õë
-	 * @return VkResult ·µ»Ø Vulkan API µÄ½á¹û´úÂë£¬VK_SUCCESS ±íÊ¾³É¹¦
+	 * @param filePath ç€è‰²å™¨ä»£ç æ–‡ä»¶çš„è·¯å¾„
+	 * @param outShaderModule æŒ‡å‘ç”¨äºå­˜å‚¨åˆ›å»ºçš„ç€è‰²å™¨æ¨¡å—å¥æŸ„çš„æŒ‡é’ˆ
+	 * @return VkResult è¿”å› Vulkan API çš„ç»“æœä»£ç ï¼ŒVK_SUCCESS è¡¨ç¤ºæˆåŠŸ
 	 */
 	VkResult AdVKPipelineLayout::CreateShaderModule(const std::string& filePath, VkShaderModule* outShaderModule) {
-		// ´ÓÎÄ¼şÖĞ¶ÁÈ¡×ÅÉ«Æ÷´úÂëÄÚÈİ
+		// ä»æ–‡ä»¶ä¸­è¯»å–ç€è‰²å™¨ä»£ç å†…å®¹
 		std::vector<char> content = ReadCharArrayFromFile(filePath);
 
-		// ÅäÖÃ×ÅÉ«Æ÷Ä£¿é´´½¨ĞÅÏ¢½á¹¹Ìå
+		// é…ç½®ç€è‰²å™¨æ¨¡å—åˆ›å»ºä¿¡æ¯ç»“æ„ä½“
 		VkShaderModuleCreateInfo shaderModuleInfo = {
 			.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
 			.pNext = nullptr,
@@ -67,7 +67,7 @@ namespace ade {
 			.pCode = reinterpret_cast<const uint32_t*>(content.data())
 		};
 
-		// µ÷ÓÃ Vulkan API ´´½¨×ÅÉ«Æ÷Ä£¿é
+		// è°ƒç”¨ Vulkan API åˆ›å»ºç€è‰²å™¨æ¨¡å—
 		return vkCreateShaderModule(mDevice->GetHandle(), &shaderModuleInfo, nullptr, outShaderModule);
 	}
 
@@ -82,16 +82,16 @@ namespace ade {
 	}
 
 	/**
-	* @brief ´´½¨ Vulkan Í¼ĞÎ¹ÜÏß
+	* @brief åˆ›å»º Vulkan å›¾å½¢ç®¡çº¿
 	*
-	* ¸Ãº¯Êı¸ºÔğ´´½¨ Vulkan Í¼ĞÎäÖÈ¾¹ÜÏß£¬°üÀ¨ÅäÖÃ¶¥µã×ÅÉ«Æ÷ºÍÆ¬¶Î×ÅÉ«Æ÷½×¶Î¡£
-	* ¹ÜÏß´´½¨ĞèÒªÔ¤ÏÈÉèÖÃºÃµÄ×ÅÉ«Æ÷Ä£¿éºÍ¹ÜÏß²¼¾Ö¡£
+	* è¯¥å‡½æ•°è´Ÿè´£åˆ›å»º Vulkan å›¾å½¢æ¸²æŸ“ç®¡çº¿ï¼ŒåŒ…æ‹¬é…ç½®é¡¶ç‚¹ç€è‰²å™¨å’Œç‰‡æ®µç€è‰²å™¨é˜¶æ®µã€‚
+	* ç®¡çº¿åˆ›å»ºéœ€è¦é¢„å…ˆè®¾ç½®å¥½çš„ç€è‰²å™¨æ¨¡å—å’Œç®¡çº¿å¸ƒå±€ã€‚
 	*
-	* @note ¸Ãº¯Êı²»·µ»ØÈÎºÎÖµ£¬µ«»á¸üĞÂ¶ÔÏóÄÚ²¿µÄ¹ÜÏß×´Ì¬
+	* @note è¯¥å‡½æ•°ä¸è¿”å›ä»»ä½•å€¼ï¼Œä½†ä¼šæ›´æ–°å¯¹è±¡å†…éƒ¨çš„ç®¡çº¿çŠ¶æ€
 	*/
 	void AdVKPipeline::Create() {
-		// ÅäÖÃÍ¼ĞÎ¹ÜÏßµÄ×ÅÉ«Æ÷½×¶ÎĞÅÏ¢
-		// °üÀ¨¶¥µã×ÅÉ«Æ÷½×¶ÎºÍÆ¬¶Î×ÅÉ«Æ÷½×¶ÎµÄ´´½¨ĞÅÏ¢
+		// é…ç½®å›¾å½¢ç®¡çº¿çš„ç€è‰²å™¨é˜¶æ®µä¿¡æ¯
+		// åŒ…æ‹¬é¡¶ç‚¹ç€è‰²å™¨é˜¶æ®µå’Œç‰‡æ®µç€è‰²å™¨é˜¶æ®µçš„åˆ›å»ºä¿¡æ¯
 		VkPipelineShaderStageCreateInfo shaderStageInfo[] = {
 			{
 				.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,

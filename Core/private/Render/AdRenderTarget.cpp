@@ -69,26 +69,53 @@ namespace ade {
 void AdRenderTarget::ReCreate() {
 	// 如果宽度或高度为0，不进行创建操作
 	if (mExtent.width == 0 || mExtent.height == 0) {
+		LOG_W("RenderTarget ReCreate() skipped: invalid extent {0}x{1}", mExtent.width, mExtent.height);
 		return;
 	}
-
-	// 清空并重新设置帧缓冲数组大小
-	mFrameBuffers.clear();
-	mFrameBuffers.resize(mBufferCount);
 
 	// 获取渲染上下文相关对象
 	AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 	AdVKDevice* device = renderCxt->GetDevice();
 	AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
+	// 如果是交换链目标，确保使用最新的交换链信息
+	if (bSwapchainTarget) {
+		// 获取当前交换链的最新信息
+		uint32_t currentWidth = swapchain->GetWidth();
+		uint32_t currentHeight = swapchain->GetHeight();
+		uint32_t currentImageCount = swapchain->GetImages().size();
+		
+		// 记录交换链状态，用于调试
+		LOG_D("Swapchain Target ReCreate - Width: {0}, Height: {1}, Image Count: {2}", 
+			currentWidth, currentHeight, currentImageCount);
+		
+		// 更新渲染目标尺寸和缓冲数量以匹配当前交换链
+		mExtent = { currentWidth, currentHeight };
+		mBufferCount = currentImageCount;
+	}
+
+	// 清空并重新设置帧缓冲数组大小
+	mFrameBuffers.clear();
+	mFrameBuffers.resize(mBufferCount);
+
 	// 获取渲染通道附件配置
 	std::vector<Attachment> attachments = mRenderPass->GetAttachments();
 	if (attachments.empty()) {
+		LOG_W("RenderTarget ReCreate() skipped: no attachments");
 		return;
 	}
 
-	// 获取交换链图像列表
-	std::vector<VkImage> swapchainImages = swapchain->GetImages();
+	// 获取交换链图像列表（只在需要时获取）
+	std::vector<VkImage> swapchainImages;
+	if (bSwapchainTarget) {
+		swapchainImages = swapchain->GetImages();
+		// 确保交换链图像数量与期望的缓冲数量匹配
+			if (swapchainImages.size() != mBufferCount) {
+				LOG_E("Swapchain image count ({0}) mismatch with buffer count ({1})", 
+				swapchainImages.size(), mBufferCount);
+				return;
+			}
+	}
 
 	// 遍历每个缓冲区，创建对应的图像资源和帧缓冲
 	for (int i = 0; i < mBufferCount; i++) {
@@ -100,19 +127,32 @@ void AdRenderTarget::ReCreate() {
 
 			// 判断是否使用交换链图像
 			if (bSwapchainTarget && attachment.finalLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR && attachment.samples == VK_SAMPLE_COUNT_1_BIT) {
+				// 安全检查：确保索引在有效范围内
+				if (i >= static_cast<int>(swapchainImages.size())) {
+					LOG_E("Invalid swapchain image index: {0}, total images: {1}", 
+						i, swapchainImages.size());
+					return;
+				}
+				
 				// 使用交换链图像创建图像资源
+				LOG_T("Creating framebuffer {0}, using swapchain image {1} for attachment {2}", 
+					i, i, j);
 				images.push_back(std::make_shared<AdVKImage>(device, swapchainImages[i], VkExtent3D{ mExtent.width, mExtent.height, 1 }, attachment.format, attachment.usage));
-			}
-			else {
-				// 创建离屏图像资源
+			} else {
+				// 创建离屏图像资源（深度/模板附件等）
+				LOG_T("Creating framebuffer {0}, creating offscreen image for attachment {1}", 
+					i, j);
 				images.push_back(std::make_shared<AdVKImage>(device, VkExtent3D{ mExtent.width, mExtent.height, 1 }, attachment.format, attachment.usage, attachment.samples));
 			}
 		}
 
 		// 创建帧缓冲对象
+		LOG_T("Creating framebuffer {0} with {1} attachments", i, images.size());
 		mFrameBuffers[i] = std::make_shared<AdVKFrameBuffer>(device, mRenderPass, images, mExtent.width, mExtent.height);
 		images.clear();
 	}
+	
+	LOG_D("RenderTarget ReCreate() completed: {0} framebuffers created", mFrameBuffers.size());
 }
 
 /**
@@ -126,27 +166,51 @@ void AdRenderTarget::ReCreate() {
 void AdRenderTarget::Begin(VkCommandBuffer cmdBuffer) {
 	assert(!bBeginTarget && "You should not called Begin() again.");
 
-	// 如果需要更新，则重新创建渲染目标资源
-	if (bShouldUpdate) {
-		ReCreate();
-		bShouldUpdate = false;
-	}
+	// 获取渲染上下文和交换链
+	AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+	AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
-	
-
-	// 根据是否为交换链目标来确定当前使用的缓冲区索引
+	// 对于交换链目标，总是检查并确保帧缓冲与当前交换链匹配
 	if (bSwapchainTarget) {
-		AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-		AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
+		// 获取当前交换链的状态
+		uint32_t currentSwapchainWidth = swapchain->GetWidth();
+		uint32_t currentSwapchainHeight = swapchain->GetHeight();
+		uint32_t currentSwapchainImageCount = swapchain->GetImages().size();
+		
+		// 如果帧缓冲数量与当前交换链图像数量不匹配，或者尺寸不匹配，或者需要更新，则重新创建帧缓冲
+		if (mBufferCount != currentSwapchainImageCount || 
+			mExtent.width != currentSwapchainWidth || 
+			mExtent.height != currentSwapchainHeight || 
+			bShouldUpdate) {
+			ReCreate();
+			bShouldUpdate = false;
+		}
+		
+		// 获取当前图像索引，并确保它在有效范围内
 		mCurrentBufferIdx = swapchain->GetCurrentImageIndex();
-	}
-	else {
+		// 安全检查：确保索引有效
+		if (mCurrentBufferIdx < 0 || mCurrentBufferIdx >= static_cast<int32_t>(mFrameBuffers.size())) {
+			LOG_W("Invalid current image index: {0}, frame buffer count: {1}", mCurrentBufferIdx, mFrameBuffers.size());
+			mCurrentBufferIdx = 0;
+		}
+	} else {
+		// 对于非交换链目标，使用循环索引
 		mCurrentBufferIdx = (mCurrentBufferIdx + 1) % mBufferCount;
+		// 如果需要更新，则重新创建渲染目标资源
+		if (bShouldUpdate) {
+			ReCreate();
+			bShouldUpdate = false;
+		}
 	}
 
-	// 开始渲染通道
-	mRenderPass->Begin(cmdBuffer, GetFrameBuffer(), mClearValues);
-	bBeginTarget = true;
+	// 安全检查：确保当前帧缓冲存在且有效
+	if (mCurrentBufferIdx >= 0 && mCurrentBufferIdx < static_cast<int32_t>(mFrameBuffers.size())) {
+		// 开始渲染通道
+		mRenderPass->Begin(cmdBuffer, GetFrameBuffer(), mClearValues);
+		bBeginTarget = true;
+	} else {
+		LOG_E("Failed to begin render pass: invalid frame buffer index {0}", mCurrentBufferIdx);
+	}
 }
 
 	/**
@@ -165,9 +229,11 @@ void AdRenderTarget::Begin(VkCommandBuffer cmdBuffer) {
 	 * @param extent 新的渲染区域大小
 	 */
 	void AdRenderTarget::SetExtent(const VkExtent2D& extent) {
-		mExtent = extent;
-		bShouldUpdate = true;
-	}
+	// 无论尺寸是否变化，只要调用了SetExtent，就标记为需要更新
+	// 这样可以确保在交换链重建时，即使尺寸相同，也会重建帧缓冲
+	mExtent = extent;
+	bShouldUpdate = true;
+}
 
 	/**
 	 * @brief 设置帧缓冲数量

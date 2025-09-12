@@ -32,6 +32,12 @@ else()
 endif()
 
 #vulkan
+# 直接使用 VULKAN_SDK 环境变量
+if(DEFINED ENV{VULKAN_SDK})
+    message("VULKAN_SDK environment variable found: $ENV{VULKAN_SDK}")
+    set(CMAKE_PREFIX_PATH $ENV{VULKAN_SDK} ${CMAKE_PREFIX_PATH})
+endif()
+
 find_package(Vulkan REQUIRED)
 if(Vulkan_FOUND)
 	message("Vulkan found: ${Vulkan_INCLUDE_DIRS}")

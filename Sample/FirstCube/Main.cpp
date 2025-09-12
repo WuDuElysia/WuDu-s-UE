@@ -1,4 +1,4 @@
-#include<iostream>
+ï»¿#include<iostream>
 #include"Adlog.h"
 #include"AdWindow.h"
 #include"AdGraphicContext.h"
@@ -64,22 +64,22 @@ int main() {
 		.sampleCount = VK_SAMPLE_COUNT_1_BIT
 	    }
 	};
-	// Ó¦¸ÃÊ¹ÓÃ×Ô¶¨Òå¸½¼şºÍ×ÓÍ¨µÀ´´½¨äÖÈ¾Í¨µÀ
+	// åº”è¯¥ä½¿ç”¨è‡ªå®šä¹‰é™„ä»¶å’Œå­é€šé“åˆ›å»ºæ¸²æŸ“é€šé“
 	auto vkRenderPass = std::make_unique<ade::AdVKRenderPass>(
 		vkdevice.get(),
-		attachments,  // ´«ÈëÄú¶¨ÒåµÄ¸½¼ş
-		subpasses     // ´«ÈëÄú¶¨ÒåµÄ×ÓÍ¨µÀ
+		attachments,  // ä¼ å…¥æ‚¨å®šä¹‰çš„é™„ä»¶
+		subpasses     // ä¼ å…¥æ‚¨å®šä¹‰çš„å­é€šé“
 	);
-	// »ñÈ¡½»»»Á´Í¼Ïñ
+	// è·å–äº¤æ¢é“¾å›¾åƒ
 	std::vector<VkImage> swapchainImages = vkswapchain->GetImages();
 	uint32_t swapchainImageCount = swapchainImages.size();
-	//´´½¨images
+	//åˆ›å»ºimages
 	VkExtent3D extent = {
 		    vkswapchain->GetWidth(),
 		    vkswapchain->GetHeight(),
 		    1
 	};
-	// ´´½¨Ö¡»º³å (Framebuffers)
+	// åˆ›å»ºå¸§ç¼“å†² (Framebuffers)
 	
 	std::vector<std::shared_ptr<ade::AdVKFrameBuffer>> framebuffers;
 	auto depthimage = std::make_shared<ade::AdVKImage>(vkdevice.get(), extent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
@@ -118,7 +118,7 @@ int main() {
 			}
 		}
 	};
-	// ´´½¨¹ÜÏß²¼¾Ö (PipelineLayout)
+	// åˆ›å»ºç®¡çº¿å¸ƒå±€ (PipelineLayout)
 	std::shared_ptr<ade::AdVKPipelineLayout> pipelineLayout =
 		std::make_shared<ade::AdVKPipelineLayout>(
 			vkdevice.get(),
@@ -127,7 +127,7 @@ int main() {
 			shaderlayout
 		);
 
-	// ´´½¨Í¼ĞÎ¹ÜÏß (Pipeline)
+	// åˆ›å»ºå›¾å½¢ç®¡çº¿ (Pipeline)
 	std::shared_ptr<ade::AdVKPipeline> pipeline =
 		std::make_shared<ade::AdVKPipeline>(
 			vkdevice.get(),
@@ -168,14 +168,14 @@ int main() {
 			offsetof(AdVertex, nor)
 		},
 	};
-	// ÅäÖÃ¹ÜÏß×´Ì¬
+	// é…ç½®ç®¡çº¿çŠ¶æ€
 	pipeline->SetInputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)
 		->EnableDepthTest()
 		->SetDynamicState({ VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR });
 	pipeline->SetVertexInputState(vertexBindings, vertexAttrs);
 	pipeline->Create();
 
-	// ´´½¨ÃüÁî³ØºÍÃüÁî»º³åÇø
+	// åˆ›å»ºå‘½ä»¤æ± å’Œå‘½ä»¤ç¼“å†²åŒº
 	std::shared_ptr<ade::AdVKCommandPool> cmdPool =
 		std::make_shared<ade::AdVKCommandPool>(
 			vkdevice.get(),
@@ -222,7 +222,7 @@ int main() {
 	};
 
 
-	// ´´½¨Í¬²½¶ÔÏó£¨ĞÅºÅÁ¿ºÍÎ§À¸£©
+	// åˆ›å»ºåŒæ­¥å¯¹è±¡ï¼ˆä¿¡å·é‡å’Œå›´æ ï¼‰
 	const uint32_t syncObjectCount = swapchainImages.size();
 	struct syncObjects {
 		VkSemaphore imageAvailableSemaphore;
@@ -236,7 +236,7 @@ int main() {
 
 	VkFenceCreateInfo fenceInfo{};
 	fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
-	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT; // ³õÊ¼ÎªÒÑ´¥·¢×´Ì¬
+	fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT; // åˆå§‹ä¸ºå·²è§¦å‘çŠ¶æ€
 
 	for (auto& syncsub : sync) {
 		CALL_VK(vkCreateSemaphore(vkdevice->GetHandle(), &semaphoreInfo, nullptr, &syncsub.imageAvailableSemaphore));
@@ -245,66 +245,66 @@ int main() {
 	
 	}
 	
-	// ¶¥µãÊı¾İ - Èı½ÇĞÎµÄÈı¸ö¶¥µã (x, y, z, r, g, b)
+	// é¡¶ç‚¹æ•°æ® - ä¸‰è§’å½¢çš„ä¸‰ä¸ªé¡¶ç‚¹ (x, y, z, r, g, b)
 	/*struct Vertex {
 		float pos[3];
 		float color[3];
 	};*/
 	
 	
-	// ´´½¨¶¥µã»º³åÇø
+	// åˆ›å»ºé¡¶ç‚¹ç¼“å†²åŒº
 	VkBuffer vertexBuffer = vertexVKBuffer->GetHandle();
 	VkDeviceMemory vertexBufferMemory = vertexVKBuffer->GetMemory();
 	
 	uint32_t currentFrame = 0;
-	// ÔÚÖ÷Ñ­»·Íâ¶¨ÒåÒ»¸ö½Ç¶È±äÁ¿
-	float baseAngleY = glm::radians(0.0f); // ÈÆYÖá25¶È
-	float baseAngleX = glm::radians(25.0f); // ÈÆXÖá30¶È
+	// åœ¨ä¸»å¾ªç¯å¤–å®šä¹‰ä¸€ä¸ªè§’åº¦å˜é‡
+	float baseAngleY = glm::radians(0.0f); // ç»•Yè½´25åº¦
+	float baseAngleX = glm::radians(25.0f); // ç»•Xè½´30åº¦
 	float angle = 0.0f;
 
-	// ³õÊ¼¾ØÕó
+	// åˆå§‹çŸ©é˜µ
 	pc.matrix = glm::rotate(glm::mat4(1.0f), baseAngleY, glm::vec3(0, 1, 0));
 	pc.matrix = glm::rotate(pc.matrix, baseAngleX, glm::vec3(1, 0, 0));
-	// ÔÚäÖÈ¾Ñ­»·ÖĞÌí¼ÓÈÕÖ¾¼ì²é
+	// åœ¨æ¸²æŸ“å¾ªç¯ä¸­æ·»åŠ æ—¥å¿—æ£€æŸ¥
 	LOG_T("Swapchain size: {0}x{1}", vkswapchain->GetWidth(), vkswapchain->GetHeight());
 	
 
 	while (!window->ShouldClose()) {
 		window->PollEvents();
 
-		// Ã¿Ö¡µİÔö½Ç¶È
-		angle += 0.001f; // ¿ØÖÆĞı×ªËÙ¶È
+		// æ¯å¸§é€’å¢è§’åº¦
+		angle += 0.001f; // æ§åˆ¶æ—‹è½¬é€Ÿåº¦
 
-		// ÏÈ³õÊ¼Ğı×ª£¬ÔÙ¶¯Ì¬Ğı×ª
+		// å…ˆåˆå§‹æ—‹è½¬ï¼Œå†åŠ¨æ€æ—‹è½¬
 		glm::mat4 m = glm::rotate(glm::mat4(1.0f), baseAngleY, glm::vec3(0, 1, 0));
 		m = glm::rotate(m, baseAngleX, glm::vec3(1, 0, 0));
-		m = glm::rotate(m, angle, glm::vec3(0, 1, 0)); // ¶¯Ì¬ÈÆYÖáĞı×ª
+		m = glm::rotate(m, angle, glm::vec3(0, 1, 0)); // åŠ¨æ€ç»•Yè½´æ—‹è½¬
 
 		pc.matrix = m;
 
-		// 1. µÈ´ıÉÏÒ»Ö¡Íê³É
+		// 1. ç­‰å¾…ä¸Šä¸€å¸§å®Œæˆ
 		vkWaitForFences(vkdevice->GetHandle(), 1, &sync[currentFrame].inFlightFence, VK_TRUE, UINT64_MAX);
 		vkResetFences(vkdevice->GetHandle(), 1, &sync[currentFrame].inFlightFence);
 		
 
 
-		// 2. »ñÈ¡µ±Ç°½»»»Á´Í¼Ïñ
+		// 2. è·å–å½“å‰äº¤æ¢é“¾å›¾åƒ
 		uint32_t imageIndex;
 
 		VkResult result = vkswapchain->AcquireImage(imageIndex, sync[currentFrame].imageAvailableSemaphore, VK_NULL_HANDLE);
 		
 
-		// 3. ´¦Àí swapchain ×´Ì¬±ä»¯
+		// 3. å¤„ç† swapchain çŠ¶æ€å˜åŒ–
 		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR) {
 			LOG_T("Swapchain needs to be recreated");
 
-			// ¹Ø¼ü£ºÔÚÖØ½¨Ç°µÈ´ıÉè±¸¿ÕÏĞ
+			// å…³é”®ï¼šåœ¨é‡å»ºå‰ç­‰å¾…è®¾å¤‡ç©ºé—²
 			vkDeviceWaitIdle(vkdevice->GetHandle());
 
-			// ÖØ½¨ swapchain
+			// é‡å»º swapchain
 			vkswapchain->ReCreate();
 			LOG_T("Swapchain recreated");
-			// ÖØ½¨Ïà¹ØµÄ framebuffers
+			// é‡å»ºç›¸å…³çš„ framebuffers
 			framebuffers.clear();
 			std::vector<VkImage> swapchainImages = vkswapchain->GetImages();
 
@@ -333,34 +333,34 @@ int main() {
 			}
 			vkResetFences(vkdevice->GetHandle(), 1, &sync[currentFrame].inFlightFence);
 			LOG_T("framebuffers recreated");
-			continue; // Ìø¹ıÕâÒ»Ö¡£¬¿ªÊ¼ÏÂÒ»Ö¡
+			continue; // è·³è¿‡è¿™ä¸€å¸§ï¼Œå¼€å§‹ä¸‹ä¸€å¸§
 		}
 		
 
-		// 3. Â¼ÖÆÃüÁî»º³åÇø
+		// 3. å½•åˆ¶å‘½ä»¤ç¼“å†²åŒº
 		VkCommandBuffer cmdbuffer1 = cmdBuffers[imageIndex];
 		ade::AdVKFrameBuffer* framebuffer1 = framebuffers[imageIndex].get();
 
 
-		// ÖØÖÃ²¢¿ªÊ¼Â¼ÖÆ
+		// é‡ç½®å¹¶å¼€å§‹å½•åˆ¶
 		vkResetCommandBuffer(cmdbuffer1, 0);
 
 		ade::AdVKCommandPool::BeginCommandBuffer(cmdbuffer1);
 		
 
-		// 4. ¿ªÊ¼äÖÈ¾Í¨µÀ
+		// 4. å¼€å§‹æ¸²æŸ“é€šé“
 		vkRenderPass->Begin(cmdbuffer1, framebuffer1, clearValues);
 	
 
 
 
-		// 5. °ó¶¨Í¼ĞÎ¹ÜÏß
+		// 5. ç»‘å®šå›¾å½¢ç®¡çº¿
 		pipeline->Bind(cmdbuffer1);
 	
 
 
 
-		// 6. °ó¶¨¶¥µã»º³åÇø
+		// 6. ç»‘å®šé¡¶ç‚¹ç¼“å†²åŒº
 		
 		VkBuffer vertexBuffers[] = { vertexBuffer };
 		VkDeviceSize offsets[] = { 0 };
@@ -371,7 +371,7 @@ int main() {
 
 
 
-		// 7. ÉèÖÃÊÓ¿ÚºÍ²Ã¼ô£¨¶¯Ì¬×´Ì¬£©
+		// 7. è®¾ç½®è§†å£å’Œè£å‰ªï¼ˆåŠ¨æ€çŠ¶æ€ï¼‰
 		VkViewport viewport{};
 		viewport.x = 0.0f;
 		viewport.y = 0.0f;
@@ -387,39 +387,39 @@ int main() {
 		vkCmdSetScissor(cmdbuffer1, 0, 1, &scissor);
 		
 		
-		// ´òÓ¡Ç°¼¸¸ö¶¥µã
+		// æ‰“å°å‰å‡ ä¸ªé¡¶ç‚¹
 		/*LOG_T("Vertex 0: Pos=({0},{1},{2}), Normal=({3},{4},{5})",
 			vertices[0].pos.x, vertices[0].pos.y, vertices[0].pos.z,
 			vertices[0].nor.x, vertices[0].nor.y, vertices[0].nor.z);*/
 
-		// 8. »æÖÆ
+		// 8. ç»˜åˆ¶
 		/*vkCmdDraw(cmdbuffer1, static_cast<uint32_t>(vertices.size()), 1, 0, 0);*/
 		vkCmdDrawIndexed(cmdbuffer1, static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
 		
 
 
-		// 9. ½áÊøäÖÈ¾Í¨µÀ
+		// 9. ç»“æŸæ¸²æŸ“é€šé“
 		vkRenderPass->End(cmdbuffer1);
 		
 
 
-		// 10. ½áÊøÃüÁîÂ¼ÖÆ
+		// 10. ç»“æŸå‘½ä»¤å½•åˆ¶
                 ade::AdVKCommandPool::EndCommandBuffer(cmdbuffer1);
 
-		// µÈ´ıÍ¼Ïñ¿ÉÓÃ
+		// ç­‰å¾…å›¾åƒå¯ç”¨
 		std::vector<VkSemaphore> waitSemaphores = { sync[currentFrame].imageAvailableSemaphore };
 
-		// äÖÈ¾Íê³Éºó´¥·¢ĞÅºÅ
+		// æ¸²æŸ“å®Œæˆåè§¦å‘ä¿¡å·
 		std::vector<VkSemaphore> signalSemaphores = { sync[currentFrame].renderFinishedSemaphore };
 		
 
 
-		// 11. Ìá½»ÃüÁîµ½Í¼ĞÎ¶ÓÁĞ
+		// 11. æäº¤å‘½ä»¤åˆ°å›¾å½¢é˜Ÿåˆ—
 		graphicQueue->Submit({cmdbuffer1}, waitSemaphores, signalSemaphores, sync[currentFrame].inFlightFence);
 		
 
 
-		// 12. ³ÊÏÖÍ¼Ïñ
+		// 12. å‘ˆç°å›¾åƒ
 		vkswapchain->Present(imageIndex, signalSemaphores);
 
 		

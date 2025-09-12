@@ -23,8 +23,8 @@ add_library(WuDu_platform
 
 target_include_directories(WuDu_platform 
     PUBLIC 
-        ${CMAKE_CURRENT_SOURCE_DIR}/External   # Ìí¼Ó External Ä¿Â¼
-        ${CMAKE_CURRENT_SOURCE_DIR}/public      # Ìí¼Ó public Ä¿Â¼
+        ${CMAKE_CURRENT_SOURCE_DIR}/External   # æ·»åŠ  External ç›®å½•
+        ${CMAKE_CURRENT_SOURCE_DIR}/public      # æ·»åŠ  public ç›®å½•
 )
 
 target_sources(WuDu_platform
@@ -33,7 +33,7 @@ target_sources(WuDu_platform
         External/imgui/imgui_draw.cpp
         External/imgui/imgui_tables.cpp
         External/imgui/imgui_widgets.cpp
-        External/imgui/imgui_demo.cpp # ¿ÉÑ¡£¬ÑİÊ¾´°¿Ú
+        External/imgui/imgui_demo.cpp # å¯é€‰ï¼Œæ¼”ç¤ºçª—å£
         External/imgui/backends/imgui_impl_glfw.cpp
         External/imgui/backends/imgui_impl_vulkan.cpp
         External/imgui/backends/imgui_impl_win32.h
@@ -53,16 +53,25 @@ target_link_libraries(WuDu_platform
 
 )
 
-find_package(Vulkan REQUIRED)
+# ç¡®ä¿ä½¿ç”¨æ­£ç¡®çš„ Vulkan è·¯å¾„
+if(DEFINED ENV{VULKAN_SDK})
+    message("VULKAN_SDK environment variable found: $ENV{VULKAN_SDK}")
+    set(Vulkan_INCLUDE_DIRS "$ENV{VULKAN_SDK}/Include")
+    set(Vulkan_LIBRARY "$ENV{VULKAN_SDK}/Lib/vulkan-1.lib")
+else()
+    find_package(Vulkan REQUIRED)
+endif()
 
-if(Vulkan_FOUND)
+if(DEFINED Vulkan_INCLUDE_DIRS AND DEFINED Vulkan_LIBRARY)
     target_include_directories(WuDu_platform
         PUBLIC ${Vulkan_INCLUDE_DIRS}
     )
     target_link_libraries(WuDu_platform
         PRIVATE ${Vulkan_LIBRARY}
     )
-    message("vulkan found")
+    message("Vulkan linked with: ${Vulkan_LIBRARY}")
+else()
+    message(FATAL_ERROR "Vulkan not found. Please check VULKAN_SDK environment variable.")
 endif()
 
 

@@ -15,7 +15,11 @@
 #include "Event/AdInputManager.h"
 #include "Event/AdEvent.h"
 #include "Event/AdEventAdaper.h"
+<<<<<<< HEAD
 #include "Gui/GuiSystem/AdGuiSystem.h"
+=======
+#include "Gui/AdGuiSystem.h"
+>>>>>>> å¯¹guiç³»ç»Ÿè¿›è¡Œè§£è€¦å‘çŽ°çª—å£é‡å»ºå¤§å°é—®é¢˜å‡ºåœ¨guiç³»ç»Ÿä¸?
 #include "AdTimeStep.h"
 #include "AdLog.h"
 
@@ -295,18 +299,32 @@ protected:
 		ade::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
 		int32_t imageIndex;
+<<<<<<< HEAD
 		if (!mRenderer->Begin(&imageIndex)) {
 			mRenderTarget->SetExtent({ swapchain->GetWidth(), swapchain->GetHeight() });
 			mGuiSystem->RebuildResources();
+=======
+		if (mRenderer->Begin(&imageIndex)) {			
+			// ´°¿Ú´óÐ¡±ä»¯Ê±£¬Í¬Ê±¸üÐÂ3D³¡¾°ºÍGUIÏµÍ³µÄ×ÊÔ´
+			mRenderTarget->SetExtent({ swapchain->GetWidth(), swapchain->GetHeight() });
+			mGuiSystem->RebuildResources(); // È·±£GUI×ÊÔ´Óë´°¿Ú´óÐ¡Í¬²½
+>>>>>>> å¯¹guiç³»ç»Ÿè¿›è¡Œè§£è€¦å‘çŽ°çª—å£é‡å»ºå¤§å°é—®é¢˜å‡ºåœ¨guiç³»ç»Ÿä¸?
 		}
 
+		
+
+		// »ñÈ¡3D³¡¾°äÖÈ¾ÃüÁî»º³åÇø
 		VkCommandBuffer cmdBuffer = mCmdBuffers[imageIndex];
 		ade::AdVKCommandPool::BeginCommandBuffer(cmdBuffer);
 		
+<<<<<<< HEAD
 	
 	
 
 		// äÖÈ¾3D³¡¾°
+=======
+		// 3. äÖÈ¾3D³¡¾°
+>>>>>>> å¯¹guiç³»ç»Ÿè¿›è¡Œè§£è€¦å‘çŽ°çª—å£é‡å»ºå¤§å°é—®é¢˜å‡ºåœ¨guiç³»ç»Ÿä¸?
 		mRenderTarget->Begin(cmdBuffer);
 		mRenderTarget->RenderMaterialSystems(cmdBuffer);
 		mRenderTarget->End(cmdBuffer);
@@ -316,11 +334,23 @@ protected:
 		
 		
 		ade::AdVKCommandPool::EndCommandBuffer(cmdBuffer);
+
+		
+
+		// 5. Ìá½»3D³¡¾°µÄäÖÈ¾ÃüÁî
 		if (mRenderer->End(imageIndex, { cmdBuffer })) {
+			// Èç¹û½»»»Á´ÖØ½¨£¬ÔÙ´Î¸üÐÂ×ÊÔ´£¨ÈßÓà±£»¤£©
 			mRenderTarget->SetExtent({ swapchain->GetWidth(), swapchain->GetHeight() });
 		}
+<<<<<<< HEAD
 		
 		// 3. ½áÊøGUIÖ¡
+=======
+		// 1. ¿ªÊ¼GUIÖ¡²¢¹¹½¨UI
+		mGuiSystem->BeginGui();
+
+		// 2. ½áÊøGUIÖ¡£¬×¼±¸äÖÈ¾Êý¾Ý
+>>>>>>> å¯¹guiç³»ç»Ÿè¿›è¡Œè§£è€¦å‘çŽ°çª—å£é‡å»ºå¤§å°é—®é¢˜å‡ºåœ¨guiç³»ç»Ÿä¸?
 		mGuiSystem->EndGui();
 
 		// 4. äÖÈ¾GUI

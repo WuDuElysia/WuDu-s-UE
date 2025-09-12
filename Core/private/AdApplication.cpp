@@ -2,6 +2,7 @@
 #include "AdLog.h"
 #include "Render/AdRenderContext.h"
 #include "ECS/AdEntity.h"
+#include "Event/AdInputManager.h"
 
 namespace ade {
 	AdAppContext AdApplication::sAppContext{};
@@ -46,7 +47,7 @@ namespace ade {
 		mLastTimePoint = std::chrono::steady_clock::now(); // 初始化上一帧时间点
 		while (!mWindow->ShouldClose()) { // 主循环直到窗口关闭
 			mWindow->PollEvents(); // 处理窗口事件
-
+			
 			// 计算帧间隔时间
 			float deltaTime = std::chrono::duration<float>(std::chrono::steady_clock::now() - mLastTimePoint).count();
 			mLastTimePoint = std::chrono::steady_clock::now();
