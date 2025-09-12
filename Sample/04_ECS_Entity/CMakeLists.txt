@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.8)
 
+
 set(SHADERS
-	
+	03_unlit_material.frag
+        03_unlit_material.vert
+	glsl_shader.vert
+        glsl_shader.frag
 )
 
 SPIRV_SHADERS(

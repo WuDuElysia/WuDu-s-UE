@@ -2,6 +2,7 @@
 #define AD_DESCRIPTOR_SET_H
 
 #include "AdVKCommon.h"
+#include "AdLog.h"
 
 namespace ade {
         class AdVKDevice;
@@ -21,6 +22,7 @@ namespace ade {
         class AdVKDescriptorPool {
         public:
                 AdVKDescriptorPool(AdVKDevice* device, uint32_t maxSets, const std::vector<VkDescriptorPoolSize>& poolSizes);
+                VkDescriptorPool GetHandle() const { return mHandle; }
                 ~AdVKDescriptorPool();
 
                 std::vector<VkDescriptorSet> AllocateDescriptorSet(AdVKDescriptorSetLayout* setLayout, uint32_t count);

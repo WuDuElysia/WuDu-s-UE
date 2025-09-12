@@ -91,25 +91,33 @@ namespace ade {
 		std::vector<VkExtensionProperties> availableExtensions(availableExtensionCount);
 		CALL_VK(vkEnumerateDeviceExtensionProperties(context->GetPhyDevice(), "", &availableExtensionCount, availableExtensions.data()));
 
+
 		// 检查并启用设备扩展
 		uint32_t enableExtensionCount;
-		const char* enableExtensions[32];
+		std::vector<const char*> enableExtensions(32);
+		enableExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
+		enableExtensions.push_back(VK_KHR_DYNAMIC_RENDERING_EXTENSION_NAME);
 		if (!checkDeviceFeatures("Device Extension", true, availableExtensionCount, availableExtensions.data(),
-			ARRAY_SIZE(requestedExtensions), requestedExtensions, &enableExtensionCount, enableExtensions)) {
+			ARRAY_SIZE(requestedExtensions), requestedExtensions, &enableExtensionCount, enableExtensions.data())) {
 			return;
 		}
+
+		// 2. 启用动态渲染特性（通过pNext链）
+		VkPhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures = {};
+		dynamicRenderingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
+		dynamicRenderingFeatures.dynamicRendering = VK_TRUE; // 关键：启用特性
 
 		// 准备设备创建信息
 		VkDeviceCreateInfo deviceInfo = {
 		    deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
-		    deviceInfo.pNext = nullptr,
+		    deviceInfo.pNext = &dynamicRenderingFeatures,
 		    deviceInfo.flags = 0,
 		    deviceInfo.queueCreateInfoCount = static_cast<uint32_t>(bSameQueueFamilyIndex ? 1 : 2),
 		    deviceInfo.pQueueCreateInfos = queueInfos,
 		    deviceInfo.enabledLayerCount = 0,
 		    deviceInfo.ppEnabledLayerNames = nullptr,
 		    deviceInfo.enabledExtensionCount = enableExtensionCount,
-		    deviceInfo.ppEnabledExtensionNames = enableExtensionCount > 0 ? enableExtensions : nullptr,
+		    deviceInfo.ppEnabledExtensionNames = enableExtensionCount > 0 ? enableExtensions.data() : nullptr,
 		    deviceInfo.pEnabledFeatures = nullptr
 		};
 

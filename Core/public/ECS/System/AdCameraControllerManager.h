@@ -3,6 +3,9 @@
 #include "ECS/AdEntity.h"
 #include "ECS/Component/AdFirstPersonCameraComponent.h"
 #include "ECS/Component/AdLookAtCameraComponent.h"
+#include "Event/AdInputManager.h"
+#include "Event/AdEvent.h"
+#include "Event/AdEventAdaper.h"
 
 namespace ade {
 	class AdCameraControllerManager {
@@ -14,10 +17,120 @@ namespace ade {
 		std::function<void(float)> m_OnMouseScroll;
 		std::function<void(float)> m_Update;
 		std::function<void(float)> m_SetAspect;
+		bool m_MouseDragging = false;
+		glm::vec2 m_LastMousePos;
+		float m_CameraYaw = 0.0f;
+		float m_CameraPitch = 0.0f;
+		float m_CameraSensitivity = 0.1f;
+		float m_CameraRadius = 2.0f;
+		float m_LastTime = 0.0f;
 
 	public:
 		AdCameraControllerManager(AdEntity* cameraEntity) : m_CameraEntity(cameraEntity) {
 			UpdateActiveController();
+			SetupCameraControls();
+		}
+
+		void SetupCameraControls() {
+			ade::InputManager::GetInstance().Subscribe<ade::MouseClickEvent>(
+				[this](ade::MouseClickEvent& event) {
+					HandleMouseClick(event);
+				}
+			);
+
+			ade::InputManager::GetInstance().Subscribe<ade::MouseMoveEvent>(
+				[this](ade::MouseMoveEvent& event) {
+					HandleMouseMove(event);
+				}
+			);
+
+			ade::InputManager::GetInstance().Subscribe<ade::MouseReleaseEvent>(
+				[this](ade::MouseReleaseEvent& event) {
+					HandleMouseRelease(event);
+				}
+			);
+
+			ade::InputManager::GetInstance().Subscribe<ade::MouseScrollEvent>(
+				[this](ade::MouseScrollEvent& event) {
+					HandleMouseScroll(event);
+				}
+			);
+
+			ade::InputManager::GetInstance().Subscribe<ade::KeyPressEvent>(
+				[this](ade::KeyPressEvent& event) {
+					HandleKeyPress(event);
+				}
+			);
+
+			ade::InputManager::GetInstance().Subscribe<ade::KeyReleaseEvent>(
+				[this](ade::KeyReleaseEvent& event) {
+					HandleKeyRelease(event);
+				}
+			);
+		}
+
+		void HandleMouseClick(ade::MouseClickEvent& event) {
+			if (event.GetButton() == GLFW_MOUSE_BUTTON_LEFT) {
+				m_MouseDragging = true;
+				m_LastMousePos = event.GetPosition();  // 这里设置起点
+			}
+		}
+
+		void HandleMouseRelease(ade::MouseReleaseEvent& event) {
+			if (event.GetButton() == GLFW_MOUSE_BUTTON_LEFT) {
+				m_MouseDragging = false;
+			}
+		}
+
+		void HandleMouseMove(ade::MouseMoveEvent& event) {
+			if (m_MouseDragging) {
+				glm::vec2 currentPos = event.GetPosition();
+				glm::vec2 delta = currentPos - m_LastMousePos;
+
+				// 调用相机控制器处理鼠标移动
+				OnMouseMove(delta.x, delta.y);
+
+				m_LastMousePos = currentPos;
+			}
+		}
+
+		void HandleMouseScroll(ade::MouseScrollEvent& event) {
+
+			float delta = event.GetYOffset();
+			OnMouseScroll(delta);
+
+		}
+
+		void HandleKeyPress(ade::KeyPressEvent& event) {
+
+			ade::AdEntity* camera = GetCameraEntity();
+			if (camera && camera->HasComponent<ade::AdFirstPersonCameraComponent>()) {
+				auto& fpCamera = camera->GetComponent<ade::AdFirstPersonCameraComponent>();
+
+				switch (event.GetKey()) {
+				case GLFW_KEY_W: fpCamera.SetMoveForward(true); break;
+				case GLFW_KEY_S: fpCamera.SetMoveBackward(true); break;
+				case GLFW_KEY_A: fpCamera.SetMoveLeft(true); break;
+				case GLFW_KEY_D: fpCamera.SetMoveRight(true); break;
+				}
+			}
+
+		}
+
+		void HandleKeyRelease(ade::KeyReleaseEvent& event) {
+
+			ade::AdEntity* camera = GetCameraEntity();
+			if (camera && camera->HasComponent<ade::AdFirstPersonCameraComponent>()) {
+				auto& fpCamera = camera->GetComponent<ade::AdFirstPersonCameraComponent>();
+
+				switch (event.GetKey()) {
+				case GLFW_KEY_W: fpCamera.SetMoveForward(false); break;
+				case GLFW_KEY_S: fpCamera.SetMoveBackward(false); break;
+				case GLFW_KEY_A: fpCamera.SetMoveLeft(false); break;
+				case GLFW_KEY_D: fpCamera.SetMoveRight(false); break;
+				}
+			}
+
 		}
 
 		void UpdateActiveController() {

@@ -1,6 +1,7 @@
 #include "Graphic/AdVKRenderPass.h"
 #include "Graphic/AdVKDevice.h"
 #include "Graphic/AdVKFrameBuffer.h"
+#include "Adlog.h"
 
 namespace ade {
 	// 构造函数：AdVKRenderPass
@@ -11,6 +12,7 @@ namespace ade {
 	// - subPasses: 子通道列表，定义了渲染流程和依赖关系
 	AdVKRenderPass::AdVKRenderPass(AdVKDevice* device, const std::vector<Attachment>& attachments, const std::vector<RenderSubPass>& subPasses)
 		: mDevice(device), mAttachments(attachments), mSubPasses(subPasses) {
+
 
 		// 如果没有子通道配置，则设置默认的子通道和附件
 		if (mSubPasses.empty()) {
@@ -134,8 +136,10 @@ namespace ade {
 			    .stencilStoreOp = attachment.stencilStoreOp, // 指定在渲染pass结束时如何处理模板附件的内容
 			    .initialLayout = attachment.initialLayout, // 指定附件在渲染pass开始时的布局
 			    .finalLayout = attachment.finalLayout // 指定附件在渲染pass结束时的布局
-				});
+			});
+
 		}
+		
 		// 初始化VkRenderPassCreateInfo结构体，用于描述渲染流程的创建信息
 		VkRenderPassCreateInfo renderPassInfo = {
 			// 指定结构体类型，这里是渲染流程创建信息

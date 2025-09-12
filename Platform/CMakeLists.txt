@@ -27,7 +27,17 @@ target_include_directories(WuDu_platform
         ${CMAKE_CURRENT_SOURCE_DIR}/public      # 添加 public 目录
 )
 
-
+target_sources(WuDu_platform
+    PRIVATE
+        External/imgui/imgui.cpp
+        External/imgui/imgui_draw.cpp
+        External/imgui/imgui_tables.cpp
+        External/imgui/imgui_widgets.cpp
+        External/imgui/imgui_demo.cpp # 可选，演示窗口
+        External/imgui/backends/imgui_impl_glfw.cpp
+        External/imgui/backends/imgui_impl_vulkan.cpp
+        External/imgui/backends/imgui_impl_win32.h
+)
 
 option(GLFW_BUILD_DOCS OFF)
 option(GLFW_BUILD_TESTS OFF)
@@ -40,6 +50,7 @@ add_subdirectory(External/glm)
 target_link_libraries(WuDu_platform
     PUBLIC glfw
     PUBLIC glm
+
 )
 
 find_package(Vulkan REQUIRED)

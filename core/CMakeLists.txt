@@ -19,7 +19,8 @@ add_library(WuDu_core
 	 "private/ECS/AdUUID.cpp" 
  
 	 "private/ECS/Component/AdFirstPersonCameraComponent.cpp"
-	 "public/ECS/System/AdCameraControllerManager.h")
+	
+	"private/Gui/GuiSystem/AdGuiSystem.cpp")
 
 target_include_directories(WuDu_core PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/public   

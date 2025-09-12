@@ -41,6 +41,8 @@ namespace ade {
                 std::vector<VkDescriptorSet> mMaterialDescSets;
                 std::vector<VkDescriptorSet> mMaterialResourceDescSets;
                 std::vector<std::shared_ptr<AdVKBuffer>> mMaterialBuffers;
+                std::shared_ptr<AdTexture> mDefaultTexture;
+                std::shared_ptr<AdSampler> mDefaultSampler;
         };
 }
 

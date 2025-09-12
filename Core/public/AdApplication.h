@@ -4,10 +4,11 @@
 #include "AdWindow.h"
 #include "AdApplicationContext.h"
 
+
 namespace ade {
         struct AppSettings {
-                uint32_t width = 800;
-                uint32_t height = 600;
+                uint32_t width = 1920;
+                uint32_t height = 1080;
                 const char* title = "WuDu Engine";
         };
 
@@ -25,6 +26,8 @@ namespace ade {
 
                 float GetStartTimeSecond() const { return std::chrono::duration<float>(std::chrono::steady_clock::now() - mStartTimePoint).count(); }
                 uint64_t GetFrameIndex() const { return mFrameIndex; }
+                AdWindow* GetWindow() const { return mWindow.get(); }
+
         protected:
                 virtual void OnConfiguration(AppSettings* appSettings) {}
                 virtual void OnInit() {}

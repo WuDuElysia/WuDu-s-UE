@@ -1,19 +1,50 @@
-#include "Render/AdSampler.h"
 
+#include "Render/AdSampler.h"
 #include "AdApplication.h"
-#include "Render/AdRenderContext.h"
 
 namespace ade {
-        AdSampler::AdSampler(VkFilter filter, VkSamplerAddressMode addressMode) : mFilter(filter), mAddressMode(addressMode) {
-                ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-                ade::AdVKDevice* device = renderCxt->GetDevice();
+	AdSampler::AdSampler(const Settings& settings)
+	{
+		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+		mDevice = renderCxt->GetDevice();
+		CreateSampler(settings);
+	}
 
-                CALL_VK(device->CreateSimpleSampler(mFilter, mAddressMode, &mHandle));
-        }
+	AdSampler::AdSampler()
+	{
+		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+		mDevice = renderCxt->GetDevice();
+		Settings defaultSettings;
+		CreateSampler(defaultSettings);
+	}
 
-        AdSampler::~AdSampler() {
-                ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-                ade::AdVKDevice* device = renderCxt->GetDevice();
-                VK_D(Sampler, device->GetHandle(), mHandle);
-        }
+	AdSampler::~AdSampler() {
+		if (mHandle != VK_NULL_HANDLE) {
+			vkDestroySampler(mDevice->GetHandle(), mHandle, nullptr);
+		}
+	}
+
+	void AdSampler::CreateSampler(const Settings& settings) {
+		VkSamplerCreateInfo samplerInfo = {};
+		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
+		samplerInfo.magFilter = settings.magFilter;
+		samplerInfo.minFilter = settings.minFilter;
+		samplerInfo.addressModeU = settings.addressModeU;
+		samplerInfo.addressModeV = settings.addressModeV;
+		samplerInfo.addressModeW = settings.addressModeW;
+		samplerInfo.anisotropyEnable = settings.anisotropyEnable;
+		samplerInfo.maxAnisotropy = settings.maxAnisotropy;
+		samplerInfo.borderColor = settings.borderColor;
+		samplerInfo.unnormalizedCoordinates = settings.unnormalizedCoordinates;
+		samplerInfo.compareEnable = VK_FALSE;
+		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
+		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
+		samplerInfo.mipLodBias = 0.0f;
+		samplerInfo.minLod = 0.0f;
+		samplerInfo.maxLod = VK_LOD_CLAMP_NONE;
+
+		if (vkCreateSampler(mDevice->GetHandle(), &samplerInfo, nullptr, &mHandle) != VK_SUCCESS) {
+			throw std::runtime_error("failed to create texture sampler!");
+		}
+	}
 }

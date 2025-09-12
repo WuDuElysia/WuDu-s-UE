@@ -14,7 +14,6 @@ layout(location=0) out vec4 vertexColor;
 void main() {
 
     gl_Position = PC.matrix * vec4(a_Pos, 1.f);
-    gl_Position.y *= -1.0;
     
 
     vertexColor = vec4(a_Normal * 0.5 + 0.5, 1.0);

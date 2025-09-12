@@ -34,6 +34,7 @@ namespace ade {
         VkInstance mInstance;
         VkSurfaceKHR mSurface;
 
+
         VkPhysicalDevice mPhyDevice;
         QueueFamilyInfo mGraphicQueueFamily;
         QueueFamilyInfo mPresentQueueFamily;

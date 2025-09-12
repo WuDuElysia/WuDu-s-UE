@@ -1,5 +1,5 @@
 #version 450
-
+#extension GL_KHR_vulkan_glsl : enable
 layout(location=1) in vec2 v_Texcoord;
 
 struct TextureParam{

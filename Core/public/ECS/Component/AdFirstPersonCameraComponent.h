@@ -45,6 +45,9 @@ namespace ade {
 		void SetFarPlane(float farPlane) { mFarPlane = farPlane; mProjMatDirty = true; }
 		const glm::mat4& GetProjMat()override;
 
+		// 添加反投影方法
+		void Unproject(float ndcX, float ndcY, glm::vec3& outOrigin, glm::vec3& outDirection) const;
+
 		// 视图矩阵相关
 		const glm::mat4& GetViewMat()override;
 

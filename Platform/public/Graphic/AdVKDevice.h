@@ -2,6 +2,7 @@
 #define AD_VK_DEVICE_H
 
 #include "AdVKCommon.h"
+#include "AdVKQueue.h"
 
 namespace ade {
 	class AdVKGraphicContext;

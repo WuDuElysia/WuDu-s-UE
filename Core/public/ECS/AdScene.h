@@ -21,6 +21,7 @@ namespace ade {
                 entt::registry& GetEcsRegistry() { return mEcsRegistry; }
                 AdNode* GetRootNode() const { return mRootNode.get(); }
                 AdEntity* GetEntity(entt::entity enttEntity);
+                
         private:
                 std::string mName;
                 entt::registry mEcsRegistry;

@@ -8,13 +8,17 @@
 
 #include "ECS/AdEntity.h"
 #include "ECS/System/AdBaseMaterialSystem.h"
+#include "ECS/System/AdUnlitMaterialSystem.h"
 #include "ECS/System/AdCameraControllerManager.h"
 #include "ECS/Component/AdLookAtCameraComponent.h"
 #include "ECS/Component/AdFirstPersonCameraComponent.h"
 #include "Event/AdInputManager.h"
 #include "Event/AdEvent.h"
 #include "Event/AdEventAdaper.h"
+#include "Gui/GuiSystem/AdGuiSystem.h"
+#include "AdTimeStep.h"
 #include "AdLog.h"
+
 
 /**
  * @brief SandBoxApp 类继承自 ade::AdApplication，用于演示基于 ECS 的实体渲染示例。
@@ -86,15 +90,17 @@ protected:
 			.sampleCount = VK_SAMPLE_COUNT_4_BIT
 		    }
 		};
+		
 
 		// 创建渲染通道
 		mRenderPass = std::make_shared<ade::AdVKRenderPass>(device, attachments, subpasses);
-
 		// 创建渲染目标并设置清除值
 		mRenderTarget = std::make_shared<ade::AdRenderTarget>(mRenderPass.get());
 		mRenderTarget->SetColorClearValue({ 0.1f, 0.2f, 0.3f, 1.f });
 		mRenderTarget->SetDepthStencilClearValue({ 1, 0 });
+		mRenderTarget->AddMaterialSystem<ade::AdUnlitMaterialSystem>();
 		mRenderTarget->AddMaterialSystem<ade::AdBaseMaterialSystem>();
+		
 
 		// 创建渲染器
 		mRenderer = std::make_shared<ade::AdRenderer>();
@@ -109,8 +115,33 @@ protected:
 		ade::AdGeometryUtil::CreateCube(-0.3f, 0.3f, -0.3f, 0.3f, -0.3f, 0.3f, vertices, indices);
 		mCubeMesh = std::make_shared<ade::AdMesh>(vertices, indices);
 
-		//设置相机控制
-		SetupCameraControls();
+		// 创建材质
+		mBaseMaterial = std::shared_ptr<ade::AdUnlitMaterial>(ade::AdMaterialFactory::GetInstance()->CreateMaterial<ade::AdUnlitMaterial>());
+		mTexture0 = std::make_shared<ade::AdTexture>(AD_RES_TEXTURE_DIR"awesomeface.png");
+
+		ade::AdSampler::Settings samplerSettings{};
+		samplerSettings.minFilter = VK_FILTER_LINEAR;
+		samplerSettings.magFilter = VK_FILTER_LINEAR;
+		samplerSettings.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		samplerSettings.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
+		mSampler = std::make_shared<ade::AdSampler>(samplerSettings);
+
+		mBaseMaterial->SetTextureView(0, mTexture0.get(), mSampler.get());
+		mBaseMaterial->SetBaseColor0(glm::vec3(0.5f, 0.5f, 0.5f));
+		
+		
+		// 1. 初始化GUI系统
+		mGuiSystem = std::make_shared<ade::AdGuiSystem>();
+		mGuiSystem->OnInit();
+
+		
+
+		
+
+		// 4. 添加自定义GUI函数（可选）
+		
+		
+
 	}
 
 	/**
@@ -119,27 +150,33 @@ protected:
 	 * @param scene 指向当前场景对象的指针。
 	 */
 	void OnSceneInit(ade::AdScene* scene) override {
+		
 		// 创建摄像机实体并设置其组件
-		ade::AdEntity* camera = scene->CreateEntity("Editor Camera");
+		ade::AdEntity* camera = mScene->CreateEntity("Editor Camera");
 		auto& cameraComp = camera->AddComponent<ade::AdFirstPersonCameraComponent>();
 		// 初始化相机控制器管理器
 		m_CameraController = std::make_unique<ade::AdCameraControllerManager>(camera);
 		m_CameraController->SetAspect(1360.0f / 768.0f);
-		
+
 		mRenderTarget->SetCamera(camera);
-
-		// 创建两种基础材质
-		auto baseMat0 = ade::AdMaterialFactory::GetInstance()->CreateMaterial<ade::AdBaseMaterial>();
-		baseMat0->colorType = ade::COLOR_TYPE_NORMAL;
-		auto baseMat1 = ade::AdMaterialFactory::GetInstance()->CreateMaterial<ade::AdBaseMaterial>();
-		baseMat1->colorType = ade::COLOR_TYPE_TEXCOORD;
-
+		
+		// 2. 设置GUI系统所需资源
+		mGuiSystem->SetResources(
+			mScene.get(),                  // 场景
+			camera,                  // 活动摄像机
+			mCubeMesh.get(),         // 立方体网格
+			mBaseMaterial.get()      // 默认材质
+		);
+		
+		// 3. 添加场景编辑器功能
+		mGuiSystem->AddSceneEditor();
+		
 		
 		// 创建多个立方体实体，并设置其材质和变换属性
 		{
 			mCubes.emplace_back(scene->CreateEntity("Cube 0"));
-			auto& materialComp = mCubes[0]->AddComponent<ade::AdBaseMaterialComponent>();
-			materialComp.AddMesh(mCubeMesh.get(), baseMat1);
+			auto& materialComp = mCubes[0]->AddComponent<ade::AdUnlitMaterialComponent>();
+			materialComp.AddMesh(mCubeMesh.get(), mBaseMaterial.get());
 			auto& transComp = mCubes[0]->GetComponent<ade::AdTransformComponent>();
 			transComp.scale = { 1.f, 1.f, 1.f };
 			transComp.position = { 0.f, 0.f, 0.0f };
@@ -147,8 +184,8 @@ protected:
 		}
 		{
 			mCubes.emplace_back(scene->CreateEntity("Cube 1"));
-			auto& materialComp = mCubes[1]->AddComponent<ade::AdBaseMaterialComponent>();
-			materialComp.AddMesh(mCubeMesh.get(), baseMat0);
+			auto& materialComp = mCubes[1]->AddComponent<ade::AdUnlitMaterialComponent>();
+			materialComp.AddMesh(mCubeMesh.get(), mBaseMaterial.get());
 			auto& transComp = mCubes[1]->GetComponent<ade::AdTransformComponent>();
 			transComp.scale = { 0.5f, 0.5f, 0.5f };
 			transComp.position = { -1.f, 0.f, 0.0f };
@@ -156,8 +193,8 @@ protected:
 		}
 		{
 			mCubes.emplace_back(scene->CreateEntity("Cube 2"));
-			auto& materialComp = mCubes[2]->AddComponent<ade::AdBaseMaterialComponent>();
-			materialComp.AddMesh(mCubeMesh.get(), baseMat1);
+			auto& materialComp = mCubes[2]->AddComponent<ade::AdUnlitMaterialComponent>();
+			materialComp.AddMesh(mCubeMesh.get(), mBaseMaterial.get());
 			auto& transComp = mCubes[2]->GetComponent<ade::AdTransformComponent>();
 			transComp.scale = { 0.5f, 0.5f, 0.5f };
 			transComp.position = { 1.f, 0.f, 0.0f };
@@ -165,8 +202,8 @@ protected:
 		}
 		{
 			mCubes.emplace_back(scene->CreateEntity("Cube 3"));
-			auto& materialComp = mCubes[3]->AddComponent<ade::AdBaseMaterialComponent>();
-			materialComp.AddMesh(mCubeMesh.get(), baseMat1);
+			auto& materialComp = mCubes[3]->AddComponent<ade::AdUnlitMaterialComponent>();
+			materialComp.AddMesh(mCubeMesh.get(), mBaseMaterial.get());
 			auto& transComp = mCubes[3]->GetComponent<ade::AdTransformComponent>();
 			transComp.scale = { 0.5f, 0.5f, 0.5f };
 			transComp.position = { 0.f, 1.f, -1.0f };
@@ -232,6 +269,9 @@ protected:
 	 */
 	void OnSceneDestroy(ade::AdScene* scene) override {
 
+		mTexture0.reset();
+		mTexture1.reset();
+		mSampler.reset();
 	}
 
 	/**
@@ -244,27 +284,51 @@ protected:
 	 * - 提交命令缓冲区并呈现图像
 	 */
 	void OnRender() override {
+
+		mGuiSystem->BeginGui();      // 开始GUI帧（内部会调用UI构建函数）
+
+		
+
+		
+		
 		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		ade::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
 		int32_t imageIndex;
-		if (mRenderer->Begin(&imageIndex)) {
+		if (!mRenderer->Begin(&imageIndex)) {
 			mRenderTarget->SetExtent({ swapchain->GetWidth(), swapchain->GetHeight() });
+			mGuiSystem->RebuildResources();
 		}
 
 		VkCommandBuffer cmdBuffer = mCmdBuffers[imageIndex];
 		ade::AdVKCommandPool::BeginCommandBuffer(cmdBuffer);
+		
+	
+	
 
+		// 渲染3D场景
 		mRenderTarget->Begin(cmdBuffer);
 		mRenderTarget->RenderMaterialSystems(cmdBuffer);
 		mRenderTarget->End(cmdBuffer);
 
+	
+
+		
+		
 		ade::AdVKCommandPool::EndCommandBuffer(cmdBuffer);
 		if (mRenderer->End(imageIndex, { cmdBuffer })) {
 			mRenderTarget->SetExtent({ swapchain->GetWidth(), swapchain->GetHeight() });
 		}
+		
+		// 3. 结束GUI帧
+		mGuiSystem->EndGui();
+
+		// 4. 渲染GUI
+		mGuiSystem->OnRender();
+		
 	}
 
+	
 	/**
 	 * @brief 应用程序销毁阶段，释放所有已创建的资源。
 	 */
@@ -272,11 +336,19 @@ protected:
 		ade::AdRenderContext* renderCxt = ade::AdApplication::GetAppContext()->renderCxt;
 		ade::AdVKDevice* device = renderCxt->GetDevice();
 		vkDeviceWaitIdle(device->GetHandle());
+		
+		// 关键：先清理GUI系统
+		
+		mGuiSystem->OnDestroy();
+		mGuiSystem.reset();
+		
+
 		mCubeMesh.reset();
 		mCmdBuffers.clear();
 		mRenderTarget.reset();
 		mRenderPass.reset();
 		mRenderer.reset();
+		
 	}
 
 private:
@@ -288,115 +360,20 @@ private:
 	std::shared_ptr<ade::AdMesh> mCubeMesh;                 ///< 立方体网格对象
 	std::vector<ade::AdEntity*> mCubes;
 
-	std::unique_ptr<ade::AdCameraControllerManager> m_CameraController;
+	std::unique_ptr<ade::AdCameraControllerManager> m_CameraController;  ///< 相机控制器管理器
 
-	bool m_MouseDragging = false;
-	glm::vec2 m_LastMousePos;
-	float m_CameraYaw = 0.0f;
-	float m_CameraPitch = 0.0f;
-	float m_CameraSensitivity = 0.1f;
-	float m_CameraRadius = 2.0f;
-	void SetupCameraControls() {
-		ade::InputManager::GetInstance().Subscribe<ade::MouseClickEvent>(
-			[this](ade::MouseClickEvent& event) {
-				HandleMouseClick(event);
-			}
-		);
+	//材质
+	std::shared_ptr<ade::AdTexture> mTexture0;
+	std::shared_ptr<ade::AdTexture> mTexture1;
+	std::shared_ptr<ade::AdSampler> mSampler;
+	std::shared_ptr<ade::AdUnlitMaterial> mBaseMaterial;
+	std::shared_ptr<ade::AdGuiSystem>mGuiSystem;
 
-		ade::InputManager::GetInstance().Subscribe<ade::MouseMoveEvent>(
-			[this](ade::MouseMoveEvent& event) {
-				HandleMouseMove(event);
-			}
-		);
 
-		ade::InputManager::GetInstance().Subscribe<ade::MouseReleaseEvent>(
-			[this](ade::MouseReleaseEvent& event) {
-				HandleMouseRelease(event);
-			}
-		);
+	
 
-		ade::InputManager::GetInstance().Subscribe<ade::MouseScrollEvent>(
-			[this](ade::MouseScrollEvent& event) {
-				HandleMouseScroll(event);
-			}
-		);
-
-		ade::InputManager::GetInstance().Subscribe<ade::KeyPressEvent>(
-			[this](ade::KeyPressEvent& event) {
-				HandleKeyPress(event);
-			}
-		);
-
-		ade::InputManager::GetInstance().Subscribe<ade::KeyReleaseEvent>(
-			[this](ade::KeyReleaseEvent& event) {
-				HandleKeyRelease(event);
-			}
-		);
-	}
-
-	void HandleMouseClick(ade::MouseClickEvent& event) {
-		if (event.GetButton() == GLFW_MOUSE_BUTTON_LEFT) {
-			m_MouseDragging = true;
-			m_LastMousePos = event.GetPosition();  // 这里设置起点
-		}
-	}
-
-	void HandleMouseRelease(ade::MouseReleaseEvent& event) {
-		if (event.GetButton() == GLFW_MOUSE_BUTTON_LEFT) {
-			m_MouseDragging = false;
-		}
-	}
-
-	void HandleMouseMove(ade::MouseMoveEvent& event) {
-		if (m_MouseDragging && m_CameraController) {
-			glm::vec2 currentPos = event.GetPosition();
-			glm::vec2 delta = currentPos - m_LastMousePos;
-
-			// 调用相机控制器处理鼠标移动
-			m_CameraController->OnMouseMove(delta.x, delta.y);
-
-			m_LastMousePos = currentPos;
-		}
-	}
-
-	void HandleMouseScroll(ade::MouseScrollEvent& event) {
-		if (m_CameraController) {
-			float delta = event.GetYOffset();
-			m_CameraController->OnMouseScroll(delta);
-		}
-	}
-
-	void HandleKeyPress(ade::KeyPressEvent& event) {
-		if (m_CameraController) {
-			ade::AdEntity* camera = m_CameraController->GetCameraEntity();
-			if (camera && camera->HasComponent<ade::AdFirstPersonCameraComponent>()) {
-				auto& fpCamera = camera->GetComponent<ade::AdFirstPersonCameraComponent>();
-
-				switch (event.GetKey()) {
-				case GLFW_KEY_W: fpCamera.SetMoveForward(true); break;
-				case GLFW_KEY_S: fpCamera.SetMoveBackward(true); break;
-				case GLFW_KEY_A: fpCamera.SetMoveLeft(true); break;
-				case GLFW_KEY_D: fpCamera.SetMoveRight(true); break;
-				}
-			}
-		}
-	}
-
-	void HandleKeyRelease(ade::KeyReleaseEvent& event) {
-		if (m_CameraController) {
-			ade::AdEntity* camera = m_CameraController->GetCameraEntity();
-			if (camera && camera->HasComponent<ade::AdFirstPersonCameraComponent>()) {
-				auto& fpCamera = camera->GetComponent<ade::AdFirstPersonCameraComponent>();
-
-				switch (event.GetKey()) {
-				case GLFW_KEY_W: fpCamera.SetMoveForward(false); break;
-				case GLFW_KEY_S: fpCamera.SetMoveBackward(false); break;
-				case GLFW_KEY_A: fpCamera.SetMoveLeft(false); break;
-				case GLFW_KEY_D: fpCamera.SetMoveRight(false); break;
-				}
-			}
-		}
-	}
+	float m_LastTime = 0.0f;
+	
 
 };
 
