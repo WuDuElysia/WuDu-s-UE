@@ -2,7 +2,7 @@
 #include "Graphic/AdVKDevice.h"
 #include "Graphic/AdVKBuffer.h"
 
-namespace ade {
+namespace WuDu {
 	/**
  * @brief 构造函数，用于创建 Vulkan 图像对象。
  *

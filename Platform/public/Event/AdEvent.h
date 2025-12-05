@@ -4,7 +4,7 @@
 #include <string>
 #include <glm/glm.hpp>
 
-namespace ade {
+namespace WuDu {
         enum class EventType {
                 MouseClick,
                 MouseMove,

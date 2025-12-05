@@ -3,7 +3,7 @@
 
 #include "AdMaterialComponent.h"
 
-namespace ade {
+namespace WuDu {
         enum UnlitMaterialTexture {
                 UNLIT_MAT_BASE_COLOR_0,
                 UNLIT_MAT_BASE_COLOR_1

@@ -3,7 +3,7 @@
 
 #include "AdEntity.h"
 
-namespace ade {
+namespace WuDu {
         class AdComponent {
         public:
                 void SetOwner(AdEntity* owner) { mOwner = owner; }

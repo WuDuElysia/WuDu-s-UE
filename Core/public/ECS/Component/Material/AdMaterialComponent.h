@@ -5,7 +5,7 @@
 #include "Render/AdMaterial.h"
 #include "ECS/AdComponent.h"
 
-namespace ade {
+namespace WuDu {
         template<typename T>
         class AdMaterialComponent : public AdComponent {
         public:

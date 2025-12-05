@@ -2,17 +2,17 @@
 #include "Render/AdSampler.h"
 #include "AdApplication.h"
 
-namespace ade {
+namespace WuDu {
 	AdSampler::AdSampler(const Settings& settings)
 	{
-		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		mDevice = renderCxt->GetDevice();
 		CreateSampler(settings);
 	}
 
 	AdSampler::AdSampler()
 	{
-		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		mDevice = renderCxt->GetDevice();
 		Settings defaultSettings;
 		CreateSampler(defaultSettings);

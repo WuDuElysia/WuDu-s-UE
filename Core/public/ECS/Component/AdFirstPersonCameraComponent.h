@@ -6,7 +6,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace ade {
+namespace WuDu {
 	class AdFirstPersonCameraComponent : public AdComponent, public AdCameraController {
 	private:
 		// 相机参数

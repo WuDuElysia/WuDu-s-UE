@@ -4,7 +4,7 @@
 #include "AdUUID.h"
 #include "entt/entity/registry.hpp"
 
-namespace ade {
+namespace WuDu {
         class AdNode;
         class AdEntity;
 

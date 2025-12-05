@@ -4,7 +4,7 @@
 #include "Event/AdInputManager.h"
 #include "Event/AdEvent.h"
 
-namespace ade {
+namespace WuDu {
 	/**
  * @brief AdRenderer构造函数
  * @details 初始化广告渲染器，创建用于Vulkan同步的信号量和栅栏
@@ -13,8 +13,8 @@ namespace ade {
  */
 	AdRenderer::AdRenderer() {
 		// 获取渲染上下文和设备句柄
-		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-		ade::AdVKDevice* device = renderCxt->GetDevice();
+		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+		WuDu::AdVKDevice* device = renderCxt->GetDevice();
 
 		// 调整同步对象容器大小以匹配缓冲区数量
 		mImageAvailableSemaphores.resize(RENDERER_NUM_BUFFER);
@@ -44,7 +44,7 @@ namespace ade {
 		}
 
 		// 订阅窗口大小变化事件
-		ade::InputManager::GetInstance().Subscribe<ade::WindowResizeEvent>([this](ade::WindowResizeEvent& event) {
+		WuDu::InputManager::GetInstance().Subscribe<WuDu::WindowResizeEvent>([this](WuDu::WindowResizeEvent& event) {
 			// 窗口大小变化时，标记交换链需要重建
 			mNeedSwapchainRecreate = true;
 			LOG_T("Window resized to {0}x{1}", event.GetWidth(), event.GetHeight());
@@ -52,8 +52,8 @@ namespace ade {
 	}
 
 	AdRenderer::~AdRenderer() {
-		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-		ade::AdVKDevice* device = renderCxt->GetDevice();
+		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+		WuDu::AdVKDevice* device = renderCxt->GetDevice();
 		for (const auto& item : mImageAvailableSemaphores) {
 			VK_D(Semaphore, device->GetHandle(), item);
 		}
@@ -80,9 +80,9 @@ namespace ade {
  *              更新相关的渲染目标或视口设置；否则返回 false。
  */
 	bool AdRenderer::Begin(int32_t* outImageIndex) {
-		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-		ade::AdVKDevice* device = renderCxt->GetDevice();
-		ade::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
+		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+		WuDu::AdVKDevice* device = renderCxt->GetDevice();
+		WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
 		bool bShouldUpdateTarget = false;
 
@@ -167,9 +167,9 @@ namespace ade {
  * @return bool 是否需要更新渲染目标尺寸，当交换链重建且尺寸发生变化时返回true
  */
 	bool AdRenderer::End(int32_t imageIndex, const std::vector<VkCommandBuffer>& cmdBuffers) {
-		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-		ade::AdVKDevice* device = renderCxt->GetDevice();
-		ade::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
+		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+		WuDu::AdVKDevice* device = renderCxt->GetDevice();
+		WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 		bool bShouldUpdateTarget = false;
 
 		// 提交命令缓冲区到图形队列，并等待信号量

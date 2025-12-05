@@ -17,7 +17,7 @@
 #define AD_RES_TEXTURE_DIR          AD_RES_ROOT_DIR"Texture/"
 #define AD_RES_SCENE_DIR            AD_RES_ROOT_DIR"Scene/"
 
-namespace ade {
+namespace WuDu {
         static std::string GetFileName(const std::string& filePath) {
                 if (filePath.empty()) {
                         return filePath;

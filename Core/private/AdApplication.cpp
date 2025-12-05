@@ -4,7 +4,7 @@
 #include "ECS/AdEntity.h"
 #include "Event/AdInputManager.h"
 
-namespace ade {
+namespace WuDu {
 	AdAppContext AdApplication::sAppContext{};
 
 	/**

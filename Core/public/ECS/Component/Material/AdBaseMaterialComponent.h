@@ -3,7 +3,7 @@
 
 #include "AdMaterialComponent.h"
 
-namespace ade {
+namespace WuDu {
         enum BaseMaterialColor {
                 COLOR_TYPE_NORMAL = 0,
                 COLOR_TYPE_TEXCOORD = 1

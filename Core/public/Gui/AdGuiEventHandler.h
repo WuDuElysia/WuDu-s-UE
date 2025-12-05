@@ -6,7 +6,7 @@
 #include "Event/AdEvent.h"
 #include "imgui/imgui.h"
 
-namespace ade {
+namespace WuDu {
     class AdGuiEventHandler {
     public:
         AdGuiEventHandler();
@@ -22,10 +22,10 @@ namespace ade {
         bool ProcessInput();
 
         // 事件处理函数
-        void HandleMouseClick(ade::MouseClickEvent& event);
-        void HandleMouseRelease(ade::MouseReleaseEvent& event);
-        void HandleMouseMove(ade::MouseMoveEvent& event);
-        void HandleMouseScroll(ade::MouseScrollEvent& event);
+        void HandleMouseClick(WuDu::MouseClickEvent& event);
+        void HandleMouseRelease(WuDu::MouseReleaseEvent& event);
+        void HandleMouseMove(WuDu::MouseMoveEvent& event);
+        void HandleMouseScroll(WuDu::MouseScrollEvent& event);
 
     private:
         // 鼠标状态

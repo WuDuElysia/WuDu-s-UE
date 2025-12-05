@@ -4,7 +4,7 @@
 #include "ECS/AdComponent.h"
 #include "AdGraphicContext.h"
 
-namespace ade {
+namespace WuDu {
         class AdTransformComponent : public AdComponent {
         public:
                 glm::vec3 position{ 0.f, 0.f, 0.f };

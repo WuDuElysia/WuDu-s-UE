@@ -2,19 +2,19 @@
 #include "Render/AdRenderContext.h"
 #include "AdApplication.h"
 
-namespace ade {
-        AdMesh::AdMesh(const std::vector<ade::AdVertex>& vertices, const std::vector<uint32_t>& indices) {
+namespace WuDu {
+        AdMesh::AdMesh(const std::vector<WuDu::AdVertex>& vertices, const std::vector<uint32_t>& indices) {
                 if (vertices.empty()) {
                         return;
                 }
-                ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-                ade::AdVKDevice* device = renderCxt->GetDevice();
+                WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+                WuDu::AdVKDevice* device = renderCxt->GetDevice();
 
                 mVertexCount = vertices.size();
                 mIndexCount = indices.size();
-                mVertexBuffer = std::make_shared<ade::AdVKBuffer>(device, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, sizeof(vertices[0]) * vertices.size(), (void*)vertices.data());
+                mVertexBuffer = std::make_shared<WuDu::AdVKBuffer>(device, VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, sizeof(vertices[0]) * vertices.size(), (void*)vertices.data());
                 if (mIndexCount > 0) {
-                        mIndexBuffer = std::make_shared<ade::AdVKBuffer>(device, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, sizeof(indices[0]) * indices.size(), (void*)indices.data());
+                        mIndexBuffer = std::make_shared<WuDu::AdVKBuffer>(device, VK_BUFFER_USAGE_INDEX_BUFFER_BIT, sizeof(indices[0]) * indices.size(), (void*)indices.data());
                 }
         }
 

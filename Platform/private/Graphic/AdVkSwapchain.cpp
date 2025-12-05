@@ -3,7 +3,7 @@
 #include "Graphic/AdVKDevice.h"
 #include "Graphic/AdVKQueue.h"
 
-namespace ade {
+namespace WuDu {
 	AdVKSwapchain::AdVKSwapchain(AdVKGraphicContext* context, AdVKDevice* device) : mContext(context), mDevice(device) {
 		ReCreate();
 	}

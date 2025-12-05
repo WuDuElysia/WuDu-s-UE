@@ -3,7 +3,7 @@
 
 #include "AdRenderContext.h"
 
-namespace ade {
+namespace WuDu {
 #define RENDERER_NUM_BUFFER     2
 
         class AdRenderer {

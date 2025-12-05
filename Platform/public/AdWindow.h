@@ -2,7 +2,7 @@
 #define AD_WINDOW_H
 
 #include"AdEngine.h"
-namespace ade {
+namespace WuDu {
 	class AdWindow {
 	public:
 		AdWindow(const AdWindow&) = delete;

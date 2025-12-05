@@ -7,7 +7,7 @@
 #include "Event/AdEvent.h"
 #include "Event/AdEventAdaper.h"
 
-namespace ade {
+namespace WuDu {
 	class AdCameraControllerManager {
 	private:
 		AdEntity* m_CameraEntity = nullptr;
@@ -32,57 +32,57 @@ namespace ade {
 		}
 
 		void SetupCameraControls() {
-			ade::InputManager::GetInstance().Subscribe<ade::MouseClickEvent>(
-				[this](ade::MouseClickEvent& event) {
+			WuDu::InputManager::GetInstance().Subscribe<WuDu::MouseClickEvent>(
+				[this](WuDu::MouseClickEvent& event) {
 					HandleMouseClick(event);
 				}
 			);
 
-			ade::InputManager::GetInstance().Subscribe<ade::MouseMoveEvent>(
-				[this](ade::MouseMoveEvent& event) {
+			WuDu::InputManager::GetInstance().Subscribe<WuDu::MouseMoveEvent>(
+				[this](WuDu::MouseMoveEvent& event) {
 					HandleMouseMove(event);
 				}
 			);
 
-			ade::InputManager::GetInstance().Subscribe<ade::MouseReleaseEvent>(
-				[this](ade::MouseReleaseEvent& event) {
+			WuDu::InputManager::GetInstance().Subscribe<WuDu::MouseReleaseEvent>(
+				[this](WuDu::MouseReleaseEvent& event) {
 					HandleMouseRelease(event);
 				}
 			);
 
-			ade::InputManager::GetInstance().Subscribe<ade::MouseScrollEvent>(
-				[this](ade::MouseScrollEvent& event) {
+			WuDu::InputManager::GetInstance().Subscribe<WuDu::MouseScrollEvent>(
+				[this](WuDu::MouseScrollEvent& event) {
 					HandleMouseScroll(event);
 				}
 			);
 
-			ade::InputManager::GetInstance().Subscribe<ade::KeyPressEvent>(
-				[this](ade::KeyPressEvent& event) {
+			WuDu::InputManager::GetInstance().Subscribe<WuDu::KeyPressEvent>(
+				[this](WuDu::KeyPressEvent& event) {
 					HandleKeyPress(event);
 				}
 			);
 
-			ade::InputManager::GetInstance().Subscribe<ade::KeyReleaseEvent>(
-				[this](ade::KeyReleaseEvent& event) {
+			WuDu::InputManager::GetInstance().Subscribe<WuDu::KeyReleaseEvent>(
+				[this](WuDu::KeyReleaseEvent& event) {
 					HandleKeyRelease(event);
 				}
 			);
 		}
 
-		void HandleMouseClick(ade::MouseClickEvent& event) {
+		void HandleMouseClick(WuDu::MouseClickEvent& event) {
 			if (event.GetButton() == GLFW_MOUSE_BUTTON_LEFT) {
 				m_MouseDragging = true;
 				m_LastMousePos = event.GetPosition();  // 这里设置起点
 			}
 		}
 
-		void HandleMouseRelease(ade::MouseReleaseEvent& event) {
+		void HandleMouseRelease(WuDu::MouseReleaseEvent& event) {
 			if (event.GetButton() == GLFW_MOUSE_BUTTON_LEFT) {
 				m_MouseDragging = false;
 			}
 		}
 
-		void HandleMouseMove(ade::MouseMoveEvent& event) {
+		void HandleMouseMove(WuDu::MouseMoveEvent& event) {
 			if (m_MouseDragging) {
 				glm::vec2 currentPos = event.GetPosition();
 				glm::vec2 delta = currentPos - m_LastMousePos;
@@ -94,18 +94,18 @@ namespace ade {
 			}
 		}
 
-		void HandleMouseScroll(ade::MouseScrollEvent& event) {
+		void HandleMouseScroll(WuDu::MouseScrollEvent& event) {
 
 			float delta = event.GetYOffset();
 			OnMouseScroll(delta);
 
 		}
 
-		void HandleKeyPress(ade::KeyPressEvent& event) {
+		void HandleKeyPress(WuDu::KeyPressEvent& event) {
 
-			ade::AdEntity* camera = GetCameraEntity();
-			if (camera && camera->HasComponent<ade::AdFirstPersonCameraComponent>()) {
-				auto& fpCamera = camera->GetComponent<ade::AdFirstPersonCameraComponent>();
+			WuDu::AdEntity* camera = GetCameraEntity();
+			if (camera && camera->HasComponent<WuDu::AdFirstPersonCameraComponent>()) {
+				auto& fpCamera = camera->GetComponent<WuDu::AdFirstPersonCameraComponent>();
 
 				switch (event.GetKey()) {
 				case GLFW_KEY_W: fpCamera.SetMoveForward(true); break;
@@ -117,11 +117,11 @@ namespace ade {
 
 		}
 
-		void HandleKeyRelease(ade::KeyReleaseEvent& event) {
+		void HandleKeyRelease(WuDu::KeyReleaseEvent& event) {
 
-			ade::AdEntity* camera = GetCameraEntity();
-			if (camera && camera->HasComponent<ade::AdFirstPersonCameraComponent>()) {
-				auto& fpCamera = camera->GetComponent<ade::AdFirstPersonCameraComponent>();
+			WuDu::AdEntity* camera = GetCameraEntity();
+			if (camera && camera->HasComponent<WuDu::AdFirstPersonCameraComponent>()) {
+				auto& fpCamera = camera->GetComponent<WuDu::AdFirstPersonCameraComponent>();
 
 				switch (event.GetKey()) {
 				case GLFW_KEY_W: fpCamera.SetMoveForward(false); break;

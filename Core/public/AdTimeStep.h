@@ -1,6 +1,6 @@
 #pragma
 
-namespace ade {
+namespace WuDu {
 
 	class AdTimeStep {
 	public:

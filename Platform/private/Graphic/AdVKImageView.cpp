@@ -1,7 +1,7 @@
 #include "Graphic/AdVKImageView.h"
 #include "Graphic/AdVKDevice.h"
 
-namespace ade {
+namespace WuDu {
 	/**
 	 * @brief 构造函数，创建Vulkan图像视图对象
 	 * @param device 指向Vulkan设备对象的指针，用于创建图像视图

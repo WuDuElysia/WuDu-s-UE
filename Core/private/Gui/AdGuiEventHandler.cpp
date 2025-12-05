@@ -5,7 +5,7 @@
 #include "Event/AdEvent.h"
 #include "GLFW/glfw3.h"
 
-namespace ade {
+namespace WuDu {
     AdGuiEventHandler::AdGuiEventHandler() {
     }
 
@@ -15,33 +15,33 @@ namespace ade {
 
     void AdGuiEventHandler::OnDestroy() {
         //// 取消订阅所有事件
-        //InputManager::GetInstance().UnsubscribeAll<ade::MouseClickEvent>(this);
-        //InputManager::GetInstance().UnsubscribeAll<ade::MouseMoveEvent>(this);
-        //InputManager::GetInstance().UnsubscribeAll<ade::MouseReleaseEvent>(this);
-        //InputManager::GetInstance().UnsubscribeAll<ade::MouseScrollEvent>(this);
+        //InputManager::GetInstance().UnsubscribeAll<WuDu::MouseClickEvent>(this);
+        //InputManager::GetInstance().UnsubscribeAll<WuDu::MouseMoveEvent>(this);
+        //InputManager::GetInstance().UnsubscribeAll<WuDu::MouseReleaseEvent>(this);
+        //InputManager::GetInstance().UnsubscribeAll<WuDu::MouseScrollEvent>(this);
     }
 
     void AdGuiEventHandler::SetupGuiControls() {
-        InputManager::GetInstance().Subscribe<ade::MouseClickEvent>(
-            [this](ade::MouseClickEvent& event) {
+        InputManager::GetInstance().Subscribe<WuDu::MouseClickEvent>(
+            [this](WuDu::MouseClickEvent& event) {
                 HandleMouseClick(event);
             }
         );
 
-        InputManager::GetInstance().Subscribe<ade::MouseMoveEvent>(
-            [this](ade::MouseMoveEvent& event) {
+        InputManager::GetInstance().Subscribe<WuDu::MouseMoveEvent>(
+            [this](WuDu::MouseMoveEvent& event) {
                 HandleMouseMove(event);
             }
         );
 
-        InputManager::GetInstance().Subscribe<ade::MouseReleaseEvent>(
-            [this](ade::MouseReleaseEvent& event) {
+        InputManager::GetInstance().Subscribe<WuDu::MouseReleaseEvent>(
+            [this](WuDu::MouseReleaseEvent& event) {
                 HandleMouseRelease(event);
             }
         );
 
-        InputManager::GetInstance().Subscribe<ade::MouseScrollEvent>(
-            [this](ade::MouseScrollEvent& event) {
+        InputManager::GetInstance().Subscribe<WuDu::MouseScrollEvent>(
+            [this](WuDu::MouseScrollEvent& event) {
                 HandleMouseScroll(event);
             }
         );
@@ -52,7 +52,7 @@ namespace ade {
         return io.WantCaptureMouse || io.WantCaptureKeyboard;
     }
 
-    void AdGuiEventHandler::HandleMouseClick(ade::MouseClickEvent& event) {
+    void AdGuiEventHandler::HandleMouseClick(WuDu::MouseClickEvent& event) {
         ImGuiIO& io = ImGui::GetIO();
 
         // 将鼠标点击事件转换为ImGui的鼠标按钮索引
@@ -80,7 +80,7 @@ namespace ade {
     }
 
     // 鼠标释放事件处理
-    void AdGuiEventHandler::HandleMouseRelease(ade::MouseReleaseEvent& event) {
+    void AdGuiEventHandler::HandleMouseRelease(WuDu::MouseReleaseEvent& event) {
         ImGuiIO& io = ImGui::GetIO();
 
         // 将鼠标释放事件转换为ImGui的鼠标按钮索引
@@ -107,7 +107,7 @@ namespace ade {
     }
 
     //鼠标移动事件处理
-    void AdGuiEventHandler::HandleMouseMove(ade::MouseMoveEvent& event) {
+    void AdGuiEventHandler::HandleMouseMove(WuDu::MouseMoveEvent& event) {
         ImGuiIO& io = ImGui::GetIO();
         glm::vec2 currentPos = event.GetPosition();
 
@@ -135,7 +135,7 @@ namespace ade {
     }
 
     //鼠标滚轮事件处理
-    void AdGuiEventHandler::HandleMouseScroll(ade::MouseScrollEvent& event) {
+    void AdGuiEventHandler::HandleMouseScroll(WuDu::MouseScrollEvent& event) {
         ImGuiIO& io = ImGui::GetIO();
 
         // 更新ImGui的鼠标滚轮状态

@@ -5,7 +5,7 @@
 #include "Graphic/AdVkSwapchain.h"
 #include "Graphic/AdVKDevice.h"
 
-namespace ade {
+namespace WuDu {
         class AdWindow;
 
         class AdRenderContext {

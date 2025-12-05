@@ -20,20 +20,20 @@ struct InstanceUbo {
         glm::mat4 modelMat{ 1.f };
 };
 
-class SandBoxApp : public ade::AdApplication {
+class SandBoxApp : public WuDu::AdApplication {
 protected:
-        void OnConfiguration(ade::AppSettings* appSettings) override {
+        void OnConfiguration(WuDu::AppSettings* appSettings) override {
                 appSettings->width = 1360;
                 appSettings->height = 768;
                 appSettings->title = "03_Texture";
         }
 
         void OnInit() override {
-                ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-                ade::AdVKDevice* device = renderCxt->GetDevice();
-                ade::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
+                WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+                WuDu::AdVKDevice* device = renderCxt->GetDevice();
+                WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
-                std::vector<ade::Attachment> attachments = {
+                std::vector<WuDu::Attachment> attachments = {
                     {
                         .format = swapchain->GetSurfaceInfo().surfaceFormat.format,
                         .loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
@@ -55,16 +55,16 @@ protected:
                         .usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT
                     }
                 };
-                std::vector<ade::RenderSubPass> subpasses = {
+                std::vector<WuDu::RenderSubPass> subpasses = {
                     {
                         .colorAttachments = { 0 },
                         .depthStencilAttachments = { 1 },
                         .sampleCount = VK_SAMPLE_COUNT_4_BIT
                     }
                 };
-                mRenderPass = std::make_shared<ade::AdVKRenderPass>(device, attachments, subpasses);
+                mRenderPass = std::make_shared<WuDu::AdVKRenderPass>(device, attachments, subpasses);
 
-                mRenderTarget = std::make_shared<ade::AdRenderTarget>(mRenderPass.get());
+                mRenderTarget = std::make_shared<WuDu::AdRenderTarget>(mRenderPass.get());
                 mRenderTarget->SetColorClearValue({ 0.1f, 0.2f, 0.3f, 1.f });
                 mRenderTarget->SetDepthStencilClearValue({ 1, 0 });
 
@@ -94,19 +94,19 @@ protected:
                         .stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT
                     }
                 };
-                mDescriptorSetLayout = std::make_shared<ade::AdVKDescriptorSetLayout>(device, desctLayoutBindings);
+                mDescriptorSetLayout = std::make_shared<WuDu::AdVKDescriptorSetLayout>(device, desctLayoutBindings);
 
-                ade::ShaderLayout shaderLayout = {
+                WuDu::ShaderLayout shaderLayout = {
                         .descriptorSetLayouts = { mDescriptorSetLayout->GetHandle() }
                 };
-                mPipelineLayout = std::make_shared<ade::AdVKPipelineLayout>(device,
+                mPipelineLayout = std::make_shared<WuDu::AdVKPipelineLayout>(device,
                         AD_RES_SHADER_DIR"02_descriptor_set.vert",
                         AD_RES_SHADER_DIR"02_descriptor_set.frag",
                         shaderLayout);
                 std::vector<VkVertexInputBindingDescription> vertexBindings = {
                     {
                         .binding = 0,
-                        .stride = sizeof(ade::AdVertex),
+                        .stride = sizeof(WuDu::AdVertex),
                         .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
                     }
                 };
@@ -115,22 +115,22 @@ protected:
                         .location = 0,
                         .binding = 0,
                         .format = VK_FORMAT_R32G32B32_SFLOAT,
-                        .offset = offsetof(ade::AdVertex, pos)
+                        .offset = offsetof(WuDu::AdVertex, pos)
                     },
                     {
                         .location = 1,
                         .binding = 0,
                         .format = VK_FORMAT_R32G32_SFLOAT,
-                        .offset = offsetof(ade::AdVertex, tex)
+                        .offset = offsetof(WuDu::AdVertex, tex)
                     },
                     {
                         .location = 2,
                         .binding = 0,
                         .format = VK_FORMAT_R32G32B32_SFLOAT,
-                        .offset = offsetof(ade::AdVertex, nor)
+                        .offset = offsetof(WuDu::AdVertex, nor)
                     }
                 };
-                mPipeline = std::make_shared<ade::AdVKPipeline>(device, mRenderPass.get(), mPipelineLayout.get());
+                mPipeline = std::make_shared<WuDu::AdVKPipeline>(device, mRenderPass.get(), mPipelineLayout.get());
                 mPipeline->SetVertexInputState(vertexBindings, vertexAttrs);
                 mPipeline->SetInputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)->EnableDepthTest();
                 mPipeline->SetDynamicState({ VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR });
@@ -147,14 +147,14 @@ protected:
                         .descriptorCount = 2
                     }
                 };
-                mDescriptorPool = std::make_shared<ade::AdVKDescriptorPool>(device, 1, poolSizes);
+                mDescriptorPool = std::make_shared<WuDu::AdVKDescriptorPool>(device, 1, poolSizes);
                 mDescriptorSets = mDescriptorPool->AllocateDescriptorSet(mDescriptorSetLayout.get(), 1);
 
-                mGlobalBuffer = std::make_shared<ade::AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(GlobalUbo), nullptr, true);
-                mInstanceBuffer = std::make_shared<ade::AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(InstanceUbo), nullptr, true);
-                mSampler = std::make_shared<ade::AdSampler>();
-                mTexture0 = std::make_shared<ade::AdTexture>(AD_RES_TEXTURE_DIR"awesomeface.png");
-                mTexture1 = std::make_shared<ade::AdTexture>(AD_RES_TEXTURE_DIR"R-C.jpeg");
+                mGlobalBuffer = std::make_shared<WuDu::AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(GlobalUbo), nullptr, true);
+                mInstanceBuffer = std::make_shared<WuDu::AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(InstanceUbo), nullptr, true);
+                mSampler = std::make_shared<WuDu::AdSampler>();
+                mTexture0 = std::make_shared<WuDu::AdTexture>(AD_RES_TEXTURE_DIR"awesomeface.png");
+                mTexture1 = std::make_shared<WuDu::AdTexture>(AD_RES_TEXTURE_DIR"R-C.jpeg");
 
                 mImageAvailableSemaphores.resize(mNumBuffer);
                 mSubmitedSemaphores.resize(mNumBuffer);
@@ -177,15 +177,15 @@ protected:
                 }
 
                 mCmdBuffers = device->GetDefaultCmdPool()->AllocateCommandBuffer(swapchain->GetImages().size());
-                std::vector<ade::AdVertex> vertices;
+                std::vector<WuDu::AdVertex> vertices;
                 std::vector<uint32_t> indices;
-                ade::AdGeometryUtil::CreateCube(-0.3f, 0.3f, -0.3f, 0.3f, -0.3f, 0.3f, vertices, indices);
-                mCubeMesh = std::make_shared<ade::AdMesh>(vertices, indices);
+                WuDu::AdGeometryUtil::CreateCube(-0.3f, 0.3f, -0.3f, 0.3f, -0.3f, 0.3f, vertices, indices);
+                mCubeMesh = std::make_shared<WuDu::AdMesh>(vertices, indices);
         }
 
         void OnUpdate(float deltaTime) override {
-                ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-                ade::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
+                WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+                WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
                 float time = std::chrono::duration<float>(std::chrono::steady_clock::now() - mStartTimePoint).count();
                 mInstanceUbo.modelMat = glm::rotate(glm::mat4(1.f), glm::radians(17.f), glm::vec3(1, 0, 0));
@@ -197,9 +197,9 @@ protected:
         }
 
         void OnRender() override {
-                ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-                ade::AdVKDevice* device = renderCxt->GetDevice();
-                ade::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
+                WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+                WuDu::AdVKDevice* device = renderCxt->GetDevice();
+                WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
                 CALL_VK(vkWaitForFences(device->GetHandle(), 1, &mFrameFences[mCurrentBuffer], VK_TRUE, UINT64_MAX));
                 CALL_VK(vkResetFences(device->GetHandle(), 1, &mFrameFences[mCurrentBuffer]));
@@ -222,10 +222,10 @@ protected:
                 }
 
                 VkCommandBuffer cmdBuffer = mCmdBuffers[imageIndex];
-                ade::AdVKCommandPool::BeginCommandBuffer(cmdBuffer);
+                WuDu::AdVKCommandPool::BeginCommandBuffer(cmdBuffer);
 
                 mRenderTarget->Begin(cmdBuffer);
-                ade::AdVKFrameBuffer* frameBuffer = mRenderTarget->GetFrameBuffer();
+                WuDu::AdVKFrameBuffer* frameBuffer = mRenderTarget->GetFrameBuffer();
 
                 mPipeline->Bind(cmdBuffer);
                 VkViewport viewport = {
@@ -254,7 +254,7 @@ protected:
 
                 mRenderTarget->End(cmdBuffer);
 
-                ade::AdVKCommandPool::EndCommandBuffer(cmdBuffer);
+                WuDu::AdVKCommandPool::EndCommandBuffer(cmdBuffer);
                 device->GetFirstGraphicQueue()->Submit({ cmdBuffer }, { mImageAvailableSemaphores[mCurrentBuffer] }, { mSubmitedSemaphores[mCurrentBuffer] }, mFrameFences[mCurrentBuffer]);
                 ret = swapchain->Present(imageIndex, { mSubmitedSemaphores[mCurrentBuffer] });
                 if (ret == VK_SUBOPTIMAL_KHR) {
@@ -272,8 +272,8 @@ protected:
         }
 
         void OnDestroy() override {
-                ade::AdRenderContext* renderCxt = ade::AdApplication::GetAppContext()->renderCxt;
-                ade::AdVKDevice* device = renderCxt->GetDevice();
+                WuDu::AdRenderContext* renderCxt = WuDu::AdApplication::GetAppContext()->renderCxt;
+                WuDu::AdVKDevice* device = renderCxt->GetDevice();
                 vkDeviceWaitIdle(device->GetHandle());
                 mGlobalBuffer.reset();
                 mInstanceBuffer.reset();
@@ -296,8 +296,8 @@ protected:
         }
 
         void UpdateDescriptorSets() {
-                ade::AdRenderContext* renderCxt = ade::AdApplication::GetAppContext()->renderCxt;
-                ade::AdVKDevice* device = renderCxt->GetDevice();
+                WuDu::AdRenderContext* renderCxt = WuDu::AdApplication::GetAppContext()->renderCxt;
+                WuDu::AdVKDevice* device = renderCxt->GetDevice();
 
                 VkDescriptorBufferInfo globalBufferInfo = {
                     .buffer = mGlobalBuffer->GetHandle(),
@@ -369,22 +369,22 @@ protected:
                 vkUpdateDescriptorSets(device->GetHandle(), writeDescriptorSets.size(), writeDescriptorSets.data(), 0, nullptr);
         }
 private:
-        std::shared_ptr<ade::AdVKRenderPass> mRenderPass;
-        std::shared_ptr<ade::AdRenderTarget> mRenderTarget;
-        std::shared_ptr<ade::AdVKDescriptorSetLayout> mDescriptorSetLayout;
-        std::shared_ptr<ade::AdVKDescriptorPool> mDescriptorPool;
+        std::shared_ptr<WuDu::AdVKRenderPass> mRenderPass;
+        std::shared_ptr<WuDu::AdRenderTarget> mRenderTarget;
+        std::shared_ptr<WuDu::AdVKDescriptorSetLayout> mDescriptorSetLayout;
+        std::shared_ptr<WuDu::AdVKDescriptorPool> mDescriptorPool;
         std::vector<VkDescriptorSet> mDescriptorSets;
-        std::shared_ptr<ade::AdVKPipelineLayout> mPipelineLayout;
-        std::shared_ptr<ade::AdVKPipeline> mPipeline;
+        std::shared_ptr<WuDu::AdVKPipelineLayout> mPipelineLayout;
+        std::shared_ptr<WuDu::AdVKPipeline> mPipeline;
 
-        std::shared_ptr<ade::AdMesh> mCubeMesh;
+        std::shared_ptr<WuDu::AdMesh> mCubeMesh;
         GlobalUbo mGlobalUbo;
         InstanceUbo mInstanceUbo;
-        std::shared_ptr<ade::AdVKBuffer> mGlobalBuffer;
-        std::shared_ptr<ade::AdVKBuffer> mInstanceBuffer;
-        std::shared_ptr<ade::AdTexture> mTexture0;
-        std::shared_ptr<ade::AdTexture> mTexture1;
-        std::shared_ptr<ade::AdSampler> mSampler;
+        std::shared_ptr<WuDu::AdVKBuffer> mGlobalBuffer;
+        std::shared_ptr<WuDu::AdVKBuffer> mInstanceBuffer;
+        std::shared_ptr<WuDu::AdTexture> mTexture0;
+        std::shared_ptr<WuDu::AdTexture> mTexture1;
+        std::shared_ptr<WuDu::AdSampler> mSampler;
 
         const uint32_t mNumBuffer = 2;
         uint32_t mCurrentBuffer = 0;
@@ -395,6 +395,6 @@ private:
         std::vector<VkCommandBuffer> mCmdBuffers;
 };
 
-ade::AdApplication* CreateApplicationEntryPoint() {
+WuDu::AdApplication* CreateApplicationEntryPoint() {
         return new SandBoxApp();
 }

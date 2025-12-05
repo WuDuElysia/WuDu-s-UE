@@ -4,7 +4,7 @@
 #include "AdNode.h"
 #include "AdScene.h"
 
-namespace ade {
+namespace WuDu {
         class AdEntity : public AdNode {
         public:
                 AdEntity(const entt::entity& ecsEntity, AdScene* scene) : mEcsEntity(ecsEntity), mScene(scene) {}

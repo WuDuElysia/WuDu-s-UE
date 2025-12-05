@@ -6,7 +6,7 @@
 #include "ECS/System/AdMaterialSystem.h"
 #include "ECS/AdEntity.h"
 
-namespace ade {
+namespace WuDu {
         class AdRenderTarget {
         public:
                 AdRenderTarget(AdVKRenderPass* renderPass);

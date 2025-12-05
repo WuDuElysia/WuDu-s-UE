@@ -3,7 +3,7 @@
 #include"AdEngine.h"
 #include"AdEvent.h"
 
-namespace ade {
+namespace WuDu {
         class InputManager {
         public:
                 static InputManager& GetInstance() {
@@ -40,7 +40,7 @@ namespace ade {
                 // ¶©ÔÄÊÂ¼þ
                 template<typename T>
                 void Subscribe(std::function<void(T&)> callback) {
-                        auto wrapper = [callback](ade::Event& e) {
+                        auto wrapper = [callback](WuDu::Event& e) {
                                 callback(static_cast<T&>(e));
                                 };
 
@@ -56,7 +56,7 @@ namespace ade {
                 InputManager() = default;
                 ~InputManager() = default;
 
-                std::queue<std::unique_ptr<ade::Event>> m_EventQueue;
-                std::unordered_map<ade::EventType, std::vector<std::function<void(ade::Event&)>>> m_Subscribers;
+                std::queue<std::unique_ptr<WuDu::Event>> m_EventQueue;
+                std::unordered_map<WuDu::EventType, std::vector<std::function<void(WuDu::Event&)>>> m_Subscribers;
         };
 }

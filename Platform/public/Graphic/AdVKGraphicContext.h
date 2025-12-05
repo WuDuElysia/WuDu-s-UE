@@ -4,7 +4,7 @@
 #include "AdGraphicContext.h"
 #include "AdVKCommon.h"
 
-namespace ade {
+namespace WuDu {
     struct QueueFamilyInfo {
         int32_t queueFamilyIndex = -1;
         uint32_t queueCount;

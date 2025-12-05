@@ -2,7 +2,7 @@
 #include "spdlog/sinks/stdout_color_sinks.h"
 #include "spdlog/async.h"
 
-namespace ade {
+namespace WuDu {
 
         Adlog Adlog::sLoggerInstance{};
         static std::shared_ptr<spdlog::logger> sSpdLogger{};

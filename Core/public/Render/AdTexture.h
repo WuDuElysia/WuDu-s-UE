@@ -3,7 +3,7 @@
 
 #include "Graphic/AdVKCommon.h"
 
-namespace ade {
+namespace WuDu {
         class AdVKImage;
         class AdVKImageView;
         class AdVKBuffer;

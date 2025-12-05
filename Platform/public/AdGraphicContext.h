@@ -12,7 +12,7 @@
 #include "glm/gtc/random.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
-namespace ade {
+namespace WuDu {
 	class AdGraphicContext {
 	public:
 		AdGraphicContext(const AdGraphicContext&) = delete;

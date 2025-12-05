@@ -6,7 +6,7 @@
 #include "ECS/Component/Material/AdBaseMaterialComponent.h"
 #include "AdGraphicContext.h"
 
-namespace ade {
+namespace WuDu {
         class AdVKPipelineLayout;
         class AdVKPipeline;
 

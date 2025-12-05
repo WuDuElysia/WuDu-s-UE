@@ -6,7 +6,7 @@
 #include "ECS/Component/AdLookAtCameraComponent.h"
 #include "ECS/Component/AdFirstPersonCameraComponent.h"
 
-namespace ade {
+namespace WuDu {
 	/**
  * @brief 获取应用程序实例指针
  *

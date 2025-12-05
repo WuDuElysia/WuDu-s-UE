@@ -3,7 +3,7 @@
 
 #include "AdVKCommon.h"
 
-namespace ade {
+namespace WuDu {
         class AdVKQueue {
         public:
                 AdVKQueue(uint32_t familyIndex, uint32_t index, VkQueue queue, bool canPresent);

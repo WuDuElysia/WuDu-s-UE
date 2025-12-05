@@ -4,10 +4,10 @@
 #include "Graphic/AdVKBuffer.h"
 #include "AdGeometryUtil.h"
 
-namespace ade {
+namespace WuDu {
         class AdMesh {
         public:
-                AdMesh(const std::vector<ade::AdVertex>& vertices, const std::vector<uint32_t>& indices = {});
+                AdMesh(const std::vector<WuDu::AdVertex>& vertices, const std::vector<uint32_t>& indices = {});
                 ~AdMesh();
 
                 void Draw(VkCommandBuffer cmdBuffer);

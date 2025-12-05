@@ -1,7 +1,7 @@
 #include "Graphic/AdVKDescriptorSet.h"
 #include "Graphic/AdVKDevice.h"
 
-namespace ade {
+namespace WuDu {
 
         /**
          * @brief 构造函数，用于创建 Vulkan 描述符集布局对象

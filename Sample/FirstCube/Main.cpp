@@ -18,14 +18,14 @@
 
 
 int main() {
-	ade::Adlog::Init();
+	WuDu::Adlog::Init();
 	LOG_T("{0},{1},{2}", __FUNCTION__, 1, 0.14f, true);
 
-	std::unique_ptr<ade::AdWindow> window = ade::AdWindow::Create(800, 600, "sandbox");
-	std::unique_ptr<ade::AdGraphicContext> graphicContext = ade::AdGraphicContext::Create(window.get());
-	auto vkgraaphicContext = dynamic_cast<ade::AdVKGraphicContext*>(graphicContext.get());
-	auto vkdevice = std::make_unique<ade::AdVKDevice>(vkgraaphicContext, 2, 2);
-	auto vkswapchain = std::make_unique<ade::AdVKSwapchain>(vkgraaphicContext,vkdevice.get());
+	std::unique_ptr<WuDu::AdWindow> window = WuDu::AdWindow::Create(800, 600, "sandbox");
+	std::unique_ptr<WuDu::AdGraphicContext> graphicContext = WuDu::AdGraphicContext::Create(window.get());
+	auto vkgraaphicContext = dynamic_cast<WuDu::AdVKGraphicContext*>(graphicContext.get());
+	auto vkdevice = std::make_unique<WuDu::AdVKDevice>(vkgraaphicContext, 2, 2);
+	auto vkswapchain = std::make_unique<WuDu::AdVKSwapchain>(vkgraaphicContext,vkdevice.get());
 	vkswapchain->ReCreate();
 
 	//RenderPass
@@ -33,7 +33,7 @@ int main() {
 	
 	VkFormat depthFormat = vkdevice->GetSettings().depthFormat;
 
-	std::vector<ade::Attachment> attachments = {
+	std::vector<WuDu::Attachment> attachments = {
 	    {
 		.format = vkswapchain->GetSurfaceInfo().surfaceFormat.format,
 		.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR,
@@ -57,7 +57,7 @@ int main() {
 		.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT
 	    }
 	};
-	std::vector<ade::RenderSubPass> subpasses = {
+	std::vector<WuDu::RenderSubPass> subpasses = {
 	    {
 		.colorAttachments = { 0 },
 		.depthStencilAttachments = { 1 },
@@ -65,7 +65,7 @@ int main() {
 	    }
 	};
 	// 应该使用自定义附件和子通道创建渲染通道
-	auto vkRenderPass = std::make_unique<ade::AdVKRenderPass>(
+	auto vkRenderPass = std::make_unique<WuDu::AdVKRenderPass>(
 		vkdevice.get(),
 		attachments,  // 传入您定义的附件
 		subpasses     // 传入您定义的子通道
@@ -81,17 +81,17 @@ int main() {
 	};
 	// 创建帧缓冲 (Framebuffers)
 	
-	std::vector<std::shared_ptr<ade::AdVKFrameBuffer>> framebuffers;
-	auto depthimage = std::make_shared<ade::AdVKImage>(vkdevice.get(), extent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
+	std::vector<std::shared_ptr<WuDu::AdVKFrameBuffer>> framebuffers;
+	auto depthimage = std::make_shared<WuDu::AdVKImage>(vkdevice.get(), extent, depthFormat, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	
         for (uint32_t i = 0; i < swapchainImageCount; i++)
 	{ 
-		std::vector<std::shared_ptr<ade::AdVKImage>> images = {
-			std::make_shared<ade::AdVKImage>(vkdevice.get(),swapchainImages[i], extent, vkdevice->GetSettings().surfaceFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,VK_SAMPLE_COUNT_4_BIT),
+		std::vector<std::shared_ptr<WuDu::AdVKImage>> images = {
+			std::make_shared<WuDu::AdVKImage>(vkdevice.get(),swapchainImages[i], extent, vkdevice->GetSettings().surfaceFormat, VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,VK_SAMPLE_COUNT_4_BIT),
 			depthimage
 			
 		};
-		framebuffers.push_back(std::make_shared<ade::AdVKFrameBuffer>(vkdevice.get(),vkRenderPass.get(), images, extent.width, extent.height));
+		framebuffers.push_back(std::make_shared<WuDu::AdVKFrameBuffer>(vkdevice.get(),vkRenderPass.get(), images, extent.width, extent.height));
 		
 	}
 	
@@ -109,7 +109,7 @@ int main() {
 	};
 	PushConstants pc;
 
-	ade::ShaderLayout shaderlayout = {
+	WuDu::ShaderLayout shaderlayout = {
 		.pushConstants = {
 			{
 				VK_SHADER_STAGE_VERTEX_BIT,
@@ -119,8 +119,8 @@ int main() {
 		}
 	};
 	// 创建管线布局 (PipelineLayout)
-	std::shared_ptr<ade::AdVKPipelineLayout> pipelineLayout =
-		std::make_shared<ade::AdVKPipelineLayout>(
+	std::shared_ptr<WuDu::AdVKPipelineLayout> pipelineLayout =
+		std::make_shared<WuDu::AdVKPipelineLayout>(
 			vkdevice.get(),
 			AD_RES_SHADER_DIR "01_hello_buffer.vert",
 			AD_RES_SHADER_DIR "01_hello_buffer.frag",
@@ -128,8 +128,8 @@ int main() {
 		);
 
 	// 创建图形管线 (Pipeline)
-	std::shared_ptr<ade::AdVKPipeline> pipeline =
-		std::make_shared<ade::AdVKPipeline>(
+	std::shared_ptr<WuDu::AdVKPipeline> pipeline =
+		std::make_shared<WuDu::AdVKPipeline>(
 			vkdevice.get(),
 			vkRenderPass.get(),
 			pipelineLayout.get()
@@ -176,8 +176,8 @@ int main() {
 	pipeline->Create();
 
 	// 创建命令池和命令缓冲区
-	std::shared_ptr<ade::AdVKCommandPool> cmdPool =
-		std::make_shared<ade::AdVKCommandPool>(
+	std::shared_ptr<WuDu::AdVKCommandPool> cmdPool =
+		std::make_shared<WuDu::AdVKCommandPool>(
 			vkdevice.get(),
 			vkgraaphicContext->GetGraphicQueueFamilyInfo().queueFamilyIndex
 		);
@@ -185,12 +185,12 @@ int main() {
 	std::vector<VkCommandBuffer> cmdBuffers =
 		cmdPool->AllocateCommandBuffer(static_cast<uint32_t>(swapchainImages.size()));
 
-	std::vector<ade::AdVertex> vertices;
+	std::vector<WuDu::AdVertex> vertices;
 	std::vector<uint32_t> indices;
-	ade::AdGeometryUtil::CreateCube(0.4f, -0.4f, 0.4f, -0.4f, 0.4f, -0.4f, vertices, indices);
+	WuDu::AdGeometryUtil::CreateCube(0.4f, -0.4f, 0.4f, -0.4f, 0.4f, -0.4f, vertices, indices);
 
 
-	std::shared_ptr	<ade::AdVKBuffer> indexBuffer = std::make_shared<ade::AdVKBuffer>(
+	std::shared_ptr	<WuDu::AdVKBuffer> indexBuffer = std::make_shared<WuDu::AdVKBuffer>(
 		vkdevice.get(),
 		VK_BUFFER_USAGE_INDEX_BUFFER_BIT,
 		indices.size() * sizeof(uint32_t),
@@ -199,14 +199,14 @@ int main() {
 	);
 
 
-	std::unique_ptr<ade::AdVKBuffer> vertexVKBuffer = std::make_unique<ade::AdVKBuffer>(
+	std::unique_ptr<WuDu::AdVKBuffer> vertexVKBuffer = std::make_unique<WuDu::AdVKBuffer>(
 		vkdevice.get(),
 		VK_BUFFER_USAGE_VERTEX_BUFFER_BIT,
-		vertices.size() * sizeof(ade::AdVertex),
+		vertices.size() * sizeof(WuDu::AdVertex),
 		const_cast<void*>(static_cast<const void*>(vertices.data())),
 		false
 	);
-	ade::AdVKQueue* graphicQueue = vkdevice->GetFirstGraphicQueue();
+	WuDu::AdVKQueue* graphicQueue = vkdevice->GetFirstGraphicQueue();
 	const std::vector<VkClearValue> clearValues = {
 		{
 			.color = {
@@ -318,12 +318,12 @@ int main() {
 				VkFormat format = vkswapchain->GetSurfaceInfo().surfaceFormat.format;
 				VkImageUsageFlags usage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 
-				auto adImage = std::make_shared<ade::AdVKImage>(
+				auto adImage = std::make_shared<WuDu::AdVKImage>(
 					vkdevice.get(), image, extent, format, usage);
 
-				std::vector<std::shared_ptr<ade::AdVKImage>> images = { adImage };
+				std::vector<std::shared_ptr<WuDu::AdVKImage>> images = { adImage };
 
-				framebuffers.push_back(std::make_shared<ade::AdVKFrameBuffer>(
+				framebuffers.push_back(std::make_shared<WuDu::AdVKFrameBuffer>(
 					vkdevice.get(),
 					vkRenderPass.get(),
 					images,
@@ -339,13 +339,13 @@ int main() {
 
 		// 3. 录制命令缓冲区
 		VkCommandBuffer cmdbuffer1 = cmdBuffers[imageIndex];
-		ade::AdVKFrameBuffer* framebuffer1 = framebuffers[imageIndex].get();
+		WuDu::AdVKFrameBuffer* framebuffer1 = framebuffers[imageIndex].get();
 
 
 		// 重置并开始录制
 		vkResetCommandBuffer(cmdbuffer1, 0);
 
-		ade::AdVKCommandPool::BeginCommandBuffer(cmdbuffer1);
+		WuDu::AdVKCommandPool::BeginCommandBuffer(cmdbuffer1);
 		
 
 		// 4. 开始渲染通道
@@ -404,7 +404,7 @@ int main() {
 
 
 		// 10. 结束命令录制
-                ade::AdVKCommandPool::EndCommandBuffer(cmdbuffer1);
+                WuDu::AdVKCommandPool::EndCommandBuffer(cmdbuffer1);
 
 		// 等待图像可用
 		std::vector<VkSemaphore> waitSemaphores = { sync[currentFrame].imageAvailableSemaphore };

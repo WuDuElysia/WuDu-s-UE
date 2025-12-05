@@ -4,7 +4,7 @@
 #include "AdVKCommon.h"
 #include "AdLog.h"
 
-namespace ade {
+namespace WuDu {
         class AdVKDevice;
 
         class AdVKDescriptorSetLayout {

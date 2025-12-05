@@ -5,7 +5,7 @@
 
 #include "spdlog/common.h"
 
-namespace ade {
+namespace WuDu {
         class Adlog {
         public:
                 
@@ -33,11 +33,11 @@ namespace ade {
 #define AD_LOG_LOGGER_CALL(adLog, level, ...)\
         (adLog)->Log(spdlog::source_loc{__FILE__, __LINE__, SPDLOG_FUNCTION}, level, __VA_ARGS__)
 
-#define LOG_T(...) AD_LOG_LOGGER_CALL(ade::Adlog::GetLoggerInstance(), spdlog::level::trace, __VA_ARGS__)
-#define LOG_D(...) AD_LOG_LOGGER_CALL(ade::Adlog::GetLoggerInstance(), spdlog::level::debug, __VA_ARGS__)
-#define LOG_I(...) AD_LOG_LOGGER_CALL(ade::Adlog::GetLoggerInstance(), spdlog::level::info, __VA_ARGS__)
-#define LOG_W(...) AD_LOG_LOGGER_CALL(ade::Adlog::GetLoggerInstance(), spdlog::level::warn, __VA_ARGS__)
-#define LOG_E(...) AD_LOG_LOGGER_CALL(ade::Adlog::GetLoggerInstance(), spdlog::level::err, __VA_ARGS__)
+#define LOG_T(...) AD_LOG_LOGGER_CALL(WuDu::Adlog::GetLoggerInstance(), spdlog::level::trace, __VA_ARGS__)
+#define LOG_D(...) AD_LOG_LOGGER_CALL(WuDu::Adlog::GetLoggerInstance(), spdlog::level::debug, __VA_ARGS__)
+#define LOG_I(...) AD_LOG_LOGGER_CALL(WuDu::Adlog::GetLoggerInstance(), spdlog::level::info, __VA_ARGS__)
+#define LOG_W(...) AD_LOG_LOGGER_CALL(WuDu::Adlog::GetLoggerInstance(), spdlog::level::warn, __VA_ARGS__)
+#define LOG_E(...) AD_LOG_LOGGER_CALL(WuDu::Adlog::GetLoggerInstance(), spdlog::level::err, __VA_ARGS__)
 }
 
 #endif

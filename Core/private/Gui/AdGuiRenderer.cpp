@@ -4,15 +4,15 @@
 #include "Graphic/AdVKRenderPass.h"
 #include <Window/AdGlfwWindow.h>
 
-namespace ade {
+namespace WuDu {
     AdGuiRenderer::AdGuiRenderer() {
     }
 
     void AdGuiRenderer::OnInit() {
         // 获取设备和上下文
-        ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+        WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
         AdVKDevice* device = renderCxt->GetDevice();
-        ade::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
+        WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
         // 创建描述符池
         std::vector<VkDescriptorPoolSize> poolSizes = {
@@ -25,9 +25,9 @@ namespace ade {
     }
 
     void AdGuiRenderer::OnRender() {
-        ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-        ade::AdVKDevice* device = renderCxt->GetDevice();
-        ade::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
+        WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+        WuDu::AdVKDevice* device = renderCxt->GetDevice();
+        WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
         ImDrawData* draw_data = ImGui::GetDrawData();
 
         // 检查窗口大小是否变化，如果变化了就重建资源
@@ -57,7 +57,7 @@ namespace ade {
 
         try {
             VkCommandBuffer cmdBuffer = mGUICmdBuffers[imageIndex];
-            ade::AdVKCommandPool::BeginCommandBuffer(cmdBuffer);
+            WuDu::AdVKCommandPool::BeginCommandBuffer(cmdBuffer);
 
             // 使用GUI专用的渲染目标进行渲染
             mGUIRenderTarget->Begin(cmdBuffer);
@@ -69,7 +69,7 @@ namespace ade {
 
             mGUIRenderTarget->End(cmdBuffer);
 
-            ade::AdVKCommandPool::EndCommandBuffer(cmdBuffer);
+            WuDu::AdVKCommandPool::EndCommandBuffer(cmdBuffer);
             
             // 提交GUI渲染命令
             if (mGUIRenderer->End(imageIndex, { cmdBuffer })) {
@@ -97,7 +97,7 @@ namespace ade {
     }
 
     void AdGuiRenderer::RebuildResources() {
-        ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+        WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
         auto device = renderCxt->GetDevice();
         auto swapchain = renderCxt->GetSwapchain();
 
@@ -123,12 +123,12 @@ namespace ade {
 
     void AdGuiRenderer::CreateGUIRenderPass() {
         // 获取设备和交换链
-        ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+        WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
         auto device = renderCxt->GetDevice();
         auto swapchain = renderCxt->GetSwapchain();
 
         // 定义GUI专用的渲染附件 - 只使用颜色附件，单采样
-        std::vector<ade::Attachment> attachments = {
+        std::vector<WuDu::Attachment> attachments = {
             {
                 .format = swapchain->GetSurfaceInfo().surfaceFormat.format,
                 .loadOp = VK_ATTACHMENT_LOAD_OP_LOAD,        // 保留3D场景内容
@@ -142,7 +142,7 @@ namespace ade {
         };
 
         // 定义GUI子通道 - 只使用颜色附件
-        std::vector<ade::RenderSubPass> subpasses = {
+        std::vector<WuDu::RenderSubPass> subpasses = {
             {
                 .colorAttachments = { 0 },                  // 使用第一个颜色附件
                 .sampleCount = VK_SAMPLE_COUNT_1_BIT        // 与附件采样数一致
@@ -150,13 +150,13 @@ namespace ade {
         };
 
         // 创建GUI专用的渲染通道
-        mGUIRenderPass = std::make_shared<ade::AdVKRenderPass>(device, attachments, subpasses);
+        mGUIRenderPass = std::make_shared<WuDu::AdVKRenderPass>(device, attachments, subpasses);
 
         // 使用GUI专用渲染通道创建渲染目标
-        mGUIRenderTarget = std::make_shared<ade::AdRenderTarget>(mGUIRenderPass.get());
+        mGUIRenderTarget = std::make_shared<WuDu::AdRenderTarget>(mGUIRenderPass.get());
 
         // 创建渲染器
-        mGUIRenderer = std::make_shared<ade::AdRenderer>();
+        mGUIRenderer = std::make_shared<WuDu::AdRenderer>();
 
         // 设置清除值 - 使用透明清除以便在3D场景上叠加GUI
         mGUIRenderTarget->SetColorClearValue({ 0.0f, 0.0f, 0.0f, 0.0f });

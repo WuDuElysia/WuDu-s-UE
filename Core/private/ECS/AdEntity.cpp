@@ -1,5 +1,5 @@
 #include "ECS/AdEntity.h"
 
-namespace ade {
+namespace WuDu {
 
 }

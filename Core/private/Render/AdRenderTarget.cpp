@@ -5,7 +5,7 @@
 #include "ECS/Component/AdLookAtCameraComponent.h"
 #include "ECS/Component/AdFirstPersonCameraComponent.h"
 
-namespace ade {
+namespace WuDu {
 
 	/**
 	* @brief AdRenderTarget构造函数，用于创建渲染目标对象

@@ -6,7 +6,7 @@
 #include "AdGraphicContext.h"
 #include "entt/core/type_info.hpp"
 
-namespace ade {
+namespace WuDu {
         // -------------------------------------------------------------------------------------------------
             // Shader Params
         struct TextureParam {

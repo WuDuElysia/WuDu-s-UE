@@ -2,7 +2,7 @@
 #include "ECS/AdEntity.h"
 #include "ECS/Component/AdTransformComponent.h"
 
-namespace ade {
+namespace WuDu {
         AdScene::AdScene() {
                 mRootNode = std::make_shared<AdNode>();
         }

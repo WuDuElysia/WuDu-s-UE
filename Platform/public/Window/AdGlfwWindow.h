@@ -4,7 +4,7 @@
 #include"AdWindow.h"
 #include"GLFW/glfw3.h"
 
-namespace ade {
+namespace WuDu {
 	class AdGlfwWindow : public AdWindow {
 	public:
 		AdGlfwWindow() = delete;

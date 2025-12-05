@@ -12,7 +12,7 @@
 #include "ECS/AdEntity.h"
 #include "ECS/Component/AdLookAtCameraComponent.h"
 
-namespace ade {
+namespace WuDu {
 	/**
 	* @brief 初始化材质系统，创建渲染管线及相关资源。
 	*
@@ -22,10 +22,10 @@ namespace ade {
 	* @param renderPass 指向 Vulkan 渲染通道的指针，用于管线创建时指定渲染目标格式。
 	*/
 	void AdBaseMaterialSystem::OnInit(AdVKRenderPass* renderPass) {
-		ade::AdVKDevice* device = GetDevice();
+		WuDu::AdVKDevice* device = GetDevice();
 
 		// 定义着色器布局，包括一个顶点着色器阶段的 Push Constant
-		ade::ShaderLayout shaderLayout = {
+		WuDu::ShaderLayout shaderLayout = {
 		    .pushConstants = {
 			{
 			    .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,  // Push Constant 用于顶点着色器

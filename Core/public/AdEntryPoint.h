@@ -4,7 +4,7 @@
 #include "AdEngine.h"
 #include "AdApplication.h"
 
-extern ade::AdApplication* CreateApplicationEntryPoint();
+extern WuDu::AdApplication* CreateApplicationEntryPoint();
 
 #if AD_ENGINE_PLATFORM_WIN32 || AD_ENGINE_PLATFORM_MACOS || AD_ENGINE_PLATFORM_LINUX
 
@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 
 	std::cout << "WuDu Engine starting..." << std::endl;
 
-	ade::AdApplication* app = CreateApplicationEntryPoint();
+	WuDu::AdApplication* app = CreateApplicationEntryPoint();
 	// start
 	app->Start(argc, argv);
 	// main loop

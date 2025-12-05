@@ -1,6 +1,6 @@
 #include "Render/AdMaterial.h"
 
-namespace ade {
+namespace WuDu {
 	/// 全局静态材质工厂实例
 	AdMaterialFactory AdMaterialFactory::s_MaterialFactory{};
 

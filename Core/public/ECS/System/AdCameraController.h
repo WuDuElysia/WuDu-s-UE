@@ -2,7 +2,7 @@
 #pragma once
 #include "Event/AdEvent.h"
 
-namespace ade {
+namespace WuDu {
         class AdCameraController {
         public:
                 virtual ~AdCameraController() = default;

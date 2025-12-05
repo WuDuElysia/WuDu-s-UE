@@ -5,7 +5,7 @@
 #include "Graphic/AdVKCommon.h"
 #include "ECS/AdSystem.h"
 
-namespace ade {
+namespace WuDu {
         class AdVKRenderPass;
         class AdRenderTarget;
         class AdApplication;

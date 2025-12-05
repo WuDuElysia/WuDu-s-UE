@@ -5,7 +5,7 @@
 #include "AdEvent.h"
 #include "AdLog.h"
 
-namespace ade {
+namespace WuDu {
         class EventAdapter {
         public:
                 static void Initialize(GLFWwindow* window) {

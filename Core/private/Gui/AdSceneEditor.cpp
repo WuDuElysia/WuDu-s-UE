@@ -4,7 +4,7 @@
 #include "Graphic/AdVKRenderPass.h"
 #include "Window/AdGlfwWindow.h"
 
-namespace ade {
+namespace WuDu {
     AdSceneEditor::AdSceneEditor() {
     }
 

@@ -3,7 +3,7 @@
 
 #include "AdVKCommon.h"
 
-namespace ade {
+namespace WuDu {
         class AdVKDevice;
 
         class AdVKBuffer {

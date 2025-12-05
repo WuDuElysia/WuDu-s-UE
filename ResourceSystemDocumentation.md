@@ -57,7 +57,7 @@ AdResource (资源基类)
 #include <memory>
 #include <atomic>
 
-namespace ade {
+namespace WuDu {
 
 enum class ResourceState {
     Unloaded,
@@ -92,7 +92,7 @@ protected:
     std::atomic<int32_t> mRefCount;
 };
 
-} // namespace ade
+} // namespace WuDu
 
 #endif // AD_RESOURCE_H
 ```
@@ -109,7 +109,7 @@ protected:
 #include <mutex>
 #include <functional>
 
-namespace ade {
+namespace WuDu {
 
 class AdResourceManager {
 public:
@@ -171,7 +171,7 @@ private:
     std::mutex mMutex;
 };
 
-} // namespace ade
+} // namespace WuDu
 
 #endif // AD_RESOURCE_MANAGER_H
 ```
@@ -188,7 +188,7 @@ private:
 #include <vector>
 #include <glm/glm.hpp>
 
-namespace ade {
+namespace WuDu {
 
 struct ModelVertex {
     glm::vec3 Position;
@@ -234,7 +234,7 @@ private:
     std::shared_ptr<AdVKDevice> mDevice;
 };
 
-} // namespace ade
+} // namespace WuDu
 
 #endif // AD_MODEL_RESOURCE_H
 ```
@@ -648,7 +648,7 @@ void main() {
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-namespace ade {
+namespace WuDu {
 
 bool AdModelLoader::LoadModel(const std::string& filePath, 
                              std::vector<ModelMesh>& meshes, 
@@ -840,7 +840,7 @@ void AdModelLoader::ProcessMaterials(const aiScene* scene,
     }
 }
 
-} // namespace ade
+} // namespace WuDu
 ```
 
 #### 3.2.5 模型资源实现 (AdModelResource)
@@ -852,7 +852,7 @@ void AdModelLoader::ProcessMaterials(const aiScene* scene,
 #include "AdResourceManager.h"
 #include "Adlog.h"
 
-namespace ade {
+namespace WuDu {
 
 AdModelResource::AdModelResource(const std::string& modelPath)
     : AdResource(modelPath) {
@@ -902,7 +902,7 @@ void AdModelResource::Unload() {
     LOG_I("Unloaded model: {0}", mPath);
 }
 
-} // namespace ade
+} // namespace WuDu
 ```
 
 ## 4. 模型渲染流程
@@ -920,7 +920,7 @@ void AdModelResource::Unload() {
 #include "Resource/AdModelResource.h"
 #include <memory>
 
-namespace ade {
+namespace WuDu {
 
 class AdModelComponent : public AdComponent {
 public:
@@ -956,7 +956,7 @@ private:
     bool mReceiveShadows;
 };
 
-} // namespace ade
+} // namespace WuDu
 
 #endif // AD_MODEL_COMPONENT_H
 ```
@@ -974,7 +974,7 @@ private:
 #include "ECS/AdEntity.h"
 #include <vector>
 
-namespace ade {
+namespace WuDu {
 
 class AdModelRenderer {
 public:
@@ -994,7 +994,7 @@ private:
     void RenderModel(const AdModelResource& model, VkCommandBuffer commandBuffer, const glm::mat4& transform);
 };
 
-} // namespace ade
+} // namespace WuDu
 
 #endif // AD_MODEL_RENDERER_H
 ```
@@ -1010,7 +1010,7 @@ private:
 #include "ECS/AdTransformComponent.h"
 #include "AdResourceManager.h"
 
-namespace ade {
+namespace WuDu {
 
 AdModelRenderer::AdModelRenderer(AdRenderContext* renderContext)
     : mRenderContext(renderContext),
@@ -1163,7 +1163,7 @@ void AdModelRenderer::Cleanup() {
     // 注意：实际实现中需要正确管理管线和布局的生命周期
 }
 
-} // namespace ade
+} // namespace WuDu
 ```
 
 ## 5. 资源系统集成
@@ -1226,20 +1226,20 @@ void AdApplication::OnDestroy() {
 #include "ECS/AdTransformComponent.h"
 #include "Resource/AdResourceManager.h"
 
-class ModelLoadingApp : public ade::AdApplication {
+class ModelLoadingApp : public WuDu::AdApplication {
 protected:
     void OnInit() override {
         // 创建实体
         auto& entity = mScene->CreateEntity();
         
         // 添加变换组件
-        auto transform = entity.AddComponent<ade::AdTransformComponent>();
+        auto transform = entity.AddComponent<WuDu::AdTransformComponent>();
         transform->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
         transform->SetRotation(glm::vec3(0.0f, 0.0f, 0.0f));
         transform->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
         
         // 添加模型组件并加载模型
-        auto modelComponent = entity.AddComponent<ade::AdModelComponent>();
+        auto modelComponent = entity.AddComponent<WuDu::AdModelComponent>();
         bool success = modelComponent->LoadModel("Model/cube.obj");
         
         if (success) {
@@ -1252,7 +1252,7 @@ protected:
     void OnUpdate(float deltaTime) override {
         // 获取实体并旋转模型
         auto& entity = mScene->GetEntity(0);
-        auto transform = entity.GetComponent<ade::AdTransformComponent>();
+        auto transform = entity.GetComponent<WuDu::AdTransformComponent>();
         
         if (transform) {
             glm::quat rotation = transform->GetRotation();
@@ -1277,11 +1277,11 @@ int main(int argc, char* argv[]) {
 #include "Resource/AdModelResource.h"
 
 // 获取资源管理器实例
-auto resourceManager = ade::AdResourceManager::GetInstance();
+auto resourceManager = WuDu::AdResourceManager::GetInstance();
 
 // 加载模型
-std::shared_ptr<ade::AdModelResource> model = 
-    resourceManager->Load<ade::AdModelResource>("Model/nanosuit.obj");
+std::shared_ptr<WuDu::AdModelResource> model = 
+    resourceManager->Load<WuDu::AdModelResource>("Model/nanosuit.obj");
 
 // 检查加载状态
 if (model && model->IsLoaded()) {

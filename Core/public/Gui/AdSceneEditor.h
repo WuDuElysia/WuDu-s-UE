@@ -10,7 +10,7 @@
 #include "ECS/Component/AdFirstPersonCameraComponent.h"
 #include "ECS/AdScene.h"
 
-namespace ade {
+namespace WuDu {
     class AdSceneEditor {
     public:
         AdSceneEditor();

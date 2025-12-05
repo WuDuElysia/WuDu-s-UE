@@ -4,7 +4,7 @@
 #include "ECS/System/AdMaterialSystem.h"
 #include "ECS/Component/Material/AdUnlitMaterialComponent.h"
 
-namespace ade {
+namespace WuDu {
 #define NUM_MATERIAL_BATCH              16
 #define NUM_MATERIAL_BATCH_MAX          2048
 

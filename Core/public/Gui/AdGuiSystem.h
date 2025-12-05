@@ -9,7 +9,7 @@
 #include "AdGuiManager.h"
 #include "AdSceneEditor.h"
 
-namespace ade {
+namespace WuDu {
 	class AdGuiSystem {
 	public:
 		AdGuiSystem() : mGuiVisible(true) {}

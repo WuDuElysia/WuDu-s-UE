@@ -5,7 +5,7 @@
 #include "AdApplicationContext.h"
 
 
-namespace ade {
+namespace WuDu {
         struct AppSettings {
                 uint32_t width = 1920;
                 uint32_t height = 1080;

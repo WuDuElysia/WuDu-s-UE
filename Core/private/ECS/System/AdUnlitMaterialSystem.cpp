@@ -11,7 +11,7 @@
 
 #include "ECS/Component/AdTransformComponent.h"
 
-namespace ade {
+namespace WuDu {
         /**
  * @brief 初始化无光照材质系统，创建渲染管线、描述符布局、描述符池等资源。
  *
@@ -128,7 +128,7 @@ namespace ade {
                 };
                 mDescriptorPool = std::make_shared<AdVKDescriptorPool>(device, 1, poolSizes);
                 mFrameUboDescSet = mDescriptorPool->AllocateDescriptorSet(mFrameUboDescSetLayout.get(), 1)[0];
-                mFrameUboBuffer = std::make_shared<ade::AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(FrameUbo), nullptr, true);
+                mFrameUboBuffer = std::make_shared<WuDu::AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(FrameUbo), nullptr, true);
 
                 // 初始化材质描述符池
                 ReCreateMaterialDescPool(NUM_MATERIAL_BATCH);
@@ -280,7 +280,7 @@ namespace ade {
                         .descriptorCount = newDescriptorSetCount * 2
                     }
                 };
-                mMaterialDescriptorPool = std::make_shared<ade::AdVKDescriptorPool>(device, newDescriptorSetCount * 2, poolSizes);
+                mMaterialDescriptorPool = std::make_shared<WuDu::AdVKDescriptorPool>(device, newDescriptorSetCount * 2, poolSizes);
 
                 // 分配新的描述符集
                 mMaterialDescSets = mMaterialDescriptorPool->AllocateDescriptorSet(mMaterialParamDescSetLayout.get(), newDescriptorSetCount);

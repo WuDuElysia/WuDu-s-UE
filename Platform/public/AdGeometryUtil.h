@@ -3,7 +3,7 @@
 
 #include "AdGraphicContext.h"
 
-namespace ade {
+namespace WuDu {
         struct AdVertex {
                 glm::vec3 pos;
                 glm::vec2 tex;

@@ -2,7 +2,7 @@
 #include "Graphic/AdVKCommon.h"
 #include "Render/AdRenderContext.h"
 
-namespace ade {
+namespace WuDu {
 	class AdSampler {
 	public:
 		// 添加设置结构体

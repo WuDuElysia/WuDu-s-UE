@@ -3,7 +3,7 @@
 #include "Graphic/AdVKQueue.h"
 #include "Graphic/AdVKCommandBuffer.h"
 
-namespace ade {
+namespace WuDu {
         AdVKBuffer::AdVKBuffer(AdVKDevice* device, VkBufferUsageFlags usage, size_t size, void* data, bool bHostVisible)
                 : mDevice(device), mSize(size), bHostVisible(bHostVisible) {
                 CreateBuffer(usage, data);

@@ -3,7 +3,7 @@
 #include "Graphic/AdVKFrameBuffer.h"
 #include "Adlog.h"
 
-namespace ade {
+namespace WuDu {
 	// 构造函数：AdVKRenderPass
 	// 描述：初始化渲染通道，包括附件和子通道的设置
 	// 参数：

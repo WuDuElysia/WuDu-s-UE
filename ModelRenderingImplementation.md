@@ -72,7 +72,7 @@ public:
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-namespace ade {
+namespace WuDu {
 
 // 处理单个网格的顶点和索引数据
 void AdModelResource::ProcessMesh(aiMesh* mesh, const aiScene* scene, AdVKDevice* device) {
@@ -186,7 +186,7 @@ void AdModelResource::ProcessMesh(aiMesh* mesh, const aiScene* scene, AdVKDevice
     mMeshes.push_back(modelMesh);
 }
 
-} // namespace ade
+} // namespace WuDu
 ```
 
 ## 4. 渲染管线配置
@@ -475,7 +475,7 @@ VkPipeline CreateModelPipeline(VkDevice device, VkPipelineLayout pipelineLayout,
 #include <memory>
 #include "Resource/AdModelResource.h"
 
-namespace ade {
+namespace WuDu {
 
 class AdModelComponent {
 public:
@@ -492,7 +492,7 @@ private:
     std::shared_ptr<AdModelResource> mModelResource;
 };
 
-} // namespace ade
+} // namespace WuDu
 
 #endif // AD_MODEL_COMPONENT_H
 ```
@@ -502,7 +502,7 @@ private:
 #include "ECS/Components/AdModelComponent.h"
 #include "Resource/AdResourceManager.h"
 
-namespace ade {
+namespace WuDu {
 
 AdModelComponent::AdModelComponent(const std::string& modelPath) {
     SetModelPath(modelPath);
@@ -513,7 +513,7 @@ void AdModelComponent::SetModelPath(const std::string& path) {
     mModelResource = AdResourceManager::GetInstance()->Load<AdModelResource>(path);
 }
 
-} // namespace ade
+} // namespace WuDu
 ```
 
 ### 5.2 模型渲染系统
@@ -529,7 +529,7 @@ void AdModelComponent::SetModelPath(const std::string& path) {
 #include "Render/AdVKCommandBuffer.h"
 #include "Adlog.h"
 
-namespace ade {
+namespace WuDu {
 
 AdModelRenderSystem::AdModelRenderSystem(AdVKDevice* device, VkRenderPass renderPass, VkExtent2D extent) 
     : mDevice(device), mExtent(extent) {
@@ -702,7 +702,7 @@ void AdModelRenderSystem::CreatePipeline(VkRenderPass renderPass) {
     mPipeline = CreateModelPipeline(mDevice->GetLogicalDevice(), mPipelineLayout, renderPass, mExtent);
 }
 
-} // namespace ade
+} // namespace WuDu
 ```
 
 ## 6. 完整渲染流程示例

@@ -1,6 +1,6 @@
 #include "ECS/AdNode.h"
 
-namespace ade {
+namespace WuDu {
         AdUUID AdNode::GetId() const {
                 return mId;
         }

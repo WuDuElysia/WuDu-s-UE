@@ -4,8 +4,8 @@
 #include"glfw/glfw3native.h"
 #include"Event/AdEventAdaper.h"
 
-// 命名空间ade开始
-namespace ade {
+// 命名空间WuDu开始
+namespace WuDu {
 	/**
 	 * AdGlfwWindow类的构造函数
 	 * @param width 窗口的宽度

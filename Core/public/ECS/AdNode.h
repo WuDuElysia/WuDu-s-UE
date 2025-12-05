@@ -3,7 +3,7 @@
 
 #include "AdUUID.h"
 
-namespace ade {
+namespace WuDu {
         class AdNode {
         public:
                 AdNode() = default;

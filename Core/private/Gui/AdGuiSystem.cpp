@@ -4,7 +4,7 @@
 #include "Graphic/AdVKRenderPass.h"
 #include <Window/AdGlfwWindow.h>
 
-namespace ade {
+namespace WuDu {
 	void AdGuiSystem::OnInit() {
 		// 按顺序初始化各个组件
 		mManager.OnInit();
@@ -12,9 +12,9 @@ namespace ade {
 		mEventHandler.OnInit();
 
 		// 获取设备和上下文以初始化ImGui Vulkan后端
-		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		AdVKDevice* device = renderCxt->GetDevice();
-		auto vkContext = dynamic_cast<ade::AdVKGraphicContext*>(renderCxt->GetGraphicContext());
+		auto vkContext = dynamic_cast<WuDu::AdVKGraphicContext*>(renderCxt->GetGraphicContext());
 
 		// 初始化ImGui Vulkan后端
 		ImGui_ImplVulkan_InitInfo init_info = {};
@@ -54,7 +54,7 @@ namespace ade {
 
 	void AdGuiSystem::OnDestroy() {
 		// 获取设备，用于等待操作完成
-		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		AdVKDevice* device = renderCxt->GetDevice();
 
 		// 首先调用ImGui_ImplVulkan_Shutdown()，释放ImGui使用的所有Vulkan资源

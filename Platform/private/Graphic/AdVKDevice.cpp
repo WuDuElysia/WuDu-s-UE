@@ -3,7 +3,7 @@
 #include "Graphic/AdVKQueue.h"
 #include "Graphic/AdVKCommandBuffer.h"
 
-namespace ade {
+namespace WuDu {
 	const DeviceFeature requestedExtensions[] = {
 		{ VK_KHR_SWAPCHAIN_EXTENSION_NAME, true },
     #ifdef AD_ENGINE_PLATFORM_WIN32
@@ -173,7 +173,7 @@ namespace ade {
 	// 创建默认命令池
 	void AdVKDevice::CreateDefaultCmdPool() {
 		// 使用 Adele库的 AdVKCommandPool类创建默认命令池
-		mDefaultCmdPool = std::make_shared<ade::AdVKCommandPool>(this, mContext->GetGraphicQueueFamilyInfo().queueFamilyIndex);
+		mDefaultCmdPool = std::make_shared<WuDu::AdVKCommandPool>(this, mContext->GetGraphicQueueFamilyInfo().queueFamilyIndex);
 	}
 
 	// 获取内存类型索引

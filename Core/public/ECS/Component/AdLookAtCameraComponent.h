@@ -5,7 +5,7 @@
 #include "AdGraphicContext.h"
 #include "ECS/System/AdCameraController.h"
 
-namespace ade {
+namespace WuDu {
         class AdLookAtCameraComponent : public AdComponent , public AdCameraController {
         public:
                 const glm::mat4& GetProjMat();

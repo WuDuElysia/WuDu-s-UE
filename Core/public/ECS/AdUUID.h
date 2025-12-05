@@ -3,7 +3,7 @@
 
 #include "AdEngine.h"
 
-namespace ade {
+namespace WuDu {
         class AdUUID {
         public:
                 AdUUID();
@@ -17,8 +17,8 @@ namespace ade {
 
 namespace std {
         template<>
-        struct hash<ade::AdUUID> {
-                std::size_t operator()(const ade::AdUUID& uuid) const {
+        struct hash<WuDu::AdUUID> {
+                std::size_t operator()(const WuDu::AdUUID& uuid) const {
                         if (!uuid) {
                                 return 0;
                         }

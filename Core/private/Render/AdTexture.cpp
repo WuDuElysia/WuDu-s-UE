@@ -10,7 +10,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
-namespace ade {
+namespace WuDu {
 	/**
 	* @brief 构造函数，从指定文件路径加载纹理图像并创建纹理对象
 	* @param filePath 图像文件的路径
@@ -63,8 +63,8 @@ namespace ade {
 	* 包括图像布局转换和数据复制等操作。
 	*/
 	void AdTexture::CreateImage(size_t size, void* data) {
-		ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-		ade::AdVKDevice* device = renderCxt->GetDevice();
+		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+		WuDu::AdVKDevice* device = renderCxt->GetDevice();
 
 		// 创建Vulkan图像和图像视图资源
 		mImage = std::make_shared<AdVKImage>(device, VkExtent3D{ mWidth, mHeight, 1 }, mFormat, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_SAMPLE_COUNT_1_BIT);

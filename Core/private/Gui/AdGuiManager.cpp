@@ -5,7 +5,7 @@
 #include "Render/AdRenderContext.h"
 #include <Window/AdGlfwWindow.h>
 
-namespace ade {
+namespace WuDu {
     AdGuiManager::AdGuiManager() : mGuiVisible(true) {
     }
 
@@ -21,12 +21,12 @@ namespace ade {
         io.ConfigViewportsNoTaskBarIcon = false;
 
         // 使用窗口实际大小
-        ade::AdApplication* appCxt = AdApplication::GetAppContext()->app;
+        WuDu::AdApplication* appCxt = AdApplication::GetAppContext()->app;
         AdGlfwWindow* window = static_cast<AdGlfwWindow*>(appCxt->GetWindow());
         
         // 获取交换链和设置显示大小
-        ade::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
-        ade::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
+        WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
+        WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
         io.DisplaySize = ImVec2(static_cast<float>(swapchain->GetWidth()), static_cast<float>(swapchain->GetHeight()));
         
         // 设置ImGui样式

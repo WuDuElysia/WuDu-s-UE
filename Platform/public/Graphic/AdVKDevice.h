@@ -4,7 +4,7 @@
 #include "AdVKCommon.h"
 #include "AdVKQueue.h"
 
-namespace ade {
+namespace WuDu {
 	class AdVKGraphicContext;
 	class AdVKQueue;
 	class AdVKCommandPool;

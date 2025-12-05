@@ -3,7 +3,7 @@
 
 #include "ECS/AdScene.h"
 
-namespace ade {
+namespace WuDu {
         class AdApplication;
         class AdRenderContext;
 
