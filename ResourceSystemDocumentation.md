@@ -56,6 +56,9 @@ AdResource (资源基类)
 #include <string>
 #include <memory>
 #include <atomic>
+#include <string_view>
+#include <random>
+#include <sstream>
 
 namespace WuDu {
 
@@ -66,18 +69,65 @@ enum class ResourceState {
     Failed
 };
 
+// UUID类型定义
+typedef std::string UUID;
+
+// UUID生成器实现
+inline UUID GenerateUUID() {
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dis(0, 15);
+    static std::uniform_int_distribution<> dis2(8, 11);
+    
+    std::stringstream ss;
+    int i;
+    ss << std::hex;
+    for (i = 0; i < 8; i++) {
+        ss << dis(gen);
+    }
+    ss << "-";
+    for (i = 0; i < 4; i++) {
+        ss << dis(gen);
+    }
+    ss << "-4";
+    for (i = 0; i < 3; i++) {
+        ss << dis(gen);
+    }
+    ss << "-";
+    ss << dis2(gen);
+    for (i = 0; i < 3; i++) {
+        ss << dis(gen);
+    }
+    ss << "-";
+    for (i = 0; i < 12; i++) {
+        ss << dis(gen);
+    }
+    return ss.str();
+}
+
+enum class ResourceIdType {
+    Path,
+    UUID
+};
+
 class AdResource {
 public:
-    AdResource(const std::string& resourcePath);
-    virtual ~AdResource();
+    AdResource(const std::string& resourcePath) 
+        : mPath(resourcePath), mUUID(GenerateUUID()), mState(ResourceState::Unloaded), mRefCount(0) {}
+    
+    virtual ~AdResource() = default;
 
     virtual bool Load() = 0;
     virtual void Unload() = 0;
     virtual bool Reload();
 
     const std::string& GetPath() const { return mPath; }
+    const UUID& GetUUID() const { return mUUID; }
     ResourceState GetState() const { return mState; }
     bool IsLoaded() const { return mState == ResourceState::Loaded; }
+    
+    // 设置资源路径（用于资源移动或重命名）
+    void SetPath(const std::string& newPath) { mPath = newPath; }
 
     void AddReference() { mRefCount.fetch_add(1); }
     void RemoveReference() {
@@ -88,6 +138,7 @@ public:
 
 protected:
     std::string mPath;
+    UUID mUUID; // 唯一标识符
     ResourceState mState;
     std::atomic<int32_t> mRefCount;
 };
@@ -108,6 +159,7 @@ protected:
 #include <unordered_map>
 #include <mutex>
 #include <functional>
+#include <optional>
 
 namespace WuDu {
 
@@ -121,34 +173,106 @@ public:
         
         std::lock_guard<std::mutex> lock(mMutex);
         
-        auto it = mResources.find(path);
-        if (it != mResources.end()) {
-            auto resource = std::dynamic_pointer_cast<T>(it->second.lock());
-            if (resource) {
-                return resource;
+        // 首先检查路径是否已存在
+        auto pathIt = mPathToUUID.find(path);
+        if (pathIt != mPathToUUID.end()) {
+            const UUID& uuid = pathIt->second;
+            auto uuidIt = mUUIDToResource.find(uuid);
+            if (uuidIt != mUUIDToResource.end()) {
+                auto resource = std::dynamic_pointer_cast<T>(uuidIt->second.lock());
+                if (resource) {
+                    return resource;
+                }
             }
         }
         
+        // 创建新资源，资源内部会生成UUID
         auto resource = std::make_shared<T>(path, std::forward<Args>(args)...);
         if (resource->Load()) {
-            mResources[path] = resource;
+            const UUID& uuid = resource->GetUUID();
+            
+            // 更新双映射表
+            mUUIDToResource[uuid] = resource;
+            mPathToUUID[path] = uuid;
         }
         
         return resource;
     }
 
+    // 通过路径获取资源
     template<typename T>
     std::shared_ptr<T> Get(const std::string& path) {
         static_assert(std::is_base_of<AdResource, T>::value, "T must derive from AdResource");
         
         std::lock_guard<std::mutex> lock(mMutex);
         
-        auto it = mResources.find(path);
-        if (it != mResources.end()) {
+        auto pathIt = mPathToUUID.find(path);
+        if (pathIt != mPathToUUID.end()) {
+            const UUID& uuid = pathIt->second;
+            return Get<T>(uuid);
+        }
+        
+        return nullptr;
+    }
+
+    // 通过UUID获取资源
+    template<typename T>
+    std::shared_ptr<T> Get(const UUID& uuid) {
+        static_assert(std::is_base_of<AdResource, T>::value, "T must derive from AdResource");
+        
+        std::lock_guard<std::mutex> lock(mMutex);
+        
+        auto it = mUUIDToResource.find(uuid);
+        if (it != mUUIDToResource.end()) {
             return std::dynamic_pointer_cast<T>(it->second.lock());
         }
         
         return nullptr;
+    }
+
+    // 通过UUID获取资源路径
+    std::optional<std::string> GetPathByUUID(const UUID& uuid) {
+        std::lock_guard<std::mutex> lock(mMutex);
+        
+        for (const auto& [path, resourceUUID] : mPathToUUID) {
+            if (resourceUUID == uuid) {
+                return path;
+            }
+        }
+        
+        return std::nullopt;
+    }
+
+    // 更新资源路径映射
+    bool UpdateResourcePath(const UUID& uuid, const std::string& newPath) {
+        std::lock_guard<std::mutex> lock(mMutex);
+        
+        // 移除旧路径映射
+        auto oldPathIt = mPathToUUID.begin();
+        while (oldPathIt != mPathToUUID.end()) {
+            if (oldPathIt->second == uuid) {
+                oldPathIt = mPathToUUID.erase(oldPathIt);
+                break;
+            } else {
+                ++oldPathIt;
+            }
+        }
+        
+        // 添加新路径映射
+        mPathToUUID[newPath] = uuid;
+        
+        // 更新资源内部路径
+        auto resourceIt = mUUIDToResource.find(uuid);
+        if (resourceIt != mUUIDToResource.end()) {
+            auto resource = resourceIt->second.lock();
+            if (resource) {
+                // 注意：这里需要AdResource类提供SetPath方法
+                // resource->SetPath(newPath);
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     void UnloadUnused();
@@ -167,7 +291,11 @@ private:
     ~AdResourceManager();
 
     std::string mRootPath;
-    std::unordered_map<std::string, std::weak_ptr<AdResource>> mResources;
+    
+    // 双映射表实现双标识系统
+    std::unordered_map<UUID, std::weak_ptr<AdResource>> mUUIDToResource;  // UUID到资源的映射
+    std::unordered_map<std::string, UUID> mPathToUUID;  // 路径到UUID的映射
+    
     std::mutex mMutex;
 };
 

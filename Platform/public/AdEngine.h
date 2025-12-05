@@ -19,6 +19,7 @@
 #include<unordered_map>
 #include<unordered_set>
 #include <limits>
+#include<atomic>
 
 
 #ifdef AD_ENGINE_PLATFORM_WIN32
