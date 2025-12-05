@@ -18,7 +18,6 @@ add_library(WuDu_platform
                                 "private/Graphic/AdVKBuffer.cpp"
                                 "private/Graphic/AdVKCommandBuffer.cpp"
                                 "private/AdGeometryUtil.cpp" 
-                                
                                 )
 
 target_include_directories(WuDu_platform 

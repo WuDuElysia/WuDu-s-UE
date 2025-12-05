@@ -23,7 +23,7 @@ add_library(WuDu_core
 	 "private/Gui/AdGuiRenderer.cpp"
 	 "private/Gui/AdGuiManager.cpp"
 	 "private/Gui/AdGuiEventHandler.cpp"
-)
+ "public/Resource/AdResourceManager.h" "public/Resource/AdModelResource.h")
 
 target_include_directories(WuDu_core PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/public   

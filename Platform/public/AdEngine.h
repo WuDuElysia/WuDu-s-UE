@@ -19,6 +19,11 @@
 #include<unordered_map>
 #include<unordered_set>
 #include <limits>
+#include<atomic>
+#include <string_view>
+#include <random>
+#include<mutex>
+#include<optional>
 
 
 #ifdef AD_ENGINE_PLATFORM_WIN32

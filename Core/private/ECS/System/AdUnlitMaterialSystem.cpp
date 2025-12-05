@@ -13,14 +13,14 @@
 
 namespace WuDu {
         /**
- * @brief ³õÊ¼»¯ÎŞ¹âÕÕ²ÄÖÊÏµÍ³£¬´´½¨äÖÈ¾¹ÜÏß¡¢ÃèÊö·û²¼¾Ö¡¢ÃèÊö·û³ØµÈ×ÊÔ´¡£
+ * @brief åˆå§‹åŒ–æ— å…‰ç…§æè´¨ç³»ç»Ÿï¼Œåˆ›å»ºæ¸²æŸ“ç®¡çº¿ã€æè¿°ç¬¦å¸ƒå±€ã€æè¿°ç¬¦æ± ç­‰èµ„æºã€‚
  *
- * @param renderPass Vulkan äÖÈ¾Í¨µÀ¶ÔÏó£¬ÓÃÓÚ¹ÜÏß´´½¨¡£
+ * @param renderPass Vulkan æ¸²æŸ“é€šé“å¯¹è±¡ï¼Œç”¨äºç®¡çº¿åˆ›å»ºã€‚
  */
         void AdUnlitMaterialSystem::OnInit(AdVKRenderPass* renderPass) {
                 AdVKDevice* device = GetDevice();
 
-                // ´´½¨Ö¡UBOÃèÊö·û¼¯²¼¾Ö£ºÓÃÓÚ´«µİÍ¶Ó°¾ØÕó¡¢ÊÓÍ¼¾ØÕóµÈÃ¿Ö¡²»±äµÄÊı¾İ
+                // åˆ›å»ºå¸§UBOæè¿°ç¬¦é›†å¸ƒå±€ï¼šç”¨äºä¼ é€’æŠ•å½±çŸ©é˜µã€è§†å›¾çŸ©é˜µç­‰æ¯å¸§ä¸å˜çš„æ•°æ®
                 {
                         const std::vector<VkDescriptorSetLayoutBinding> bindings = {
                            {
@@ -33,7 +33,7 @@ namespace WuDu {
                         mFrameUboDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
                 }
 
-                // ´´½¨²ÄÖÊ²ÎÊıÃèÊö·û¼¯²¼¾Ö£ºÓÃÓÚ´«µİ²ÄÖÊ²ÎÊı£¨ÈçÑÕÉ«¡¢ÎÆÀí²ÎÊıµÈ£©
+                // åˆ›å»ºæè´¨å‚æ•°æè¿°ç¬¦é›†å¸ƒå±€ï¼šç”¨äºä¼ é€’æè´¨å‚æ•°ï¼ˆå¦‚é¢œè‰²ã€çº¹ç†å‚æ•°ç­‰ï¼‰
                 {
                         const std::vector<VkDescriptorSetLayoutBinding> bindings = {
                             {
@@ -46,7 +46,7 @@ namespace WuDu {
                         mMaterialParamDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
                 }
 
-                // ´´½¨²ÄÖÊ×ÊÔ´ÃèÊö·û¼¯²¼¾Ö£ºÓÃÓÚ´«µİÎÆÀí²ÉÑùÆ÷ºÍÍ¼ÏñÊÓÍ¼
+                // åˆ›å»ºæè´¨èµ„æºæè¿°ç¬¦é›†å¸ƒå±€ï¼šç”¨äºä¼ é€’çº¹ç†é‡‡æ ·å™¨å’Œå›¾åƒè§†å›¾
                 {
                         const std::vector<VkDescriptorSetLayoutBinding> bindings = {
                             {
@@ -65,14 +65,14 @@ namespace WuDu {
                         mMaterialResourceDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
                 }
 
-                // ¶¨ÒåÍÆËÍ³£Á¿£ºÓÃÓÚ´«µİÄ£ĞÍ±ä»»¾ØÕó
+                // å®šä¹‰æ¨é€å¸¸é‡ï¼šç”¨äºä¼ é€’æ¨¡å‹å˜æ¢çŸ©é˜µ
                 VkPushConstantRange modelPC = {
                     .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
                     .offset = 0,
                     .size = sizeof(ModelPC)
                 };
 
-                // ¹¹½¨×ÅÉ«Æ÷²¼¾Ö²¢´´½¨¹ÜÏß²¼¾Ö
+                // æ„å»ºç€è‰²å™¨å¸ƒå±€å¹¶åˆ›å»ºç®¡çº¿å¸ƒå±€
                 ShaderLayout shaderLayout = {
                     .descriptorSetLayouts = { mFrameUboDescSetLayout->GetHandle(), mMaterialParamDescSetLayout->GetHandle(), mMaterialResourceDescSetLayout->GetHandle() },
                     .pushConstants = { modelPC }
@@ -82,7 +82,7 @@ namespace WuDu {
                         AD_RES_SHADER_DIR"03_unlit_material.frag",
                         shaderLayout);
 
-                // ÅäÖÃ¶¥µãÊäÈë¸ñÊ½£ºÎ»ÖÃ¡¢ÎÆÀí×ø±ê¡¢·¨Ïß
+                // é…ç½®é¡¶ç‚¹è¾“å…¥æ ¼å¼ï¼šä½ç½®ã€çº¹ç†åæ ‡ã€æ³•çº¿
                 std::vector<VkVertexInputBindingDescription> vertexBindings = {
                     {
                         .binding = 0,
@@ -111,7 +111,7 @@ namespace WuDu {
                     }
                 };
 
-                // ´´½¨Í¼ĞÎ¹ÜÏß²¢ÉèÖÃÏà¹Ø×´Ì¬
+                // åˆ›å»ºå›¾å½¢ç®¡çº¿å¹¶è®¾ç½®ç›¸å…³çŠ¶æ€
                 mPipeline = std::make_shared<AdVKPipeline>(device, renderPass, mPipelineLayout.get());
                 mPipeline->SetVertexInputState(vertexBindings, vertexAttrs);
                 mPipeline->EnableDepthTest();
@@ -119,7 +119,7 @@ namespace WuDu {
                 mPipeline->SetMultisampleState(VK_SAMPLE_COUNT_4_BIT, VK_FALSE);
                 mPipeline->Create();
 
-                // ´´½¨ÃèÊö·û³Ø²¢·ÖÅäÖ¡UBOÃèÊö·û¼¯
+                // åˆ›å»ºæè¿°ç¬¦æ± å¹¶åˆ†é…å¸§UBOæè¿°ç¬¦é›†
                 std::vector<VkDescriptorPoolSize> poolSizes = {
                     {
                         .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -130,23 +130,23 @@ namespace WuDu {
                 mFrameUboDescSet = mDescriptorPool->AllocateDescriptorSet(mFrameUboDescSetLayout.get(), 1)[0];
                 mFrameUboBuffer = std::make_shared<WuDu::AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(FrameUbo), nullptr, true);
 
-                // ³õÊ¼»¯²ÄÖÊÃèÊö·û³Ø
+                // åˆå§‹åŒ–æè´¨æè¿°ç¬¦æ± 
                 ReCreateMaterialDescPool(NUM_MATERIAL_BATCH);
 
-                // ´´½¨Ä¬ÈÏÎÆÀí£¨°×É«ÏñËØ£©
+                // åˆ›å»ºé»˜è®¤çº¹ç†ï¼ˆç™½è‰²åƒç´ ï¼‰
                 RGBAColor* whitePixel = new RGBAColor{255,255,255,255};
                 mDefaultTexture = std::make_shared<AdTexture>(1, 1, whitePixel);
 
-                // ´´½¨Ä¬ÈÏ²ÉÑùÆ÷
+                // åˆ›å»ºé»˜è®¤é‡‡æ ·å™¨
                
                 mDefaultSampler = std::make_shared<AdSampler>();
         }
 
         /**
-         * @brief Ö´ĞĞÎŞ¹âÕÕ²ÄÖÊÏµÍ³µÄäÖÈ¾Âß¼­¡£
+         * @brief æ‰§è¡Œæ— å…‰ç…§æè´¨ç³»ç»Ÿçš„æ¸²æŸ“é€»è¾‘ã€‚
          *
-         * @param cmdBuffer Vulkan ÃüÁî»º³åÇø£¬ÓÃÓÚ¼ÇÂ¼äÖÈ¾ÃüÁî¡£
-         * @param renderTarget äÖÈ¾Ä¿±ê¶ÔÏó£¬°üº¬Ö¡»º³åµÈĞÅÏ¢¡£
+         * @param cmdBuffer Vulkan å‘½ä»¤ç¼“å†²åŒºï¼Œç”¨äºè®°å½•æ¸²æŸ“å‘½ä»¤ã€‚
+         * @param renderTarget æ¸²æŸ“ç›®æ ‡å¯¹è±¡ï¼ŒåŒ…å«å¸§ç¼“å†²ç­‰ä¿¡æ¯ã€‚
          */
         void AdUnlitMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) {
                 AdScene* scene = GetScene();
@@ -155,13 +155,13 @@ namespace WuDu {
                 }
                 entt::registry& reg = scene->GetEcsRegistry();
 
-                // »ñÈ¡¾ßÓĞ±ä»»×é¼şºÍÎŞ¹âÕÕ²ÄÖÊ×é¼şµÄÊµÌåÊÓÍ¼
+                // è·å–å…·æœ‰å˜æ¢ç»„ä»¶å’Œæ— å…‰ç…§æè´¨ç»„ä»¶çš„å®ä½“è§†å›¾
                 auto view = reg.view<AdTransformComponent, AdUnlitMaterialComponent>();
                 if (std::distance(view.begin(), view.end()) == 0) {
                         return;
                 }
 
-                // °ó¶¨Í¼ĞÎ¹ÜÏß²¢ÉèÖÃÊÓ¿ÚºÍ²Ã¼ôÇøÓò
+                // ç»‘å®šå›¾å½¢ç®¡çº¿å¹¶è®¾ç½®è§†å£å’Œè£å‰ªåŒºåŸŸ
                 mPipeline->Bind(cmdBuffer);
                 AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
                 VkViewport viewport = {
@@ -179,10 +179,10 @@ namespace WuDu {
                 };
                 vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
 
-                // ¸üĞÂÖ¡UBOÃèÊö·û¼¯
+                // æ›´æ–°å¸§UBOæè¿°ç¬¦é›†
                 UpdateFrameUboDescSet(renderTarget);
 
-                // ¼ì²éÊÇ·ñĞèÒªÖØĞÂ´´½¨²ÄÖÊÃèÊö·û³Ø
+                // æ£€æŸ¥æ˜¯å¦éœ€è¦é‡æ–°åˆ›å»ºæè´¨æè¿°ç¬¦æ± 
                 bool bShouldForceUpdateMaterial = false;
                 uint32_t materialCount = AdMaterialFactory::GetInstance()->GetMaterialSize<AdUnlitMaterial>();
                 if (materialCount > mLastDescriptorSetCount) {
@@ -190,7 +190,7 @@ namespace WuDu {
                         bShouldForceUpdateMaterial = true;
                 }
 
-                // ±éÀúËùÓĞÊµÌå²¢äÖÈ¾
+                // éå†æ‰€æœ‰å®ä½“å¹¶æ¸²æŸ“
                 std::vector<bool> updateFlags(materialCount);
                 view.each([this, &updateFlags, &bShouldForceUpdateMaterial, &cmdBuffer](AdTransformComponent& transComp, AdUnlitMaterialComponent& materialComp) {
                         for (const auto& entry : materialComp.GetMeshMaterials()) {
@@ -204,16 +204,16 @@ namespace WuDu {
                                 VkDescriptorSet paramsDescSet = mMaterialDescSets[materialIndex];
                                 VkDescriptorSet resourceDescSet = mMaterialResourceDescSets[materialIndex];
 
-                                // ¸üĞÂ²ÄÖÊ²ÎÊıºÍ×ÊÔ´ÃèÊö·û¼¯
-                                // ĞŞ¸´£ºÈ·±£Ê×´ÎÊ¹ÓÃÊ±Ò»¶¨¸üĞÂÃèÊö·û¼¯
+                                // æ›´æ–°æè´¨å‚æ•°å’Œèµ„æºæè¿°ç¬¦é›†
+                                // ä¿®å¤ï¼šç¡®ä¿é¦–æ¬¡ä½¿ç”¨æ—¶ä¸€å®šæ›´æ–°æè¿°ç¬¦é›†
                                 if (!updateFlags[materialIndex] || bShouldForceUpdateMaterial) {
-                                        // ÒÆ³ı ShouldFlush ¼ì²é£¬»òÕßÈ·±£ĞÂ²ÄÖÊµÄ flush ±êÖ¾ÕıÈ·ÉèÖÃ
+                                        // ç§»é™¤ ShouldFlush æ£€æŸ¥ï¼Œæˆ–è€…ç¡®ä¿æ–°æè´¨çš„ flush æ ‡å¿—æ­£ç¡®è®¾ç½®
                                         UpdateMaterialParamsDescSet(paramsDescSet, material);
                                         UpdateMaterialResourceDescSet(resourceDescSet, material);
                                         updateFlags[materialIndex] = true;
                                 }
 
-                                // °ó¶¨ÃèÊö·û¼¯²¢ÍÆËÍÄ£ĞÍ±ä»»¾ØÕó
+                                // ç»‘å®šæè¿°ç¬¦é›†å¹¶æ¨é€æ¨¡å‹å˜æ¢çŸ©é˜µ
                                 VkDescriptorSet descriptorSets[] = { mFrameUboDescSet, paramsDescSet, resourceDescSet };
                                 vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetHandle(),
                                         0, ARRAY_SIZE(descriptorSets), descriptorSets, 0, nullptr);
@@ -221,7 +221,7 @@ namespace WuDu {
                                 ModelPC pc = { transComp.GetTransform() };
                                 vkCmdPushConstants(cmdBuffer, mPipelineLayout->GetHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pc), &pc);
 
-                                // »æÖÆÍø¸ñ
+                                // ç»˜åˆ¶ç½‘æ ¼
                                 for (const auto& meshIndex : entry.second) {
                                         materialComp.GetMesh(meshIndex)->Draw(cmdBuffer);
                                 }
@@ -230,7 +230,7 @@ namespace WuDu {
         }
 
         /**
-         * @brief Ïú»ÙÎŞ¹âÕÕ²ÄÖÊÏµÍ³×ÊÔ´¡£
+         * @brief é”€æ¯æ— å…‰ç…§æè´¨ç³»ç»Ÿèµ„æºã€‚
          */
         void AdUnlitMaterialSystem::OnDestroy() {
                 mPipeline.reset();
@@ -238,14 +238,14 @@ namespace WuDu {
         }
 
         /**
-         * @brief ÖØĞÂ´´½¨²ÄÖÊÃèÊö·û³Ø£¬ÒÔÊÊÓ¦¸ü¶à²ÄÖÊµÄĞèÇó¡£
+         * @brief é‡æ–°åˆ›å»ºæè´¨æè¿°ç¬¦æ± ï¼Œä»¥é€‚åº”æ›´å¤šæè´¨çš„éœ€æ±‚ã€‚
          *
-         * @param materialCount µ±Ç°ĞèÒªÖ§³ÖµÄ²ÄÖÊÊıÁ¿¡£
+         * @param materialCount å½“å‰éœ€è¦æ”¯æŒçš„æè´¨æ•°é‡ã€‚
          */
         void AdUnlitMaterialSystem::ReCreateMaterialDescPool(uint32_t materialCount) {
                 AdVKDevice* device = GetDevice();
 
-                // ¼ÆËãĞÂµÄÃèÊö·û¼¯ÊıÁ¿
+                // è®¡ç®—æ–°çš„æè¿°ç¬¦é›†æ•°é‡
                 uint32_t newDescriptorSetCount = mLastDescriptorSetCount;
                 if (mLastDescriptorSetCount == 0) {
                         newDescriptorSetCount = NUM_MATERIAL_BATCH;
@@ -262,14 +262,14 @@ namespace WuDu {
 
                 LOG_W("{0}: {1} -> {2} S.", __FUNCTION__, mLastDescriptorSetCount, newDescriptorSetCount);
 
-                // Ïú»Ù¾ÉµÄÃèÊö·û³ØºÍÏà¹Ø×ÊÔ´
+                // é”€æ¯æ—§çš„æè¿°ç¬¦æ± å’Œç›¸å…³èµ„æº
                 mMaterialDescSets.clear();
                 mMaterialResourceDescSets.clear();
                 if (mMaterialDescriptorPool) {
                         mMaterialDescriptorPool.reset();
                 }
 
-                // ´´½¨ĞÂµÄÃèÊö·û³Ø
+                // åˆ›å»ºæ–°çš„æè¿°ç¬¦æ± 
                 std::vector<VkDescriptorPoolSize> poolSizes = {
                     {
                         .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -282,13 +282,13 @@ namespace WuDu {
                 };
                 mMaterialDescriptorPool = std::make_shared<WuDu::AdVKDescriptorPool>(device, newDescriptorSetCount * 2, poolSizes);
 
-                // ·ÖÅäĞÂµÄÃèÊö·û¼¯
+                // åˆ†é…æ–°çš„æè¿°ç¬¦é›†
                 mMaterialDescSets = mMaterialDescriptorPool->AllocateDescriptorSet(mMaterialParamDescSetLayout.get(), newDescriptorSetCount);
                 mMaterialResourceDescSets = mMaterialDescriptorPool->AllocateDescriptorSet(mMaterialResourceDescSetLayout.get(), newDescriptorSetCount);
                 assert(mMaterialDescSets.size() == newDescriptorSetCount && "Failed to AllocateDescriptorSet");
                 assert(mMaterialResourceDescSets.size() == newDescriptorSetCount && "Failed to AllocateDescriptorSet");
 
-                // ´´½¨ĞÂµÄ²ÄÖÊ»º³åÇø
+                // åˆ›å»ºæ–°çš„æè´¨ç¼“å†²åŒº
                 uint32_t diffCount = newDescriptorSetCount - mLastDescriptorSetCount;
                 for (int i = 0; i < diffCount; i++) {
                         mMaterialBuffers.push_back(std::make_shared<AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(UnlitMaterialUbo), nullptr, true));
@@ -298,9 +298,9 @@ namespace WuDu {
         }
 
         /**
-         * @brief ¸üĞÂÖ¡UBOÃèÊö·û¼¯£¬´«µİÍ¶Ó°¾ØÕó¡¢ÊÓÍ¼¾ØÕóµÈÃ¿Ö¡Êı¾İ¡£
+         * @brief æ›´æ–°å¸§UBOæè¿°ç¬¦é›†ï¼Œä¼ é€’æŠ•å½±çŸ©é˜µã€è§†å›¾çŸ©é˜µç­‰æ¯å¸§æ•°æ®ã€‚
          *
-         * @param renderTarget äÖÈ¾Ä¿±ê¶ÔÏó£¬ÓÃÓÚ»ñÈ¡Ö¡»º³åĞÅÏ¢¡£
+         * @param renderTarget æ¸²æŸ“ç›®æ ‡å¯¹è±¡ï¼Œç”¨äºè·å–å¸§ç¼“å†²ä¿¡æ¯ã€‚
          */
         void AdUnlitMaterialSystem::UpdateFrameUboDescSet(AdRenderTarget* renderTarget) {
                 AdApplication* app = GetApp();
@@ -309,7 +309,7 @@ namespace WuDu {
                 AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
                 glm::ivec2 resolution = { frameBuffer->GetWidth(), frameBuffer->GetHeight() };
 
-                // ¹¹ÔìÖ¡UBOÊı¾İ
+                // æ„é€ å¸§UBOæ•°æ®
                 FrameUbo frameUbo = {
                     .projMat = GetProjMat(renderTarget),
                     .viewMat = GetViewMat(renderTarget),
@@ -318,7 +318,7 @@ namespace WuDu {
                     .time = app->GetStartTimeSecond()
                 };
 
-                // Ğ´Èë»º³åÇø²¢¸üĞÂÃèÊö·û¼¯
+                // å†™å…¥ç¼“å†²åŒºå¹¶æ›´æ–°æè¿°ç¬¦é›†
                 mFrameUboBuffer->WriteData(&frameUbo);
                 VkDescriptorBufferInfo bufferInfo = DescriptorSetWriter::BuildBufferInfo(mFrameUboBuffer->GetHandle(), 0, sizeof(frameUbo));
                 VkWriteDescriptorSet bufferWrite = DescriptorSetWriter::WriteBuffer(mFrameUboDescSet, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
@@ -326,17 +326,17 @@ namespace WuDu {
         }
 
         /**
-         * @brief ¸üĞÂ²ÄÖÊ²ÎÊıÃèÊö·û¼¯£¬´«µİ²ÄÖÊ²ÎÊı£¨ÈçÑÕÉ«¡¢ÎÆÀí²ÎÊıµÈ£©¡£
+         * @brief æ›´æ–°æè´¨å‚æ•°æè¿°ç¬¦é›†ï¼Œä¼ é€’æè´¨å‚æ•°ï¼ˆå¦‚é¢œè‰²ã€çº¹ç†å‚æ•°ç­‰ï¼‰ã€‚
          *
-         * @param descSet ²ÄÖÊ²ÎÊıÃèÊö·û¼¯¾ä±ú¡£
-         * @param material ÎŞ¹âÕÕ²ÄÖÊ¶ÔÏó£¬°üº¬²ÎÊıÊı¾İ¡£
+         * @param descSet æè´¨å‚æ•°æè¿°ç¬¦é›†å¥æŸ„ã€‚
+         * @param material æ— å…‰ç…§æè´¨å¯¹è±¡ï¼ŒåŒ…å«å‚æ•°æ•°æ®ã€‚
          */
         void AdUnlitMaterialSystem::UpdateMaterialParamsDescSet(VkDescriptorSet descSet, AdUnlitMaterial* material) {
                 AdVKDevice* device = GetDevice();
 
                 AdVKBuffer* materialBuffer = mMaterialBuffers[material->GetIndex()].get();
 
-                // »ñÈ¡²ÄÖÊ²ÎÊı²¢¸üĞÂÎÆÀí²ÎÊı
+                // è·å–æè´¨å‚æ•°å¹¶æ›´æ–°çº¹ç†å‚æ•°
                 UnlitMaterialUbo params = material->GetParams();
 
                 const TextureView* texture0 = material->GetTextureView(UNLIT_MAT_BASE_COLOR_0);
@@ -349,7 +349,7 @@ namespace WuDu {
                         AdMaterial::UpdateTextureParams(texture1, &params.textureParam1);
                 }
 
-                // Ğ´Èë»º³åÇø²¢¸üĞÂÃèÊö·û¼¯
+                // å†™å…¥ç¼“å†²åŒºå¹¶æ›´æ–°æè¿°ç¬¦é›†
                 materialBuffer->WriteData(&params);
                 VkDescriptorBufferInfo bufferInfo = DescriptorSetWriter::BuildBufferInfo(materialBuffer->GetHandle(), 0, sizeof(params));
                 VkWriteDescriptorSet bufferWrite = DescriptorSetWriter::WriteBuffer(descSet, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
@@ -357,28 +357,28 @@ namespace WuDu {
         }
 
         /**
-         * @brief ¸üĞÂ²ÄÖÊ×ÊÔ´ÃèÊö·û¼¯£¬´«µİÎÆÀí²ÉÑùÆ÷ºÍÍ¼ÏñÊÓÍ¼¡£
+         * @brief æ›´æ–°æè´¨èµ„æºæè¿°ç¬¦é›†ï¼Œä¼ é€’çº¹ç†é‡‡æ ·å™¨å’Œå›¾åƒè§†å›¾ã€‚
          *
-         * @param descSet ²ÄÖÊ×ÊÔ´ÃèÊö·û¼¯¾ä±ú¡£
-         * @param material ÎŞ¹âÕÕ²ÄÖÊ¶ÔÏó£¬°üº¬ÎÆÀí×ÊÔ´¡£
+         * @param descSet æè´¨èµ„æºæè¿°ç¬¦é›†å¥æŸ„ã€‚
+         * @param material æ— å…‰ç…§æè´¨å¯¹è±¡ï¼ŒåŒ…å«çº¹ç†èµ„æºã€‚
          */
         void AdUnlitMaterialSystem::UpdateMaterialResourceDescSet(VkDescriptorSet descSet, AdUnlitMaterial* material) {
                 AdVKDevice* device = GetDevice();
 
-                // »ñÈ¡ÎÆÀí×ÊÔ´
+                // è·å–çº¹ç†èµ„æº
                 const TextureView* texture0 = material->GetTextureView(UNLIT_MAT_BASE_COLOR_0);
                 const TextureView* texture1 = material->GetTextureView(UNLIT_MAT_BASE_COLOR_1);
 
-                // È·±£ÓĞÓĞĞ§µÄÎÆÀí×ÊÔ´
+                // ç¡®ä¿æœ‰æœ‰æ•ˆçš„çº¹ç†èµ„æº
                 TextureView defaultView;
                 defaultView.texture = mDefaultTexture.get();
                 defaultView.sampler = mDefaultSampler.get();
 
-                // Èç¹ûÃ»ÓĞÉèÖÃÎÆÀí£¬Ê¹ÓÃÄ¬ÈÏÎÆÀí
+                // å¦‚æœæ²¡æœ‰è®¾ç½®çº¹ç†ï¼Œä½¿ç”¨é»˜è®¤çº¹ç†
                 if (!texture0) texture0 = &defaultView;
                 if (!texture1) texture1 = &defaultView;
 
-                // È·±£ÎÆÀíºÍ²ÉÑùÆ÷¶¼ÓĞĞ§
+                // ç¡®ä¿çº¹ç†å’Œé‡‡æ ·å™¨éƒ½æœ‰æ•ˆ
                 if (!texture0->texture || !texture0->sampler) {
                         texture0 = &defaultView;
                 }
@@ -386,7 +386,7 @@ namespace WuDu {
                         texture1 = &defaultView;
                 }
 
-                // ¹¹½¨Í¼ÏñĞÅÏ¢
+                // æ„å»ºå›¾åƒä¿¡æ¯
                 VkDescriptorImageInfo textureInfo0 = DescriptorSetWriter::BuildImageInfo(
                         texture0->sampler->GetHandle(),
                         texture0->texture->GetImageView()->GetHandle()

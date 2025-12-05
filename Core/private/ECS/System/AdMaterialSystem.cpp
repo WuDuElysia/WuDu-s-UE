@@ -8,11 +8,11 @@
 
 namespace WuDu {
 	/**
- * @brief »ñÈ¡Ó¦ÓÃ³ÌĞòÊµÀıÖ¸Õë
+ * @brief è·å–åº”ç”¨ç¨‹åºå®ä¾‹æŒ‡é’ˆ
  *
- * Í¨¹ıÈ«¾ÖÓ¦ÓÃÉÏÏÂÎÄ»ñÈ¡µ±Ç°ÔËĞĞµÄÓ¦ÓÃ³ÌĞòÊµÀı¡£
+ * é€šè¿‡å…¨å±€åº”ç”¨ä¸Šä¸‹æ–‡è·å–å½“å‰è¿è¡Œçš„åº”ç”¨ç¨‹åºå®ä¾‹ã€‚
  *
- * @return AdApplication* Ó¦ÓÃ³ÌĞòÊµÀıÖ¸Õë£¬ÈôÉÏÏÂÎÄÎŞĞ§Ôò·µ»Ønullptr
+ * @return AdApplication* åº”ç”¨ç¨‹åºå®ä¾‹æŒ‡é’ˆï¼Œè‹¥ä¸Šä¸‹æ–‡æ— æ•ˆåˆ™è¿”å›nullptr
  */
 	AdApplication* AdMaterialSystem::GetApp() const {
 		AdAppContext* appContext = AdApplication::GetAppContext();
@@ -23,11 +23,11 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief »ñÈ¡µ±Ç°³¡¾°ÊµÀıÖ¸Õë
+	 * @brief è·å–å½“å‰åœºæ™¯å®ä¾‹æŒ‡é’ˆ
 	 *
-	 * Í¨¹ıÈ«¾ÖÓ¦ÓÃÉÏÏÂÎÄ»ñÈ¡µ±Ç°»î¶¯µÄ³¡¾°ÊµÀı¡£
+	 * é€šè¿‡å…¨å±€åº”ç”¨ä¸Šä¸‹æ–‡è·å–å½“å‰æ´»åŠ¨çš„åœºæ™¯å®ä¾‹ã€‚
 	 *
-	 * @return AdScene* ³¡¾°ÊµÀıÖ¸Õë£¬ÈôÉÏÏÂÎÄÎŞĞ§Ôò·µ»Ønullptr
+	 * @return AdScene* åœºæ™¯å®ä¾‹æŒ‡é’ˆï¼Œè‹¥ä¸Šä¸‹æ–‡æ— æ•ˆåˆ™è¿”å›nullptr
 	 */
 	AdScene* AdMaterialSystem::GetScene() const {
 		AdAppContext* appContext = AdApplication::GetAppContext();
@@ -38,11 +38,11 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief »ñÈ¡ Vulkan Éè±¸ÊµÀıÖ¸Õë
+	 * @brief è·å– Vulkan è®¾å¤‡å®ä¾‹æŒ‡é’ˆ
 	 *
-	 * Í¨¹ıÈ«¾ÖÓ¦ÓÃÉÏÏÂÎÄºÍäÖÈ¾ÉÏÏÂÎÄ»ñÈ¡ Vulkan Éè±¸ÊµÀı¡£
+	 * é€šè¿‡å…¨å±€åº”ç”¨ä¸Šä¸‹æ–‡å’Œæ¸²æŸ“ä¸Šä¸‹æ–‡è·å– Vulkan è®¾å¤‡å®ä¾‹ã€‚
 	 *
-	 * @return AdVKDevice* Vulkan Éè±¸ÊµÀıÖ¸Õë£¬ÈôÉÏÏÂÎÄ»òäÖÈ¾ÉÏÏÂÎÄÎŞĞ§Ôò·µ»Ønullptr
+	 * @return AdVKDevice* Vulkan è®¾å¤‡å®ä¾‹æŒ‡é’ˆï¼Œè‹¥ä¸Šä¸‹æ–‡æˆ–æ¸²æŸ“ä¸Šä¸‹æ–‡æ— æ•ˆåˆ™è¿”å›nullptr
 	 */
 	AdVKDevice* AdMaterialSystem::GetDevice() const {
 		AdAppContext* appContext = AdApplication::GetAppContext();
@@ -55,22 +55,22 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief »ñÈ¡Ö¸¶¨äÖÈ¾Ä¿±êµÄÍ¶Ó°¾ØÕó
+	 * @brief è·å–æŒ‡å®šæ¸²æŸ“ç›®æ ‡çš„æŠ•å½±çŸ©é˜µ
 	 *
-	 * ¸ù¾İäÖÈ¾Ä¿±ê°ó¶¨µÄÏà»úÀàĞÍ£¨LookAt »ò FirstPerson£©»ñÈ¡¶ÔÓ¦µÄÍ¶Ó°¾ØÕó¡£
+	 * æ ¹æ®æ¸²æŸ“ç›®æ ‡ç»‘å®šçš„ç›¸æœºç±»å‹ï¼ˆLookAt æˆ– FirstPersonï¼‰è·å–å¯¹åº”çš„æŠ•å½±çŸ©é˜µã€‚
 	 *
-	 * @param renderTarget äÖÈ¾Ä¿±êÊµÀıÖ¸Õë
-	 * @return const glm::mat4 Í¶Ó°¾ØÕó£¬ÈôÎ´ÕÒµ½ÓĞĞ§Ïà»ú×é¼şÔò·µ»Øµ¥Î»¾ØÕó
+	 * @param renderTarget æ¸²æŸ“ç›®æ ‡å®ä¾‹æŒ‡é’ˆ
+	 * @return const glm::mat4 æŠ•å½±çŸ©é˜µï¼Œè‹¥æœªæ‰¾åˆ°æœ‰æ•ˆç›¸æœºç»„ä»¶åˆ™è¿”å›å•ä½çŸ©é˜µ
 	 */
 	const glm::mat4 AdMaterialSystem::GetProjMat(AdRenderTarget* renderTarget) const {
 		glm::mat4 projMat{ 1.f };
 		AdEntity* camera = renderTarget->GetCamera();
-		// ¼ì²éÏà»úÊµÌåÊÇ·ñ°üº¬ LookAt Ïà»ú×é¼ş
+		// æ£€æŸ¥ç›¸æœºå®ä½“æ˜¯å¦åŒ…å« LookAt ç›¸æœºç»„ä»¶
 		if (AdEntity::HasComponent<AdLookAtCameraComponent>(camera)) {
 			auto& cameraComp = camera->GetComponent<AdLookAtCameraComponent>();
 			projMat = cameraComp.GetProjMat();
 		}
-		// Èô²»°üº¬ LookAt ×é¼ş£¬Ôò¼ì²éÊÇ·ñÎªµÚÒ»ÈË³ÆÏà»ú
+		// è‹¥ä¸åŒ…å« LookAt ç»„ä»¶ï¼Œåˆ™æ£€æŸ¥æ˜¯å¦ä¸ºç¬¬ä¸€äººç§°ç›¸æœº
 		else if (AdEntity::HasComponent<AdFirstPersonCameraComponent>(camera)) {
 			auto& cameraComp = camera->GetComponent<AdFirstPersonCameraComponent>();
 			projMat = cameraComp.GetProjMat();
@@ -79,22 +79,22 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief »ñÈ¡Ö¸¶¨äÖÈ¾Ä¿±êµÄÊÓÍ¼¾ØÕó
+	 * @brief è·å–æŒ‡å®šæ¸²æŸ“ç›®æ ‡çš„è§†å›¾çŸ©é˜µ
 	 *
-	 * ¸ù¾İäÖÈ¾Ä¿±ê°ó¶¨µÄÏà»úÀàĞÍ£¨LookAt »ò FirstPerson£©»ñÈ¡¶ÔÓ¦µÄÊÓÍ¼¾ØÕó¡£
+	 * æ ¹æ®æ¸²æŸ“ç›®æ ‡ç»‘å®šçš„ç›¸æœºç±»å‹ï¼ˆLookAt æˆ– FirstPersonï¼‰è·å–å¯¹åº”çš„è§†å›¾çŸ©é˜µã€‚
 	 *
-	 * @param renderTarget äÖÈ¾Ä¿±êÊµÀıÖ¸Õë
-	 * @return const glm::mat4 ÊÓÍ¼¾ØÕó£¬ÈôÎ´ÕÒµ½ÓĞĞ§Ïà»ú×é¼şÔò·µ»Øµ¥Î»¾ØÕó
+	 * @param renderTarget æ¸²æŸ“ç›®æ ‡å®ä¾‹æŒ‡é’ˆ
+	 * @return const glm::mat4 è§†å›¾çŸ©é˜µï¼Œè‹¥æœªæ‰¾åˆ°æœ‰æ•ˆç›¸æœºç»„ä»¶åˆ™è¿”å›å•ä½çŸ©é˜µ
 	 */
 	const glm::mat4 AdMaterialSystem::GetViewMat(AdRenderTarget* renderTarget) const {
 		glm::mat4 viewMat{ 1.f };
 		AdEntity* camera = renderTarget->GetCamera();
-		// ¼ì²éÏà»úÊµÌåÊÇ·ñ°üº¬ LookAt Ïà»ú×é¼ş
+		// æ£€æŸ¥ç›¸æœºå®ä½“æ˜¯å¦åŒ…å« LookAt ç›¸æœºç»„ä»¶
 		if (AdEntity::HasComponent<AdLookAtCameraComponent>(camera)) {
 			auto& cameraComp = camera->GetComponent<AdLookAtCameraComponent>();
 			viewMat = cameraComp.GetViewMat();
 		}
-		// Èô²»°üº¬ LookAt ×é¼ş£¬Ôò¼ì²éÊÇ·ñÎªµÚÒ»ÈË³ÆÏà»ú
+		// è‹¥ä¸åŒ…å« LookAt ç»„ä»¶ï¼Œåˆ™æ£€æŸ¥æ˜¯å¦ä¸ºç¬¬ä¸€äººç§°ç›¸æœº
 		else if (AdEntity::HasComponent<AdFirstPersonCameraComponent>(camera)) {
 			auto& cameraComp = camera->GetComponent<AdFirstPersonCameraComponent>();
 			viewMat = cameraComp.GetViewMat();
