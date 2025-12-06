@@ -24,10 +24,10 @@ namespace WuDu {
                                 auto uuidIt = mUUIDToResource.find(uuid);
                                 if (uuidIt != mUUIDToResource.end()) {
                                         auto resource = std::dynamic_pointer_cast<T>(uuidIt->second.lock());
-                                        if (resource) {
-                                                return resource;
-                                        }
+                                if (resource) {
+                                        return resource;
                                 }
+                        }
                         }
 
                         // 创建新资源，资源内部会生成UUID
@@ -144,6 +144,6 @@ namespace WuDu {
                 std::mutex mMutex;
         };
 
-}
+} 
 
 #endif
