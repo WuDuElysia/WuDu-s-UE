@@ -15,3 +15,6 @@ modelmesh属性需要扩展
 每个mesh所对应的material，需要添加关联方法
 材质系统中 配置顶点的输入格式需要更改
 
+原来的pipeline没有与renderpass的subpass进行绑定，而是默认的renderpass中的第一个subpass
+
+

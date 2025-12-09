@@ -117,6 +117,7 @@ namespace WuDu {
                 mPipeline->EnableDepthTest();
                 mPipeline->SetDynamicState({ VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR });
                 mPipeline->SetMultisampleState(VK_SAMPLE_COUNT_4_BIT, VK_FALSE);
+                mPipeline->SetSubPassIndex(0);
                 mPipeline->Create();
 
                 // 创建描述符池并分配帧UBO描述符集

@@ -174,6 +174,8 @@ namespace WuDu {
 		 */
 		void Create();
 
+		void SetSubPassIndex(uint32_t index);
+
 		/**
 		 * @brief 绑定当前管线到命令缓冲区
 		 * @param cmdBuffer 命令缓冲区句柄
@@ -264,7 +266,7 @@ namespace WuDu {
 		AdVKDevice* mDevice;                         ///< 指向Vulkan设备对象的指针
 		AdVKRenderPass* mRenderPass;                 ///< 指向渲染通道对象的指针
 		AdVKPipelineLayout* mPipelineLayout;         ///< 指向管线布局对象的指针
-
+		uint32_t mSubPassIndex;
 		PipelineConfig mPipelineConfig;              ///< 管线配置信息
 	};
 }

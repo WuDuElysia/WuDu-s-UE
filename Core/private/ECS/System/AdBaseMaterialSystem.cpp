@@ -87,6 +87,8 @@ namespace WuDu {
 		// 设置多重采样状态：4倍采样，禁用采样遮罩
 		mPipeline->SetMultisampleState(VK_SAMPLE_COUNT_4_BIT, VK_FALSE);
 
+		mPipeline->SetSubPassIndex(0);
+
 		// 最终创建图形管线
 		mPipeline->Create();
 	}

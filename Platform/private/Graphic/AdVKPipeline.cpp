@@ -231,7 +231,7 @@ namespace WuDu {
 			.pDynamicState = &dynamicStateInfo,
 			.layout = mPipelineLayout->GetHandle(),
 			.renderPass = mRenderPass->GetHandle(),
-			.subpass = 0,
+			.subpass = mSubPassIndex,
 			.basePipelineHandle = VK_NULL_HANDLE,
 			.basePipelineIndex = 0
 		};
@@ -319,6 +319,10 @@ namespace WuDu {
 		mPipelineConfig.depthStencilState.depthWriteEnable = VK_TRUE;
 		mPipelineConfig.depthStencilState.depthCompareOp = VK_COMPARE_OP_LESS;
 		return this;
+	}
+
+	void AdVKPipeline::SetSubPassIndex(uint32_t index){
+		mSubPassIndex = index;
 	}
 
 	void AdVKPipeline::Bind(VkCommandBuffer cmdBuffer) {
