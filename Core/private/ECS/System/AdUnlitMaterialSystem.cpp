@@ -84,31 +84,43 @@ namespace WuDu {
 
                 // 配置顶点输入格式：位置、纹理坐标、法线
                 std::vector<VkVertexInputBindingDescription> vertexBindings = {
-                    {
-                        .binding = 0,
-                        .stride = sizeof(AdVertex),
-                        .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
-                    }
+                        {
+                                .binding = 0,
+                                .stride = sizeof(AdVertex),
+                                .inputRate = VK_VERTEX_INPUT_RATE_VERTEX
+                        }
                 };
                 std::vector<VkVertexInputAttributeDescription> vertexAttrs = {
                     {
-                        .location = 0,
-                        .binding = 0,
-                        .format = VK_FORMAT_R32G32B32_SFLOAT,
-                        .offset = offsetof(AdVertex, pos)
-                    },
-                    {
-                        .location = 1,
-                        .binding = 0,
-                        .format = VK_FORMAT_R32G32_SFLOAT,
-                        .offset = offsetof(AdVertex, tex)
-                    },
-                    {
-                        .location = 2,
-                        .binding = 0,
-                        .format = VK_FORMAT_R32G32B32_SFLOAT,
-                        .offset = offsetof(AdVertex, nor)
-                    }
+                                .location = 0,                         // 属性位置 0：顶点位置
+                                .binding = 0,                          // 来自绑定 0
+                                .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
+                                .offset = offsetof(AdVertex, Position)      // 在 AdVertex 中的偏移
+                        },
+                        {
+                                .location = 1,                         // 属性位置 1：纹理坐标
+                                .binding = 0,
+                                .format = VK_FORMAT_R32G32_SFLOAT,     // 2个32位浮点数
+                                .offset = offsetof(AdVertex, TexCoord)
+                        },
+                        {
+                                .location = 2,                         // 属性位置 2：法线
+                                .binding = 0,
+                                .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
+                                .offset = offsetof(AdVertex, Normal)
+                        },
+                        {
+                                .location = 3,                         // 属性位置 2：法线
+                                .binding = 0,
+                                .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
+                                .offset = offsetof(AdVertex, Tangent)
+                        },
+                        {
+                                .location = 4,                         // 属性位置 2：法线
+                                .binding = 0,
+                                .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
+                                .offset = offsetof(AdVertex, Bitangent)
+                        }
                 };
 
                 // 创建图形管线并设置相关状态

@@ -14,115 +14,127 @@
 
 namespace WuDu {
 	/**
-	* @brief ³õÊ¼»¯²ÄÖÊÏµÍ³£¬´´½¨äÖÈ¾¹ÜÏß¼°Ïà¹Ø×ÊÔ´¡£
+	* @brief åˆå§‹åŒ–æè´¨ç³»ç»Ÿï¼Œåˆ›å»ºæ¸²æŸ“ç®¡çº¿åŠç›¸å…³èµ„æºã€‚
 	*
-	* ¸Ãº¯ÊıÓÃÓÚ³õÊ¼»¯ AdBaseMaterialSystem£¬ÉèÖÃ×ÅÉ«Æ÷¡¢¶¥µãÊäÈë²¼¾Ö¡¢
-	* äÖÈ¾¹ÜÏß×´Ì¬µÈ£¬×îÖÕ´´½¨ Vulkan Í¼ĞÎ¹ÜÏß¡£
+	* è¯¥å‡½æ•°ç”¨äºåˆå§‹åŒ– AdBaseMaterialSystemï¼Œè®¾ç½®ç€è‰²å™¨ã€é¡¶ç‚¹è¾“å…¥å¸ƒå±€ã€
+	* æ¸²æŸ“ç®¡çº¿çŠ¶æ€ç­‰ï¼Œæœ€ç»ˆåˆ›å»º Vulkan å›¾å½¢ç®¡çº¿ã€‚
 	*
-	* @param renderPass Ö¸Ïò Vulkan äÖÈ¾Í¨µÀµÄÖ¸Õë£¬ÓÃÓÚ¹ÜÏß´´½¨Ê±Ö¸¶¨äÖÈ¾Ä¿±ê¸ñÊ½¡£
+	* @param renderPass æŒ‡å‘ Vulkan æ¸²æŸ“é€šé“çš„æŒ‡é’ˆï¼Œç”¨äºç®¡çº¿åˆ›å»ºæ—¶æŒ‡å®šæ¸²æŸ“ç›®æ ‡æ ¼å¼ã€‚
 	*/
 	void AdBaseMaterialSystem::OnInit(AdVKRenderPass* renderPass) {
 		WuDu::AdVKDevice* device = GetDevice();
 
-		// ¶¨Òå×ÅÉ«Æ÷²¼¾Ö£¬°üÀ¨Ò»¸ö¶¥µã×ÅÉ«Æ÷½×¶ÎµÄ Push Constant
+		// å®šä¹‰ç€è‰²å™¨å¸ƒå±€ï¼ŒåŒ…æ‹¬ä¸€ä¸ªé¡¶ç‚¹ç€è‰²å™¨é˜¶æ®µçš„ Push Constant
 		WuDu::ShaderLayout shaderLayout = {
 		    .pushConstants = {
 			{
-			    .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,  // Push Constant ÓÃÓÚ¶¥µã×ÅÉ«Æ÷
-			    .offset = 0,                               // Æ«ÒÆÎª 0
-			    .size = sizeof(PushConstants)              // ´óĞ¡Îª PushConstants ½á¹¹Ìå´óĞ¡
+			    .stageFlags = VK_SHADER_STAGE_VERTEX_BIT,  // Push Constant ç”¨äºé¡¶ç‚¹ç€è‰²å™¨
+			    .offset = 0,                               // åç§»ä¸º 0
+			    .size = sizeof(PushConstants)              // å¤§å°ä¸º PushConstants ç»“æ„ä½“å¤§å°
 			}
 		    }
 		};
 
-		// ´´½¨¹ÜÏß²¼¾Ö£¬¼ÓÔØ¶¥µãºÍÆ¬¶Î×ÅÉ«Æ÷£¬²¢´«Èë×ÅÉ«Æ÷²¼¾Ö
+		// åˆ›å»ºç®¡çº¿å¸ƒå±€ï¼ŒåŠ è½½é¡¶ç‚¹å’Œç‰‡æ®µç€è‰²å™¨ï¼Œå¹¶ä¼ å…¥ç€è‰²å™¨å¸ƒå±€
 		mPipelineLayout = std::make_shared<AdVKPipelineLayout>(device,
 			AD_RES_SHADER_DIR"01_hello_buffer.vert",
 			AD_RES_SHADER_DIR"01_hello_buffer.frag",
 			shaderLayout);
 
-		// ¶¨Òå¶¥µãÊäÈë°ó¶¨ÃèÊö£ºÃ¿¸ö¶¥µãÊı¾İµÄ²½³¤ºÍÊäÈëÆµÂÊ
+		// å®šä¹‰é¡¶ç‚¹è¾“å…¥ç»‘å®šæè¿°ï¼šæ¯ä¸ªé¡¶ç‚¹æ•°æ®çš„æ­¥é•¿å’Œè¾“å…¥é¢‘ç‡
 		std::vector<VkVertexInputBindingDescription> vertexBindings = {
 		    {
-			.binding = 0,                          // °ó¶¨µãÎª 0
-			.stride = sizeof(AdVertex),            // Ã¿¸ö¶¥µãµÄ×Ö½Ú´óĞ¡
-			.inputRate = VK_VERTEX_INPUT_RATE_VERTEX // Ã¿¸ö¶¥µã¶ÁÈ¡Ò»´Î
+			.binding = 0,                          // ç»‘å®šç‚¹ä¸º 0
+			.stride = sizeof(AdVertex),            // æ¯ä¸ªé¡¶ç‚¹çš„å­—èŠ‚å¤§å°
+			.inputRate = VK_VERTEX_INPUT_RATE_VERTEX // æ¯ä¸ªé¡¶ç‚¹è¯»å–ä¸€æ¬¡
 		    }
 		};
 
-		// ¶¨Òå¶¥µãÊôĞÔÃèÊö£ºÎ»ÖÃ¡¢ÎÆÀí×ø±ê¡¢·¨ÏßµÈÊôĞÔÔÚ¶¥µã½á¹¹ÖĞµÄÎ»ÖÃºÍ¸ñÊ½
+		// å®šä¹‰é¡¶ç‚¹å±æ€§æè¿°ï¼šä½ç½®ã€çº¹ç†åæ ‡ã€æ³•çº¿ç­‰å±æ€§åœ¨é¡¶ç‚¹ç»“æ„ä¸­çš„ä½ç½®å’Œæ ¼å¼
 		std::vector<VkVertexInputAttributeDescription> vertexAttrs = {
-		    {
-			.location = 0,                         // ÊôĞÔÎ»ÖÃ 0£º¶¥µãÎ»ÖÃ
-			.binding = 0,                          // À´×Ô°ó¶¨ 0
-			.format = VK_FORMAT_R32G32B32_SFLOAT,  // 3¸ö32Î»¸¡µãÊı
-			.offset = offsetof(AdVertex, pos)      // ÔÚ AdVertex ÖĞµÄÆ«ÒÆ
-		    },
-		    {
-			.location = 1,                         // ÊôĞÔÎ»ÖÃ 1£ºÎÆÀí×ø±ê
-			.binding = 0,
-			.format = VK_FORMAT_R32G32_SFLOAT,     // 2¸ö32Î»¸¡µãÊı
-			.offset = offsetof(AdVertex, tex)
-		    },
-		    {
-			.location = 2,                         // ÊôĞÔÎ»ÖÃ 2£º·¨Ïß
-			.binding = 0,
-			.format = VK_FORMAT_R32G32B32_SFLOAT,  // 3¸ö32Î»¸¡µãÊı
-			.offset = offsetof(AdVertex, nor)
-		    }
+			{
+				.location = 0,                         // å±æ€§ä½ç½® 0ï¼šé¡¶ç‚¹ä½ç½®
+				.binding = 0,                          // æ¥è‡ªç»‘å®š 0
+				.format = VK_FORMAT_R32G32B32_SFLOAT,  // 3ä¸ª32ä½æµ®ç‚¹æ•°
+				.offset = offsetof(AdVertex, Position)      // åœ¨ AdVertex ä¸­çš„åç§»
+			},
+			{
+				.location = 1,                         // å±æ€§ä½ç½® 1ï¼šçº¹ç†åæ ‡
+				.binding = 0,
+				.format = VK_FORMAT_R32G32_SFLOAT,     // 2ä¸ª32ä½æµ®ç‚¹æ•°
+				.offset = offsetof(AdVertex, TexCoord)
+			},
+			{
+				.location = 2,                         // å±æ€§ä½ç½® 2ï¼šæ³•çº¿
+				.binding = 0,
+				.format = VK_FORMAT_R32G32B32_SFLOAT,  // 3ä¸ª32ä½æµ®ç‚¹æ•°
+				.offset = offsetof(AdVertex, Normal)
+			},
+			{
+				.location = 3,                         // å±æ€§ä½ç½® 2ï¼šæ³•çº¿
+				.binding = 0,
+				.format = VK_FORMAT_R32G32B32_SFLOAT,  // 3ä¸ª32ä½æµ®ç‚¹æ•°
+				.offset = offsetof(AdVertex, Tangent)
+			},
+			{
+				.location = 4,                         // å±æ€§ä½ç½® 2ï¼šæ³•çº¿
+				.binding = 0,
+				.format = VK_FORMAT_R32G32B32_SFLOAT,  // 3ä¸ª32ä½æµ®ç‚¹æ•°
+				.offset = offsetof(AdVertex, Bitangent)
+			}
 		};
 
-		// ´´½¨Í¼ĞÎ¹ÜÏß¶ÔÏó
+		// åˆ›å»ºå›¾å½¢ç®¡çº¿å¯¹è±¡
 		mPipeline = std::make_shared<AdVKPipeline>(device, renderPass, mPipelineLayout.get());
 
-		// ÉèÖÃ¶¥µãÊäÈë×´Ì¬
+		// è®¾ç½®é¡¶ç‚¹è¾“å…¥çŠ¶æ€
 		mPipeline->SetVertexInputState(vertexBindings, vertexAttrs);
 
-		// ÉèÖÃÍ¼Ôª×°Åä×´Ì¬£ºÈı½ÇĞÎÁĞ±í£¬²¢ÆôÓÃÉî¶È²âÊÔ
+		// è®¾ç½®å›¾å…ƒè£…é…çŠ¶æ€ï¼šä¸‰è§’å½¢åˆ—è¡¨ï¼Œå¹¶å¯ç”¨æ·±åº¦æµ‹è¯•
 		mPipeline->SetInputAssemblyState(VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST)->EnableDepthTest();
 
-		// ÉèÖÃ¶¯Ì¬×´Ì¬£ºÊÓ¿ÚºÍ²Ã¼ôÇøÓò½«ÔÚÃüÁî»º³åÇøÖĞ¶¯Ì¬ÉèÖÃ
+		// è®¾ç½®åŠ¨æ€çŠ¶æ€ï¼šè§†å£å’Œè£å‰ªåŒºåŸŸå°†åœ¨å‘½ä»¤ç¼“å†²åŒºä¸­åŠ¨æ€è®¾ç½®
 		mPipeline->SetDynamicState({ VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR });
 
-		// ÉèÖÃ¶àÖØ²ÉÑù×´Ì¬£º4±¶²ÉÑù£¬½ûÓÃ²ÉÑùÕÚÕÖ
+		// è®¾ç½®å¤šé‡é‡‡æ ·çŠ¶æ€ï¼š4å€é‡‡æ ·ï¼Œç¦ç”¨é‡‡æ ·é®ç½©
 		mPipeline->SetMultisampleState(VK_SAMPLE_COUNT_4_BIT, VK_FALSE);
 
 		mPipeline->SetSubPassIndex(0);
 
-		// ×îÖÕ´´½¨Í¼ĞÎ¹ÜÏß
+		// æœ€ç»ˆåˆ›å»ºå›¾å½¢ç®¡çº¿
 		mPipeline->Create();
 	}
 
 	/**
-	* @brief äÖÈ¾Ê¹ÓÃ»ù´¡²ÄÖÊµÄÊµÌå
+	* @brief æ¸²æŸ“ä½¿ç”¨åŸºç¡€æè´¨çš„å®ä½“
 	*
-	* ¸Ãº¯Êı¸ºÔğäÖÈ¾³¡¾°ÖĞËùÓĞ´øÓĞ AdTransformComponent ºÍ AdBaseMaterialComponent ×é¼şµÄÊµÌå¡£
-	* Ëü»á°ó¶¨äÖÈ¾¹ÜÏß¡¢ÉèÖÃÊÓ¿ÚºÍ²Ã¼ôÇøÓò£¬²¢ÎªÃ¿¸öÊµÌåÉèÖÃÏàÓ¦µÄ Push Constants£¬
-	* ×îºóµ÷ÓÃÍø¸ñµÄ Draw ·½·¨½øĞĞ»æÖÆ¡£
+	* è¯¥å‡½æ•°è´Ÿè´£æ¸²æŸ“åœºæ™¯ä¸­æ‰€æœ‰å¸¦æœ‰ AdTransformComponent å’Œ AdBaseMaterialComponent ç»„ä»¶çš„å®ä½“ã€‚
+	* å®ƒä¼šç»‘å®šæ¸²æŸ“ç®¡çº¿ã€è®¾ç½®è§†å£å’Œè£å‰ªåŒºåŸŸï¼Œå¹¶ä¸ºæ¯ä¸ªå®ä½“è®¾ç½®ç›¸åº”çš„ Push Constantsï¼Œ
+	* æœ€åè°ƒç”¨ç½‘æ ¼çš„ Draw æ–¹æ³•è¿›è¡Œç»˜åˆ¶ã€‚
 	*
-	* @param cmdBuffer Vulkan ÃüÁî»º³åÇø£¬ÓÃÓÚ¼ÇÂ¼äÖÈ¾ÃüÁî
-	* @param renderTarget µ±Ç°äÖÈ¾Ä¿±ê£¬°üº¬Ö¡»º³åµÈĞÅÏ¢
+	* @param cmdBuffer Vulkan å‘½ä»¤ç¼“å†²åŒºï¼Œç”¨äºè®°å½•æ¸²æŸ“å‘½ä»¤
+	* @param renderTarget å½“å‰æ¸²æŸ“ç›®æ ‡ï¼ŒåŒ…å«å¸§ç¼“å†²ç­‰ä¿¡æ¯
 	*/
 	void AdBaseMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) {
-		// »ñÈ¡µ±Ç°³¡¾°£¬Èç¹û²»´æÔÚÔòÖ±½Ó·µ»Ø
+		// è·å–å½“å‰åœºæ™¯ï¼Œå¦‚æœä¸å­˜åœ¨åˆ™ç›´æ¥è¿”å›
 		AdScene* scene = GetScene();
 		if (!scene) {
 			return;
 		}
 
-		// »ñÈ¡ ECS ×¢²á±í²¢É¸Ñ¡³ö¾ßÓĞ Transform ºÍ BaseMaterial ×é¼şµÄÊµÌå
+		// è·å– ECS æ³¨å†Œè¡¨å¹¶ç­›é€‰å‡ºå…·æœ‰ Transform å’Œ BaseMaterial ç»„ä»¶çš„å®ä½“
 		entt::registry& reg = scene->GetEcsRegistry();
 		auto view = reg.view<AdTransformComponent, AdBaseMaterialComponent>();
 
-		// Èç¹ûÃ»ÓĞ·ûºÏÌõ¼şµÄÊµÌå£¬ÔòÖ±½Ó·µ»Ø
+		// å¦‚æœæ²¡æœ‰ç¬¦åˆæ¡ä»¶çš„å®ä½“ï¼Œåˆ™ç›´æ¥è¿”å›
 		if (std::distance(view.begin(), view.end()) == 0) {
 			return;
 		}
 
-		// °ó¶¨µ±Ç°äÖÈ¾¹ÜÏß
+		// ç»‘å®šå½“å‰æ¸²æŸ“ç®¡çº¿
 		mPipeline->Bind(cmdBuffer);
 
-		// ÉèÖÃÊÓ¿ÚºÍ²Ã¼ôÇøÓò
+		// è®¾ç½®è§†å£å’Œè£å‰ªåŒºåŸŸ
 		AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
 		VkViewport viewport = {
 		    .x = 0,
@@ -140,33 +152,33 @@ namespace WuDu {
 		};
 		vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
 
-		// »ñÈ¡Í¶Ó°¾ØÕóºÍÊÓÍ¼¾ØÕó
+		// è·å–æŠ•å½±çŸ©é˜µå’Œè§†å›¾çŸ©é˜µ
 		glm::mat4 projMat = GetProjMat(renderTarget);
 		glm::mat4 viewMat = GetViewMat(renderTarget);
 
-		// ±éÀúËùÓĞ·ûºÏÌõ¼şµÄÊµÌå²¢½øĞĞäÖÈ¾
+		// éå†æ‰€æœ‰ç¬¦åˆæ¡ä»¶çš„å®ä½“å¹¶è¿›è¡Œæ¸²æŸ“
 		view.each([this, &cmdBuffer, &projMat, &viewMat](const auto& e, const AdTransformComponent& transComp, const AdBaseMaterialComponent& materialComp) {
-			// »ñÈ¡¸Ã×é¼şÖĞµÄÍø¸ñ²ÄÖÊÓ³Éä
+			// è·å–è¯¥ç»„ä»¶ä¸­çš„ç½‘æ ¼æè´¨æ˜ å°„
 			auto meshMaterials = materialComp.GetMeshMaterials();
 
-			// ±éÀúÃ¿ÖÖ²ÄÖÊ¼°Æä¶ÔÓ¦µÄÍø¸ñË÷ÒıÁĞ±í
+			// éå†æ¯ç§æè´¨åŠå…¶å¯¹åº”çš„ç½‘æ ¼ç´¢å¼•åˆ—è¡¨
 			for (const auto& entry : meshMaterials) {
 				AdBaseMaterial* material = entry.first;
 
-				// Èç¹û²ÄÖÊÎª¿Õ£¬ÔòÊä³ö¾¯¸æÈÕÖ¾²¢Ìø¹ı
+				// å¦‚æœæè´¨ä¸ºç©ºï¼Œåˆ™è¾“å‡ºè­¦å‘Šæ—¥å¿—å¹¶è·³è¿‡
 				if (!material) {
 					LOG_W("TODO: default material or error material ?");
 					continue;
 				}
 
-				// ¹¹Ôì²¢ÉèÖÃ Push Constants Êı¾İ
+				// æ„é€ å¹¶è®¾ç½® Push Constants æ•°æ®
 				PushConstants pushConstants{
 				    .matrix = projMat * viewMat * transComp.GetTransform(),
 				    .colorType = static_cast<uint32_t>(material->colorType)
 				};
 				vkCmdPushConstants(cmdBuffer, mPipelineLayout->GetHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pushConstants), &pushConstants);
 
-				// ±éÀúÓëµ±Ç°²ÄÖÊ¹ØÁªµÄËùÓĞÍø¸ñË÷Òı£¬²¢Ö´ĞĞ»æÖÆ
+				// éå†ä¸å½“å‰æè´¨å…³è”çš„æ‰€æœ‰ç½‘æ ¼ç´¢å¼•ï¼Œå¹¶æ‰§è¡Œç»˜åˆ¶
 				for (const auto& meshIndex : entry.second) {
 					AdMesh* mesh = materialComp.GetMesh(meshIndex);
 					if (mesh) {

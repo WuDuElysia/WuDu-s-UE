@@ -52,6 +52,28 @@ target_link_libraries(WuDu_platform
 
 )
 
+# 配置Assimp预编译库
+set(ASSIMP_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External/assimp/include")
+set(ASSIMP_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External/assimp/lib")
+
+# 根据编译类型选择库名称和子目录
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(ASSIMP_LIB_NAME "assimp-vc145-mtd")
+    set(ASSIMP_LIB_SUBDIR "Debug")
+else()
+    set(ASSIMP_LIB_NAME "assimp-vc145-mt")
+    set(ASSIMP_LIB_SUBDIR "Release")
+endif()
+
+# 查找Assimp库
+find_library(ASSIMP_LIBRARY ${ASSIMP_LIB_NAME} PATHS "${ASSIMP_LIB_DIR}/${ASSIMP_LIB_SUBDIR}" NO_DEFAULT_PATH)
+if(NOT ASSIMP_LIBRARY)
+    message(FATAL_ERROR "Assimp library not found. Expected ${ASSIMP_LIB_NAME} in ${ASSIMP_LIB_DIR}/${ASSIMP_LIB_SUBDIR}")
+endif()
+
+# 链接Assimp库
+target_include_directories(WuDu_platform PRIVATE ${ASSIMP_INCLUDE_DIR})
+target_link_libraries(WuDu_platform PRIVATE ${ASSIMP_LIBRARY})
 # 确保使用正确的 Vulkan 路径
 if(DEFINED ENV{VULKAN_SDK})
     message("VULKAN_SDK environment variable found: $ENV{VULKAN_SDK}")

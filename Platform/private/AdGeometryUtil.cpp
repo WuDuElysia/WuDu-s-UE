@@ -46,62 +46,62 @@ namespace WuDu {
                 };
 
                 if (bUseTextcoords) {
-                        vertices[0].tex = glm::vec2(0.0f, 0.0f);
-                        vertices[1].tex = glm::vec2(1.0f, 0.0f);
-                        vertices[2].tex = glm::vec2(1.0f, 1.0f);
-                        vertices[3].tex = glm::vec2(0.0f, 1.0f);
+                        vertices[0].TexCoord = glm::vec2(0.0f, 0.0f);
+                        vertices[1].TexCoord = glm::vec2(1.0f, 0.0f);
+                        vertices[2].TexCoord = glm::vec2(1.0f, 1.0f);
+                        vertices[3].TexCoord = glm::vec2(0.0f, 1.0f);
 
-                        vertices[4].tex = glm::vec2(1.0f, 0.0f);
-                        vertices[5].tex = glm::vec2(1.0f, 1.0f);
-                        vertices[6].tex = glm::vec2(0.0f, 1.0f);
-                        vertices[7].tex = glm::vec2(0.0f, 0.0f);
+                        vertices[4].TexCoord = glm::vec2(1.0f, 0.0f);
+                        vertices[5].TexCoord = glm::vec2(1.0f, 1.0f);
+                        vertices[6].TexCoord = glm::vec2(0.0f, 1.0f);
+                        vertices[7].TexCoord = glm::vec2(0.0f, 0.0f);
 
-                        vertices[8].tex = glm::vec2(1.0f, 0.0f);
-                        vertices[9].tex = glm::vec2(1.0f, 1.0f);
-                        vertices[10].tex = glm::vec2(0.0f, 1.0f);
-                        vertices[11].tex = glm::vec2(0.0f, 0.0f);
+                        vertices[8].TexCoord = glm::vec2(1.0f, 0.0f);
+                        vertices[9].TexCoord = glm::vec2(1.0f, 1.0f);
+                        vertices[10].TexCoord = glm::vec2(0.0f, 1.0f);
+                        vertices[11].TexCoord = glm::vec2(0.0f, 0.0f);
 
-                        vertices[12].tex = glm::vec2(0.0f, 0.0f);
-                        vertices[13].tex = glm::vec2(1.0f, 0.0f);
-                        vertices[14].tex = glm::vec2(1.0f, 1.0f);
-                        vertices[15].tex = glm::vec2(0.0f, 1.0f);
+                        vertices[12].TexCoord = glm::vec2(0.0f, 0.0f);
+                        vertices[13].TexCoord = glm::vec2(1.0f, 0.0f);
+                        vertices[14].TexCoord = glm::vec2(1.0f, 1.0f);
+                        vertices[15].TexCoord = glm::vec2(0.0f, 1.0f);
 
-                        vertices[16].tex = glm::vec2(0.0f, 0.0f);
-                        vertices[17].tex = glm::vec2(1.0f, 0.0f);
-                        vertices[18].tex = glm::vec2(1.0f, 1.0f);
-                        vertices[19].tex = glm::vec2(0.0f, 1.0f);
+                        vertices[16].TexCoord = glm::vec2(0.0f, 0.0f);
+                        vertices[17].TexCoord = glm::vec2(1.0f, 0.0f);
+                        vertices[18].TexCoord = glm::vec2(1.0f, 1.0f);
+                        vertices[19].TexCoord = glm::vec2(0.0f, 1.0f);
 
-                        vertices[20].tex = glm::vec2(1.0f, 1.0f);
-                        vertices[21].tex = glm::vec2(0.0f, 1.0f);
-                        vertices[22].tex = glm::vec2(0.0f, 0.0f);
-                        vertices[23].tex = glm::vec2(1.0f, 0.0f);
+                        vertices[20].TexCoord = glm::vec2(1.0f, 1.0f);
+                        vertices[21].TexCoord = glm::vec2(0.0f, 1.0f);
+                        vertices[22].TexCoord = glm::vec2(0.0f, 0.0f);
+                        vertices[23].TexCoord = glm::vec2(1.0f, 0.0f);
                 }
 
                 if (bUseNormals) {
-                        vertices[0].nor = normalMat * glm::vec4(0, 0, 1, 1);
-                        vertices[1].nor = normalMat * glm::vec4(0, 0, 1, 1);
-                        vertices[2].nor = normalMat * glm::vec4(0, 0, 1, 1);
-                        vertices[3].nor = normalMat * glm::vec4(0, 0, 1, 1);
-                        vertices[4].nor = normalMat * glm::vec4(1, 0, 0, 1);
-                        vertices[5].nor = normalMat * glm::vec4(1, 0, 0, 1);
-                        vertices[6].nor = normalMat * glm::vec4(1, 0, 0, 1);
-                        vertices[7].nor = normalMat * glm::vec4(1, 0, 0, 1);
-                        vertices[8].nor = normalMat * glm::vec4(0, 1, 0, 1);
-                        vertices[9].nor = normalMat * glm::vec4(0, 1, 0, 1);
-                        vertices[10].nor = normalMat * glm::vec4(0, 1, 0, 1);
-                        vertices[11].nor = normalMat * glm::vec4(0, 1, 0, 1);
-                        vertices[12].nor = normalMat * glm::vec4(-1, 0, 0, 1);
-                        vertices[13].nor = normalMat * glm::vec4(-1, 0, 0, 1);
-                        vertices[14].nor = normalMat * glm::vec4(-1, 0, 0, 1);
-                        vertices[15].nor = normalMat * glm::vec4(-1, 0, 0, 1);
-                        vertices[16].nor = normalMat * glm::vec4(0, -1, 0, 1);
-                        vertices[17].nor = normalMat * glm::vec4(0, -1, 0, 1);
-                        vertices[18].nor = normalMat * glm::vec4(0, -1, 0, 1);
-                        vertices[19].nor = normalMat * glm::vec4(0, -1, 0, 1);
-                        vertices[20].nor = normalMat * glm::vec4(0, 0, -1, 1);
-                        vertices[21].nor = normalMat * glm::vec4(0, 0, -1, 1);
-                        vertices[22].nor = normalMat * glm::vec4(0, 0, -1, 1);
-                        vertices[23].nor = normalMat * glm::vec4(0, 0, -1, 1);
+                        vertices[0].Normal = normalMat * glm::vec4(0, 0, 1, 1);
+                        vertices[1].Normal = normalMat * glm::vec4(0, 0, 1, 1);
+                        vertices[2].Normal = normalMat * glm::vec4(0, 0, 1, 1);
+                        vertices[3].Normal = normalMat * glm::vec4(0, 0, 1, 1);
+                        vertices[4].Normal = normalMat * glm::vec4(1, 0, 0, 1);
+                        vertices[5].Normal = normalMat * glm::vec4(1, 0, 0, 1);
+                        vertices[6].Normal = normalMat * glm::vec4(1, 0, 0, 1);
+                        vertices[7].Normal = normalMat * glm::vec4(1, 0, 0, 1);
+                        vertices[8].Normal = normalMat * glm::vec4(0, 1, 0, 1);
+                        vertices[9].Normal = normalMat * glm::vec4(0, 1, 0, 1);
+                        vertices[10].Normal = normalMat * glm::vec4(0, 1, 0, 1);
+                        vertices[11].Normal = normalMat * glm::vec4(0, 1, 0, 1);
+                        vertices[12].Normal = normalMat * glm::vec4(-1, 0, 0, 1);
+                        vertices[13].Normal = normalMat * glm::vec4(-1, 0, 0, 1);
+                        vertices[14].Normal = normalMat * glm::vec4(-1, 0, 0, 1);
+                        vertices[15].Normal = normalMat * glm::vec4(-1, 0, 0, 1);
+                        vertices[16].Normal = normalMat * glm::vec4(0, -1, 0, 1);
+                        vertices[17].Normal = normalMat * glm::vec4(0, -1, 0, 1);
+                        vertices[18].Normal = normalMat * glm::vec4(0, -1, 0, 1);
+                        vertices[19].Normal = normalMat * glm::vec4(0, -1, 0, 1);
+                        vertices[20].Normal = normalMat * glm::vec4(0, 0, -1, 1);
+                        vertices[21].Normal = normalMat * glm::vec4(0, 0, -1, 1);
+                        vertices[22].Normal = normalMat * glm::vec4(0, 0, -1, 1);
+                        vertices[23].Normal = normalMat * glm::vec4(0, 0, -1, 1);
                 }
 
                 indices = {

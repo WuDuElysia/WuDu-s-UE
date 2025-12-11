@@ -5,9 +5,13 @@
 
 namespace WuDu {
         struct AdVertex {
-                glm::vec3 pos;
-                glm::vec2 tex;
-                glm::vec3 nor;
+                glm::vec3 Position;
+                glm::vec2 TexCoord;
+                glm::vec3 Normal;
+                //ÇÐÏß
+                glm::vec3 Tangent;
+                //¸±ÇÐÏß
+                glm::vec3 Bitangent;
         };
 
         class AdGeometryUtil {
