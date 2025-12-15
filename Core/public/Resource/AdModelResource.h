@@ -52,7 +52,7 @@ namespace WuDu {
 	private:
 		std::vector<ModelMesh> mMeshs;
 		std::vector<ModelMaterial> mMaterials;
-		std::shared_ptr<AdVKDevice>
+		std::shared_ptr<AdVKDevice> mDevice;
 
 	};
 

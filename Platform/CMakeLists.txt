@@ -58,10 +58,10 @@ set(ASSIMP_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External/assimp/lib")
 
 # 根据编译类型选择库名称和子目录
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(ASSIMP_LIB_NAME "assimp-vc145-mtd")
+    set(ASSIMP_LIB_NAME "assimp-vc143-mtd")
     set(ASSIMP_LIB_SUBDIR "Debug")
 else()
-    set(ASSIMP_LIB_NAME "assimp-vc145-mt")
+    set(ASSIMP_LIB_NAME "assimp-vc143-mt")
     set(ASSIMP_LIB_SUBDIR "Release")
 endif()
 
@@ -72,7 +72,7 @@ if(NOT ASSIMP_LIBRARY)
 endif()
 
 # 链接Assimp库
-target_include_directories(WuDu_platform PRIVATE ${ASSIMP_INCLUDE_DIR})
+target_include_directories(WuDu_platform PUBLIC ${ASSIMP_INCLUDE_DIR})
 target_link_libraries(WuDu_platform PRIVATE ${ASSIMP_LIBRARY})
 # 确保使用正确的 Vulkan 路径
 if(DEFINED ENV{VULKAN_SDK})
