@@ -1,5 +1,6 @@
-#pragma
+#pragma once
 #include "Resource/AdModelResource.h"
+#include "AdEngine.h"
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -13,18 +14,18 @@ namespace WuDu {
 								std::vector<ModelMaterial>& materials);
 
 	private:
-		//处理assimp节点
+		//澶勭悊assimp鑺傜偣
 		static void ProcessNode(aiNode* node,
 							const aiScene* scene,
 							std::vector<ModelMesh>& meshes,
 							std::vector<ModelMaterial>& materials);
 
-		//处理单个网格 提取顶点数据
+		//澶勭悊鍗曚釜缃戞牸 鎻愬彇椤剁偣鏁版嵁
 		static ModelMesh ProcessMesh(aiMesh* mesh,
 			const aiScene* scene,
 			const std::vector<ModelMaterial>& materials);
 
-		//处理材质
+		//澶勭悊鏉愯川
 		static void ProcessMaterials(const aiScene* scene,
 			std::vector<ModelMaterial>& materials);
 

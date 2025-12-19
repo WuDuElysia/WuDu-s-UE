@@ -116,8 +116,15 @@ struct ModelMaterial {
     glm::vec3 BaseColor;
     float Metallic;
     float Roughness;
+    float AO;
+    float Alpha;             // 透明度
+    glm::vec3 EmissiveColor; // 自发光颜色
+    float EmissiveStrength;  // 自发光强度
+    float Anisotropy;        // 各向异性因子(0.0=无各向异性, 1.0=完全各向异性)
+    glm::vec3 AnisotropyDirection; // 各向异性方向
     std::string BaseColorTexturePath;
     std::string NormalTexturePath;
+    std::string MetallicRoughnessTexturePath;
 };
 
 // 模型网格结构
@@ -274,27 +281,124 @@ private:
             aiMaterial* material = scene->mMaterials[i];
             ModelMaterial mat;
             
-            // 提取基础颜色
-            aiColor3D color(0.0f, 0.0f, 0.0f);
-            if (material->Get(AI_MATKEY_COLOR_DIFFUSE, color) == AI_SUCCESS) {
-                mat.BaseColor = glm::vec3(color.r, color.g, color.b);
+            // 提取PBR基础颜色
+            aiColor3D baseColor(0.0f, 0.0f, 0.0f);
+            if (material->Get(AI_MATKEY_COLOR_DIFFUSE, baseColor) == AI_SUCCESS) {
+                mat.BaseColor = glm::vec3(baseColor.r, baseColor.g, baseColor.b);
             } else {
-                mat.BaseColor = glm::vec3(1.0f, 1.0f, 1.0f);
+                mat.BaseColor = glm::vec3(1.0f, 1.0f, 1.0f);  // 默认白色
             }
             
-            // 提取金属度和粗糙度
-            mat.Metallic = 0.0f;
-            mat.Roughness = 0.5f;
+            // 提取透明度
+            float alpha = 1.0f;
+            if (material->Get(AI_MATKEY_OPACITY, alpha) == AI_SUCCESS) {
+                mat.Alpha = alpha;
+            } else {
+                mat.Alpha = 1.0f;  // 默认完全不透明
+            }
             
-            // 提取纹理路径
+            // 提取自发光颜色
+            aiColor3D emissiveColor(0.0f, 0.0f, 0.0f);
+            if (material->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor) == AI_SUCCESS) {
+                mat.EmissiveColor = glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b);
+            } else {
+                mat.EmissiveColor = glm::vec3(0.0f, 0.0f, 0.0f);  // 默认不发光
+            }
+            
+            // 提取PBR金属度
+            float metallic = 0.0f;
+            if (material->Get(AI_MATKEY_METALLIC_FACTOR, metallic) == AI_SUCCESS) {
+                mat.Metallic = metallic;
+            } else if (material->Get("$mat.metallic", 0, 0, metallic) == AI_SUCCESS) {
+                mat.Metallic = metallic;
+            } else {
+                mat.Metallic = 0.0f;      // 默认非金属
+            }
+            
+            // 提取PBR粗糙度
+            float roughness = 0.5f;
+            if (material->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughness) == AI_SUCCESS) {
+                mat.Roughness = roughness;
+            } else if (material->Get("$mat.roughness", 0, 0, roughness) == AI_SUCCESS) {
+                mat.Roughness = roughness;
+            } else {
+                mat.Roughness = 0.5f;     // 默认中等粗糙度
+            }
+            
+            // 提取环境光遮蔽
+            float ao = 1.0f;
+            if (material->Get(AI_MATKEY_OCCLUSION_STRENGTH, ao) == AI_SUCCESS) {
+                mat.AO = ao;
+            } else if (material->Get("$mat.aoStrength", 0, 0, ao) == AI_SUCCESS) {
+                mat.AO = ao;
+            } else {
+                mat.AO = 1.0f;            // 默认完全环境光遮蔽
+            }
+            
+            // 设置各向异性默认值
+            // 说明: 各向异性属性通常不在模型文件中定义，需要用户手动调整
+            // 各向异性因子: 0.0表示无各向异性，1.0表示完全各向异性
+            // 各向异性方向: 定义了材料表面的方向，影响高光的形状
+            mat.Anisotropy = 0.0f;           // 默认无各向异性
+            mat.AnisotropyDirection = glm::vec3(1.0f, 0.0f, 0.0f); // 默认各向异性方向
+            
+            // 提取自发光强度
+            float emissiveStrength = 1.0f;
+            // 尝试从自发光颜色的强度推断，或直接提取
+            aiColor3D emissive;            
+            if (material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive) == AI_SUCCESS) {
+                emissiveStrength = glm::length(glm::vec3(emissive.r, emissive.g, emissive.b));
+            } else if (material->Get("$mat.emissiveStrength", 0, 0, emissiveStrength) == AI_SUCCESS) {
+                // 某些格式可能有专门的自发光强度属性
+            }
+            mat.EmissiveStrength = emissiveStrength;
+            
+
+            
+            // 提取PBR纹理路径
             aiString texturePath;
+            
+            // 设置基础颜色纹理
             if (material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath) == AI_SUCCESS) {
                 mat.BaseColorTexturePath = texturePath.C_Str();
             }
             
+            // 设置法线纹理
             if (material->GetTexture(aiTextureType_NORMALS, 0, &texturePath) == AI_SUCCESS) {
                 mat.NormalTexturePath = texturePath.C_Str();
             }
+            
+            // 设置金属度纹理
+            if (material->GetTexture(aiTextureType_METALNESS, 0, &texturePath) == AI_SUCCESS) {
+                mat.MetallicTexturePath = texturePath.C_Str();
+            }
+            
+            // 设置粗糙度纹理
+            if (material->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &texturePath) == AI_SUCCESS) {
+                mat.RoughnessTexturePath = texturePath.C_Str();
+            }
+            
+            // 设置环境光遮蔽纹理
+            if (material->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &texturePath) == AI_SUCCESS) {
+                mat.AOTexturePath = texturePath.C_Str();
+            }
+            
+
+            
+            // 设置透明度贴图
+            if (material->GetTexture(aiTextureType_OPACITY, 0, &texturePath) == AI_SUCCESS) {
+                mat.AlphaTexturePath = texturePath.C_Str();
+            }
+            
+            // 设置自发光纹理
+            if (material->GetTexture(aiTextureType_EMISSIVE, 0, &texturePath) == AI_SUCCESS) {
+                mat.EmissiveTexturePath = texturePath.C_Str();
+            }
+        
+        // 设置法线纹理
+        if (material->GetTexture(aiTextureType_NORMALS, 0, &texturePath) == AI_SUCCESS) {
+            mat.NormalTexturePath = texturePath.C_Str();
+        }
             
             materials.push_back(mat);
         }

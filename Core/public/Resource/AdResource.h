@@ -7,7 +7,7 @@
 
 namespace WuDu {
 
-        //添加状态
+
         enum class ResourceState {
                 Unloaded,
                 Loading,
@@ -15,7 +15,7 @@ namespace WuDu {
                 Failed
         };
 
-        //UUID类型定义
+
         typedef std::string UUID;
 
         inline UUID CreateUUID() {
@@ -50,20 +50,20 @@ namespace WuDu {
                 return ss.str();
         }
 
-        //查找方式
+
         enum class ResourceIdType {
                 path,
                 UUID
         };
-        //资源基础类
+
         class AdResource {
         public:
                 AdResource(const std::string& resourcePath) :mPath(resourcePath), mUUID(CreateUUID()), mState(ResourceState::Unloaded), mRefCount(0) {}
-                virtual ~AdResource();
+                virtual ~AdResource() = default;
 
                 virtual bool Load() = 0;
                 virtual void Unload() = 0;
-                virtual bool Reload();
+                //virtual bool Reload();
 
                 const std::string& GetPath() const { return mPath; }
                 ResourceState GetState() const { return mState; }

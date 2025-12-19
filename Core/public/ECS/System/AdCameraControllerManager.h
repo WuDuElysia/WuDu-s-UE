@@ -70,14 +70,14 @@ namespace WuDu {
 		}
 
 		void HandleMouseClick(WuDu::MouseClickEvent& event) {
-			if (event.GetButton() == GLFW_MOUSE_BUTTON_LEFT) {
+			if (event.GetButton() == GLFW_MOUSE_BUTTON_RIGHT) {
 				m_MouseDragging = true;
 				m_LastMousePos = event.GetPosition();  // 这里设置起点
 			}
 		}
 
 		void HandleMouseRelease(WuDu::MouseReleaseEvent& event) {
-			if (event.GetButton() == GLFW_MOUSE_BUTTON_LEFT) {
+			if (event.GetButton() == GLFW_MOUSE_BUTTON_RIGHT) {
 				m_MouseDragging = false;
 			}
 		}
@@ -112,6 +112,8 @@ namespace WuDu {
 				case GLFW_KEY_S: fpCamera.SetMoveBackward(true); break;
 				case GLFW_KEY_A: fpCamera.SetMoveLeft(true); break;
 				case GLFW_KEY_D: fpCamera.SetMoveRight(true); break;
+				case GLFW_KEY_Q: fpCamera.SetMoveDown(true); break;
+				case GLFW_KEY_E: fpCamera.SetMoveUp(true); break;
 				}
 			}
 
@@ -128,6 +130,8 @@ namespace WuDu {
 				case GLFW_KEY_S: fpCamera.SetMoveBackward(false); break;
 				case GLFW_KEY_A: fpCamera.SetMoveLeft(false); break;
 				case GLFW_KEY_D: fpCamera.SetMoveRight(false); break;
+				case GLFW_KEY_Q: fpCamera.SetMoveDown(false); break;
+				case GLFW_KEY_E: fpCamera.SetMoveUp(false); break;
 				}
 			}
 

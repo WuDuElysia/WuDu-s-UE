@@ -32,6 +32,8 @@ namespace WuDu {
 		bool mMoveBackward = false;
 		bool mMoveLeft = false;
 		bool mMoveRight = false;
+		bool mMoveUp = false;
+		bool mMoveDown = false;
 
 		float mRadius{ 4.f };
 
@@ -64,6 +66,8 @@ namespace WuDu {
 		void SetMoveBackward(bool pressed) { mMoveBackward = pressed; }
 		void SetMoveLeft(bool pressed) { mMoveLeft = pressed; }
 		void SetMoveRight(bool pressed) { mMoveRight = pressed; }
+		void SetMoveUp(bool pressed) { mMoveUp = pressed; }	//E
+		void SetMoveDown(bool pressed) { mMoveDown = pressed; }	//Q
 
 
 		// ¸üÐÂ

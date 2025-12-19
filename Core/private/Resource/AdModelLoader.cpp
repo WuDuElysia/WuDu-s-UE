@@ -1,5 +1,6 @@
 #include "Resource/AdModelLoader.h"
 
+
 namespace WuDu {
 
 	bool AdModelLoader::LoadModel(const std::string& filePath,
@@ -7,16 +8,16 @@ namespace WuDu {
 								std::vector<ModelMaterial>& materials) {
 		Assimp::Importer importer;
 
-		//ÉèÖÃAssimpµ¼ÈëÑ¡Ïî
+		//è®¾ç½®Assimpå¯¼å…¥é€‰é¡¹
 		unsigned int importFlags =
-			aiProcess_Triangulate |			//½«ËùÓĞÍ¼Ôª×ª»»ÎªÈı½ÇĞÎ
-			aiProcess_FlipUVs |				//·´×ªÎÆÀí×ø±êyÖá
-			aiProcess_CalcTangentSpace |		//¼ÆËãÇĞÏßºÍ¸±ÇĞÏß
-			aiProcess_GenSmoothNormals |	//Éú³ÉÆ½»¬·¢ÏÖ
-			aiProcess_JoinIdenticalVertices |	//ºÏ²¢ÏàÍ¬¶¥µã
-			aiProcess_OptimizeMeshes;			//ÓÅ»¯Íø¸ñ
+			aiProcess_Triangulate |			//å°†æ‰€æœ‰å›¾å…ƒè½¬æ¢ä¸ºä¸‰è§’å½¢
+			aiProcess_FlipUVs |				//åè½¬çº¹ç†åæ ‡yè½´
+			aiProcess_CalcTangentSpace |		//è®¡ç®—åˆ‡çº¿å’Œå‰¯åˆ‡çº¿
+			aiProcess_GenSmoothNormals |	//ç”Ÿæˆå¹³æ»‘å‘ç°
+			aiProcess_JoinIdenticalVertices |	//åˆå¹¶ç›¸åŒé¡¶ç‚¹
+			aiProcess_OptimizeMeshes;			//ä¼˜åŒ–ç½‘æ ¼
 
-		//µ¼ÈëÄ£ĞÍ
+		//å¯¼å…¥æ¨¡å‹
 		const aiScene* scene = importer.ReadFile(filePath,importFlags);
 
 		if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) {
@@ -24,10 +25,10 @@ namespace WuDu {
 			return false;
 		}
 
-		//´¦Àí²ÄÖÊ
+		//å¤„ç†æè´¨
 		ProcessMaterials(scene,materials);
 
-		//µİ¹é´¦ÀíËùÓĞ½Úµã
+		//é€’å½’å¤„ç†æ‰€æœ‰èŠ‚ç‚¹
 		ProcessNode(scene->mRootNode, scene, meshes, materials);
 
 		return true;
@@ -36,34 +37,34 @@ namespace WuDu {
 	void AdModelLoader::ProcessNode(aiNode* node, const aiScene* scene,
 		std::vector<ModelMesh>& meshes,
 		std::vector<ModelMaterial>& materials) {
-		//´¦Àíµ±Ç°½ÚµãµÄËùÓĞÍø¸ñ
+		//å¤„ç†å½“å‰èŠ‚ç‚¹çš„æ‰€æœ‰ç½‘æ ¼
 		for (unsigned int i = 0; i < node->mNumMeshes; i++) {
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			meshes.push_back(ProcessMesh(mesh, scene, materials));
 		}
 
-		//µİ¹é´¦Àí×Ó½Úµã
+		//é€’å½’å¤„ç†å­èŠ‚ç‚¹
 		for (unsigned int i = 0; i < node->mNumChildren; i++) {
 			ProcessNode(node->mChildren[i], scene, meshes, materials);
 		}
 	}
 
-	//´¦Àíµ¥¸öÍø¸ñ ÌáÈ¡¶¥µãÊı¾İ
-	ModelMesh ProcessMesh(aiMesh* mesh, const aiScene* scene,
+	//å¤„ç†å•ä¸ªç½‘æ ¼ æå–é¡¶ç‚¹æ•°æ®
+	ModelMesh AdModelLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene,
 						const std::vector<ModelMaterial>& materials) {
 		ModelMesh result;
 		result.MaterialIndex = mesh->mMaterialIndex;
 
-		//ÌáÈ¡¶¥µãÊı¾İ
+		//æå–é¡¶ç‚¹æ•°æ®
 		for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
 			ModelVertex vertex;
 
-			// ÌáÈ¡Î»ÖÃ
+			// æå–ä½ç½®
 			vertex.Position.x = mesh->mVertices[i].x;
 			vertex.Position.y = mesh->mVertices[i].y;
 			vertex.Position.z = mesh->mVertices[i].z;
 
-			// ÌáÈ¡ÎÆÀí×ø±ê£¨Èç¹û´æÔÚ£©
+			// æå–çº¹ç†åæ ‡ï¼ˆå¦‚æœå­˜åœ¨ï¼‰
 			if (mesh->mTextureCoords[0]) {
 				vertex.TexCoord.x = mesh->mTextureCoords[0][i].x;
 				vertex.TexCoord.y = mesh->mTextureCoords[0][i].y;
@@ -72,12 +73,12 @@ namespace WuDu {
 				vertex.TexCoord = glm::vec2(0.0f, 0.0f);
 			}
 
-			// ÌáÈ¡·¨Ïß
+			// æå–æ³•çº¿
 			vertex.Normal.x = mesh->mNormals[i].x;
 			vertex.Normal.y = mesh->mNormals[i].y;
 			vertex.Normal.z = mesh->mNormals[i].z;
 
-			// ÌáÈ¡ÇĞÏßºÍ¸±ÇĞÏß£¨Èç¹û´æÔÚ£©
+			// æå–åˆ‡çº¿å’Œå‰¯åˆ‡çº¿ï¼ˆå¦‚æœå­˜åœ¨ï¼‰
 			if (mesh->mTangents && mesh->mBitangents) {
 				vertex.Tangent.x = mesh->mTangents[i].x;
 				vertex.Tangent.y = mesh->mTangents[i].y;
@@ -89,6 +90,137 @@ namespace WuDu {
 			}
 
 			result.Vertices.push_back(vertex);
+		}
+
+		//æå–ç´¢å¼•æ•°æ®
+		for (unsigned int i = 0; i < mesh->mNumFaces; i++) {
+			aiFace face = mesh->mFaces[i];
+			for (unsigned int j = 0; j < face.mNumIndices; j++) {
+				result.Indices.push_back(face.mIndices[j]);
+			}
+		}
+
+		return result;
+	}
+
+	//å¤„ç†æè´¨
+	void AdModelLoader::ProcessMaterials(const aiScene* scene,
+							std::vector<ModelMaterial>& materials) {
+		materials.reserve(scene->mNumMaterials);
+
+		for (unsigned int i = 0; i < scene->mNumMaterials; i++) {
+			aiMaterial* material = scene->mMaterials[i];
+			ModelMaterial mat;
+
+			//æå–PBRåŸºç¡€é¢œè‰²
+			aiColor3D color(0.0f, 0.0f, 0.0f);
+			if (material->Get(AI_MATKEY_BASE_COLOR, color) == AI_SUCCESS) {
+				mat.BaseColor = glm::vec3(color.r, color.g, color.b);
+			} else {
+				mat.BaseColor = glm::vec3(1.0f, 1.0f, 1.0f);
+			}
+
+			//æå–é€æ˜åº¦
+			float alpha = 1.0f;
+			if (material->Get(AI_MATKEY_OPACITY, alpha) == AI_SUCCESS) {
+				mat.Alpha = alpha;
+			} else {
+				mat.Alpha = 1.0f;
+			}
+
+			//æå–è‡ªå‘å…‰é¢œè‰²
+			aiColor3D emissiveColor(0.0f, 0.0f, 0.0f);
+			if (material->Get(AI_MATKEY_COLOR_EMISSIVE, emissiveColor) == AI_SUCCESS) {
+				mat.EmissiveColor = glm::vec3(emissiveColor.r, emissiveColor.g, emissiveColor.b);
+			} else {
+				mat.EmissiveColor = glm::vec3(0.0f, 0.0f, 0.0f);
+			}
+
+			//æå–PBRé‡‘å±åº¦
+			float metallic = 0.0f;
+			if (material->Get(AI_MATKEY_METALLIC_FACTOR, metallic) == AI_SUCCESS) {
+				mat.Metallic = metallic;
+			} else if (material->Get("$mat.metallic", 0, 0, metallic) == AI_SUCCESS) {
+				mat.Metallic = metallic;
+			} else {
+				mat.Metallic = 0.0f;
+			}
+			
+			//æå–PBRç²—ç³™åº¦
+			float roughness = 0.5f;
+			if (material->Get(AI_MATKEY_ROUGHNESS_FACTOR, roughness) == AI_SUCCESS) {
+				mat.Roughness = roughness;
+			} else if (material->Get("$mat.roughness", 0, 0, roughness) == AI_SUCCESS) {
+				mat.Roughness = roughness;
+			} else {
+				mat.Roughness = 0.0f;
+			}
+			
+			//æå–ç¯å¢ƒå…‰é®è”½
+			float ao = 1.0f;
+			mat.AO = ao;
+			
+			//æå–è‡ªå‘å…‰å¼ºåº¦
+			float emissiveStrength = 1.0f;
+
+			aiColor3D emissive;
+			if (material->Get(AI_MATKEY_COLOR_EMISSIVE, emissive) == AI_SUCCESS) {
+				emissiveStrength = glm::length(glm::vec3(emissive.r, emissive.g, emissive.b));
+			}
+			mat.EmissiveStrength = emissiveStrength;
+			
+			//è®¾ç½®å„å‘å¼‚æ€§é»˜è®¤å€¼
+			mat.Anisotropy = 0.0f;           // é»˜è®¤æ— å„å‘å¼‚æ€§
+			mat.AnisotropyDirection = glm::vec3(1.0f, 0.0f, 0.0f); // é»˜è®¤å„å‘å¼‚æ€§æ–¹å‘
+			
+
+
+			//æå–PBRçº¹ç†è·¯å¾„
+			aiString texturePath;
+			
+			//åŸºç¡€é¢œè‰²çº¹ç†
+			if (material->GetTexture(aiTextureType_BASE_COLOR, 0, &texturePath) == AI_SUCCESS) {
+				mat.BaseColorTexturePath = texturePath.C_Str();
+			}
+
+			//æ³•çº¿çº¹ç†
+			if (material->GetTexture(aiTextureType_NORMALS, 0, &texturePath) == AI_SUCCESS) {
+				mat.NormalTexturePath = texturePath.C_Str();
+			}
+
+			//é‡‘å±åº¦çº¹ç†
+			if (material->GetTexture(aiTextureType_METALNESS, 0, &texturePath) == AI_SUCCESS) {
+				mat.MetallicTexturePath = texturePath.C_Str();
+			}
+
+			//ç²—ç³™åº¦çº¹ç†
+			if (material->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &texturePath) == AI_SUCCESS) {
+				mat.RoughnessTexturePath = texturePath.C_Str();
+			} else if (material->GetTexture(aiTextureType_SHININESS, 0, &texturePath) == AI_SUCCESS) {
+				// ä½¿ç”¨å…‰æ³½åº¦çº¹ç†ä½œä¸ºç²—ç³™åº¦çº¹ç†çš„å›é€€
+				mat.RoughnessTexturePath = texturePath.C_Str();
+			}
+
+			//ç¯å¢ƒå…‰é®è”½çº¹ç†
+			if (material->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &texturePath) == AI_SUCCESS) {
+				mat.AOTexturePath = texturePath.C_Str();
+			}
+
+
+
+			//é€æ˜åº¦è´´å›¾
+			if (material->GetTexture(aiTextureType_OPACITY, 0, &texturePath) == AI_SUCCESS) {
+				mat.AlphaTexturePath = texturePath.C_Str();
+			}
+
+			//è‡ªå‘å…‰çº¹ç†
+			if (material->GetTexture(aiTextureType_EMISSIVE, 0, &texturePath) == AI_SUCCESS) {
+				mat.EmissiveTexturePath = texturePath.C_Str();
+			}
+
+
+			materials.push_back(mat);
+
 		}
 	}
 }

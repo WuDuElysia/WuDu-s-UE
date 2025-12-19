@@ -50,6 +50,7 @@ namespace WuDu {
 			mNearPlane,
 			mFarPlane
 		);
+		mProjMat[1][1] *= -1.0f;
 		mProjMatDirty = false;
 	}
 
@@ -86,7 +87,7 @@ namespace WuDu {
 
 	void AdFirstPersonCameraComponent::OnMouseMove(float deltaX, float deltaY) {
 		mYaw += deltaX * mSensitivity;
-		mPitch += deltaY * mSensitivity;
+		mPitch -= deltaY * mSensitivity;
 
 		// 限制俯仰角
 		if (mPitch > 89.0f) mPitch = 89.0f;
@@ -115,7 +116,10 @@ namespace WuDu {
 		front.z = sin(glm::radians(mYaw)) * cos(glm::radians(mPitch));
 		front = glm::normalize(front);
 
-		glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
+		glm::vec3 worldUp(0.0f, 1.0f, 0.0f);
+		glm::vec3 right = glm::normalize(glm::cross(front, worldUp));
+
+		glm::vec3 up = glm::normalize(glm::cross(right, front));
 
 		// 根据按键状态移动相机
 		float velocity = mMoveSpeed * deltaTime;
@@ -131,6 +135,12 @@ namespace WuDu {
 		}
 		if (mMoveRight) {
 			transComp.position += right * velocity;
+		}
+		if (mMoveUp) {
+			transComp.position += up * velocity;
+		}
+		if (mMoveDown) {
+			transComp.position -= up * velocity;
 		}
 
 		mViewMatDirty = true;

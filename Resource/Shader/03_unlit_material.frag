@@ -45,7 +45,7 @@ void main(){
 
     if(materialUbo.textureParam0.enable){
         TextureParam param = materialUbo.textureParam0;
-        param.uvTransform.w = -frameUbo.time;
+//        param.uvTransform.w = -frameUbo.time;
         color0 = texture(texture0, getTextureUV(param, v_Texcoord)).rgb;
     }
 

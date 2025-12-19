@@ -18,6 +18,7 @@
 #include "Gui/AdGuiSystem.h"
 #include "AdTimeStep.h"
 #include "AdLog.h"
+#include "Resource/AdModelResource.h"
 
 
 /**
@@ -115,9 +116,25 @@ protected:
 		WuDu::AdGeometryUtil::CreateCube(-0.3f, 0.3f, -0.3f, 0.3f, -0.3f, 0.3f, vertices, indices);
 		mCubeMesh = std::make_shared<WuDu::AdMesh>(vertices, indices);
 
+		//加载模型
+		std::shared_ptr<WuDu::AdModelResource> model = std::make_shared<WuDu::AdModelResource>(AD_RES_MODEL_DIR"MiG-29.obj");
+		std::vector<WuDu::ModelVertex> Vertices;
+		std::vector<uint32_t> Indices;
+		if (model->Load()) {
+			const std::vector<WuDu::ModelMesh>& meshes = model->GetMeshes();
+
+			//处理每个网格
+			/*for (const auto& mesh : meshes) {
+				
+			}*/
+			Vertices = meshes[0].Vertices;
+			Indices = meshes[0].Indices;
+		}
+		mModelMesh = std::make_shared<WuDu::AdMesh>(Vertices, Indices);
+
 		// 创建材质
 		mBaseMaterial = std::shared_ptr<WuDu::AdUnlitMaterial>(WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdUnlitMaterial>());
-		mTexture0 = std::make_shared<WuDu::AdTexture>(AD_RES_TEXTURE_DIR"awesomeface.png");
+		mTexture0 = std::make_shared<WuDu::AdTexture>(AD_RES_TEXTURE_DIR"R-C.jpeg");
 
 		WuDu::AdSampler::Settings samplerSettings{};
 		samplerSettings.minFilter = VK_FILTER_LINEAR;
@@ -209,6 +226,24 @@ protected:
 			transComp.position = { 0.f, 1.f, -1.0f };
 			transComp.rotation = { 17.f, 30.f, 0.f };
 		}
+		{
+			mCubes.emplace_back(scene->CreateEntity("Phainon"));
+			auto& materialComp = mCubes[4]->AddComponent<WuDu::AdUnlitMaterialComponent>();
+			materialComp.AddMesh(mModelMesh.get(), mBaseMaterial.get());
+			auto& transComp = mCubes[4]->GetComponent<WuDu::AdTransformComponent>();
+			transComp.scale = { 1.f, 1.f, 1.f };
+			transComp.position = { 0.f, 0.f, 0.0f };
+			transComp.rotation = { 0.f, 0.f, 0.f };
+		}
+		/*{
+			mCubes.emplace_back(scene->CreateEntity("Phainon"));
+			auto& materialComp = mCubes[5]->AddComponent<WuDu::AdUnlitMaterialComponent>();
+			materialComp.AddMesh(mModelMesh.get(), mBaseMaterial.get());
+			auto& transComp = mCubes[5]->GetComponent<WuDu::AdTransformComponent>();
+			transComp.scale = { 1.f, 1.f, 1.f };
+			transComp.position = { 0.f, 0.f, 0.0f };
+			transComp.rotation = { 0.f, 0.f, 0.f };
+		}*/
 	}
 
 	void OnUpdate(float deltaTime) override {
@@ -344,6 +379,7 @@ private:
 
 	std::vector<VkCommandBuffer> mCmdBuffers;               ///< 命令缓冲区数组
 	std::shared_ptr<WuDu::AdMesh> mCubeMesh;                 ///< 立方体网格对象
+	std::shared_ptr<WuDu::AdMesh> mModelMesh;
 	std::vector<WuDu::AdEntity*> mCubes;
 
 	std::unique_ptr<WuDu::AdCameraControllerManager> m_CameraController;  ///< 相机控制器管理器
