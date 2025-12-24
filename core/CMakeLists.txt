@@ -24,7 +24,7 @@ add_library(WuDu_core
 	 "private/Gui/AdGuiManager.cpp"
 	 "private/Gui/AdGuiEventHandler.cpp"
 	 "private/Resource/AdModelLoader.cpp" 
-	 "private/Resource/AdModelResource.cpp")
+	 "private/Resource/AdModelResource.cpp" "private/ECS/System/AdPBRMaterialSystem.cpp" "public/ECS/System/AdPBRMaterialSystem.h" "public/ECS/Component/Material/AdPBRMaterialComponent.h")
 
 target_include_directories(WuDu_core PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/public   

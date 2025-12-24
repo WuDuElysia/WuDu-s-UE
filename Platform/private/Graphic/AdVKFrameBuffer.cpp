@@ -15,26 +15,26 @@ namespace WuDu {
 	}
 
 	/**
-	* @brief ÖØĞÂ´´½¨Ö¡»º³å¶ÔÏó
-	* @param images ÓÃÓÚ´´½¨Ö¡»º³åµÄÍ¼Ïñ×ÊÔ´ÁĞ±í
-	* @param width Ö¡»º³åµÄ¿í¶È
-	* @param height Ö¡»º³åµÄ¸ß¶È
-	* @return ´´½¨³É¹¦·µ»Øtrue£¬Ê§°Ü·µ»Øfalse
+	* @brief é‡æ–°åˆ›å»ºå¸§ç¼“å†²å¯¹è±¡
+	* @param images ç”¨äºåˆ›å»ºå¸§ç¼“å†²çš„å›¾åƒèµ„æºåˆ—è¡¨
+	* @param width å¸§ç¼“å†²çš„å®½åº¦
+	* @param height å¸§ç¼“å†²çš„é«˜åº¦
+	* @return åˆ›å»ºæˆåŠŸè¿”å›trueï¼Œå¤±è´¥è¿”å›false
 	*
-	* ¸Ãº¯Êı»áÏú»ÙÔ­ÓĞµÄÖ¡»º³å¶ÔÏó£¬¸ù¾İ´«ÈëµÄÍ¼Ïñ×ÊÔ´ÖØĞÂ´´½¨ĞÂµÄÖ¡»º³å¡£
-	* Ö§³ÖÑÕÉ«¸½¼şºÍÉî¶È¸½¼şµÄ×Ô¶¯Ê¶±ğºÍ´¦Àí¡£
+	* è¯¥å‡½æ•°ä¼šé”€æ¯åŸæœ‰çš„å¸§ç¼“å†²å¯¹è±¡ï¼Œæ ¹æ®ä¼ å…¥çš„å›¾åƒèµ„æºé‡æ–°åˆ›å»ºæ–°çš„å¸§ç¼“å†²ã€‚
+	* æ”¯æŒé¢œè‰²é™„ä»¶å’Œæ·±åº¦é™„ä»¶çš„è‡ªåŠ¨è¯†åˆ«å’Œå¤„ç†ã€‚
 	*/
 	bool AdVKFrameBuffer::ReCreate(const std::vector<std::shared_ptr<AdVKImage>>& images, uint32_t width, uint32_t height) {
 		VkResult ret;
 
-		// Ïú»ÙÔ­ÓĞµÄÖ¡»º³å¶ÔÏó
+		// é”€æ¯åŸæœ‰çš„å¸§ç¼“å†²å¯¹è±¡
 		VK_D(Framebuffer, mDevice->GetHandle(), mHandle);
 
 		mWidth = width;
 		mHeight = height;
 		mImageViews.clear();
 
-		// ´´½¨¸½¼şÊÓÍ¼ÁĞ±í£¬¸ù¾İÍ¼Ïñ¸ñÊ½×Ô¶¯ÅĞ¶ÏÊÇÉî¶È¸½¼ş»¹ÊÇÑÕÉ«¸½¼ş
+		// åˆ›å»ºé™„ä»¶è§†å›¾åˆ—è¡¨ï¼Œæ ¹æ®å›¾åƒæ ¼å¼è‡ªåŠ¨åˆ¤æ–­æ˜¯æ·±åº¦é™„ä»¶è¿˜æ˜¯é¢œè‰²é™„ä»¶
 		std::vector<VkImageView> attachments(images.size());
 		for (int i = 0; i < images.size(); i++) {
 			bool isDepthFormat = IsDepthOnlyFormat(images[i]->GetFormat()); // FIXME when format is stencil format
@@ -43,7 +43,7 @@ namespace WuDu {
 			attachments[i] = mImageViews[i]->GetHandle();
 		}
 
-		// ÅäÖÃ²¢´´½¨Ö¡»º³å¶ÔÏó
+		// é…ç½®å¹¶åˆ›å»ºå¸§ç¼“å†²å¯¹è±¡
 		VkFramebufferCreateInfo frameBufferInfo = {
 			.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO,
 			.pNext = nullptr,

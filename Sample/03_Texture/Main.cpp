@@ -10,6 +10,7 @@
 #include "Graphic/AdVKCommandBuffer.h"
 #include "Graphic/AdVKDescriptorSet.h"
 #include "Graphic/AdVKImageView.h"
+#include "AdGeometryUtil.h"
 
 struct GlobalUbo {
         glm::mat4 projMat{ 1.f };
@@ -111,24 +112,36 @@ protected:
                     }
                 };
                 std::vector<VkVertexInputAttributeDescription> vertexAttrs = {
-                    {
-                        .location = 0,
-                        .binding = 0,
-                        .format = VK_FORMAT_R32G32B32_SFLOAT,
-                        .offset = offsetof(WuDu::AdVertex, pos)
-                    },
-                    {
-                        .location = 1,
-                        .binding = 0,
-                        .format = VK_FORMAT_R32G32_SFLOAT,
-                        .offset = offsetof(WuDu::AdVertex, tex)
-                    },
-                    {
-                        .location = 2,
-                        .binding = 0,
-                        .format = VK_FORMAT_R32G32B32_SFLOAT,
-                        .offset = offsetof(WuDu::AdVertex, nor)
-                    }
+                        {
+                                .location = 0,                         // 属性位置 0：顶点位置
+                                .binding = 0,                          // 来自绑定 0
+                                .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
+                                .offset = offsetof(WuDu::AdVertex, Position)      // 在 AdVertex 中的偏移
+                        },
+                        {
+                                .location = 1,                         // 属性位置 1：纹理坐标
+                                .binding = 0,
+                                .format = VK_FORMAT_R32G32_SFLOAT,     // 2个32位浮点数
+                                .offset = offsetof(WuDu::AdVertex, TexCoord)
+                        },
+                        {
+                                .location = 2,                     //法线    
+                                .binding = 0,
+                                .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
+                                .offset = offsetof(WuDu::AdVertex, Normal)
+                        },
+                        {
+                                .location = 3,                         
+                                .binding = 0,
+                                .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
+                                .offset = offsetof(WuDu::AdVertex, Tangent)
+                        },
+                        {
+                                .location = 4,                         
+                                .binding = 0,
+                                .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
+                                .offset = offsetof(WuDu::AdVertex, Bitangent)
+                        }
                 };
                 mPipeline = std::make_shared<WuDu::AdVKPipeline>(device, mRenderPass.get(), mPipelineLayout.get());
                 mPipeline->SetVertexInputState(vertexBindings, vertexAttrs);

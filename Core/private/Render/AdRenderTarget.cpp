@@ -8,30 +8,30 @@
 namespace WuDu {
 
 	/**
-	* @brief AdRenderTarget¹¹Ôìº¯Êı£¬ÓÃÓÚ´´½¨äÖÈ¾Ä¿±ê¶ÔÏó
-	* @param renderPass Ö¸ÏòVulkanäÖÈ¾Í¨µÀ¶ÔÏóµÄÖ¸Õë£¬ÓÃÓÚÖ¸¶¨äÖÈ¾Ä¿±êµÄäÖÈ¾Í¨µÀ
+	* @brief AdRenderTargetæ„é€ å‡½æ•°ï¼Œç”¨äºåˆ›å»ºæ¸²æŸ“ç›®æ ‡å¯¹è±¡
+	* @param renderPass æŒ‡å‘Vulkanæ¸²æŸ“é€šé“å¯¹è±¡çš„æŒ‡é’ˆï¼Œç”¨äºæŒ‡å®šæ¸²æŸ“ç›®æ ‡çš„æ¸²æŸ“é€šé“
 	*/
 	AdRenderTarget::AdRenderTarget(AdVKRenderPass* renderPass) {
-		// »ñÈ¡äÖÈ¾ÉÏÏÂÎÄºÍ½»»»Á´¶ÔÏó
+		// è·å–æ¸²æŸ“ä¸Šä¸‹æ–‡å’Œäº¤æ¢é“¾å¯¹è±¡
 		AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
-		// ³õÊ¼»¯äÖÈ¾Ä¿±êµÄ»ù±¾ÊôĞÔ
+		// åˆå§‹åŒ–æ¸²æŸ“ç›®æ ‡çš„åŸºæœ¬å±æ€§
 		mRenderPass = renderPass;
 		mBufferCount = swapchain->GetImages().size();
 		mExtent = { swapchain->GetWidth(), swapchain->GetHeight() };
 		bSwapchainTarget = true;
 
-		// Ö´ĞĞ³õÊ¼»¯ºÍÖØĞÂ´´½¨²Ù×÷
+		// æ‰§è¡Œåˆå§‹åŒ–å’Œé‡æ–°åˆ›å»ºæ“ä½œ
 		Init();
 		ReCreate();
 	}
 
 	/**
-	 * @brief ¹¹Ôìº¯Êı£¬ÓÃÓÚ´´½¨×Ô¶¨ÒåäÖÈ¾Ä¿±ê¶ÔÏó£¨·Ç½»»»Á´°ó¶¨£©
-	 * @param renderPass äÖÈ¾Í¨µÀ¶ÔÏóÖ¸Õë
-	 * @param bufferCount Ö¡»º³åÊıÁ¿
-	 * @param extent äÖÈ¾ÇøÓò´óĞ¡£¨¿í¸ß£©
+	 * @brief æ„é€ å‡½æ•°ï¼Œç”¨äºåˆ›å»ºè‡ªå®šä¹‰æ¸²æŸ“ç›®æ ‡å¯¹è±¡ï¼ˆéäº¤æ¢é“¾ç»‘å®šï¼‰
+	 * @param renderPass æ¸²æŸ“é€šé“å¯¹è±¡æŒ‡é’ˆ
+	 * @param bufferCount å¸§ç¼“å†²æ•°é‡
+	 * @param extent æ¸²æŸ“åŒºåŸŸå¤§å°ï¼ˆå®½é«˜ï¼‰
 	 */
 	AdRenderTarget::AdRenderTarget(AdVKRenderPass* renderPass, uint32_t bufferCount, VkExtent2D extent) :
 		mRenderPass(renderPass), mBufferCount(bufferCount), mExtent(extent), bSwapchainTarget(false) {
@@ -40,7 +40,7 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief Îö¹¹º¯Êı£¬ÊÍ·ÅËùÓĞ²ÄÖÊÏµÍ³×ÊÔ´
+	 * @brief ææ„å‡½æ•°ï¼Œé‡Šæ”¾æ‰€æœ‰æè´¨ç³»ç»Ÿèµ„æº
 	 */
 	AdRenderTarget::~AdRenderTarget() {
 		for (const auto& item : mMaterialSystemList) {
@@ -50,7 +50,7 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief ³õÊ¼»¯äÖÈ¾Ä¿±êµÄÇå³ıÖµÅäÖÃ
+	 * @brief åˆå§‹åŒ–æ¸²æŸ“ç›®æ ‡çš„æ¸…é™¤å€¼é…ç½®
 	 */
 	void AdRenderTarget::Init() {
 		mClearValues.resize(mRenderPass->GetAttachmentSize());
@@ -59,57 +59,57 @@ namespace WuDu {
 	}
 
 	/**
- * @brief ÖØĞÂ´´½¨Ö¡»º³å¼°Ïà¹ØÍ¼Ïñ×ÊÔ´
+ * @brief é‡æ–°åˆ›å»ºå¸§ç¼“å†²åŠç›¸å…³å›¾åƒèµ„æº
  * 
- * ¸Ãº¯Êı¸ù¾İµ±Ç°äÖÈ¾Ä¿±êµÄ³ß´çºÍäÖÈ¾Í¨µÀ¸½¼şÅäÖÃ£¬ÖØĞÂ´´½¨Ö¡»º³å¼°Æä¹ØÁªµÄÍ¼Ïñ×ÊÔ´¡£
- * Èç¹ûäÖÈ¾Ä¿±ê³ß´çÎª0£¬ÔòÖ±½Ó·µ»Ø²»Ö´ĞĞÈÎºÎ²Ù×÷¡£
- * ¶ÔÓÚÃ¿¸ö»º³åÇø£¬»á¸ù¾İ¸½¼şÀàĞÍ¾ö¶¨ÊÇ·ñÊ¹ÓÃ½»»»Á´Í¼Ïñ»ò´´½¨ÀëÆÁÍ¼Ïñ¡£
- * ×îÖÕÎªÃ¿¸ö»º³åÇø´´½¨¶ÔÓ¦µÄÖ¡»º³å¶ÔÏó¡£
+ * è¯¥å‡½æ•°æ ¹æ®å½“å‰æ¸²æŸ“ç›®æ ‡çš„å°ºå¯¸å’Œæ¸²æŸ“é€šé“é™„ä»¶é…ç½®ï¼Œé‡æ–°åˆ›å»ºå¸§ç¼“å†²åŠå…¶å…³è”çš„å›¾åƒèµ„æºã€‚
+ * å¦‚æœæ¸²æŸ“ç›®æ ‡å°ºå¯¸ä¸º0ï¼Œåˆ™ç›´æ¥è¿”å›ä¸æ‰§è¡Œä»»ä½•æ“ä½œã€‚
+ * å¯¹äºæ¯ä¸ªç¼“å†²åŒºï¼Œä¼šæ ¹æ®é™„ä»¶ç±»å‹å†³å®šæ˜¯å¦ä½¿ç”¨äº¤æ¢é“¾å›¾åƒæˆ–åˆ›å»ºç¦»å±å›¾åƒã€‚
+ * æœ€ç»ˆä¸ºæ¯ä¸ªç¼“å†²åŒºåˆ›å»ºå¯¹åº”çš„å¸§ç¼“å†²å¯¹è±¡ã€‚
  */
 void AdRenderTarget::ReCreate() {
-	// Èç¹û¿í¶È»ò¸ß¶ÈÎª0£¬²»½øĞĞ´´½¨²Ù×÷
+	// å¦‚æœå®½åº¦æˆ–é«˜åº¦ä¸º0ï¼Œä¸è¿›è¡Œåˆ›å»ºæ“ä½œ
 	if (mExtent.width == 0 || mExtent.height == 0) {
 		LOG_W("RenderTarget ReCreate() skipped: invalid extent {0}x{1}", mExtent.width, mExtent.height);
 		return;
 	}
 
-	// »ñÈ¡äÖÈ¾ÉÏÏÂÎÄÏà¹Ø¶ÔÏó
+	// è·å–æ¸²æŸ“ä¸Šä¸‹æ–‡ç›¸å…³å¯¹è±¡
 	AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 	AdVKDevice* device = renderCxt->GetDevice();
 	AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
-	// Èç¹ûÊÇ½»»»Á´Ä¿±ê£¬È·±£Ê¹ÓÃ×îĞÂµÄ½»»»Á´ĞÅÏ¢
+	// å¦‚æœæ˜¯äº¤æ¢é“¾ç›®æ ‡ï¼Œç¡®ä¿ä½¿ç”¨æœ€æ–°çš„äº¤æ¢é“¾ä¿¡æ¯
 	if (bSwapchainTarget) {
-		// »ñÈ¡µ±Ç°½»»»Á´µÄ×îĞÂĞÅÏ¢
+		// è·å–å½“å‰äº¤æ¢é“¾çš„æœ€æ–°ä¿¡æ¯
 		uint32_t currentWidth = swapchain->GetWidth();
 		uint32_t currentHeight = swapchain->GetHeight();
 		uint32_t currentImageCount = swapchain->GetImages().size();
 		
-		// ¼ÇÂ¼½»»»Á´×´Ì¬£¬ÓÃÓÚµ÷ÊÔ
+		// è®°å½•äº¤æ¢é“¾çŠ¶æ€ï¼Œç”¨äºè°ƒè¯•
 		LOG_D("Swapchain Target ReCreate - Width: {0}, Height: {1}, Image Count: {2}", 
 			currentWidth, currentHeight, currentImageCount);
 		
-		// ¸üĞÂäÖÈ¾Ä¿±ê³ß´çºÍ»º³åÊıÁ¿ÒÔÆ¥Åäµ±Ç°½»»»Á´
+		// æ›´æ–°æ¸²æŸ“ç›®æ ‡å°ºå¯¸å’Œç¼“å†²æ•°é‡ä»¥åŒ¹é…å½“å‰äº¤æ¢é“¾
 		mExtent = { currentWidth, currentHeight };
 		mBufferCount = currentImageCount;
 	}
 
-	// Çå¿Õ²¢ÖØĞÂÉèÖÃÖ¡»º³åÊı×é´óĞ¡
+	// æ¸…ç©ºå¹¶é‡æ–°è®¾ç½®å¸§ç¼“å†²æ•°ç»„å¤§å°
 	mFrameBuffers.clear();
 	mFrameBuffers.resize(mBufferCount);
 
-	// »ñÈ¡äÖÈ¾Í¨µÀ¸½¼şÅäÖÃ
+	// è·å–æ¸²æŸ“é€šé“é™„ä»¶é…ç½®
 	std::vector<Attachment> attachments = mRenderPass->GetAttachments();
 	if (attachments.empty()) {
 		LOG_W("RenderTarget ReCreate() skipped: no attachments");
 		return;
 	}
 
-	// »ñÈ¡½»»»Á´Í¼ÏñÁĞ±í£¨Ö»ÔÚĞèÒªÊ±»ñÈ¡£©
+	// è·å–äº¤æ¢é“¾å›¾åƒåˆ—è¡¨ï¼ˆåªåœ¨éœ€è¦æ—¶è·å–ï¼‰
 	std::vector<VkImage> swapchainImages;
 	if (bSwapchainTarget) {
 		swapchainImages = swapchain->GetImages();
-		// È·±£½»»»Á´Í¼ÏñÊıÁ¿ÓëÆÚÍûµÄ»º³åÊıÁ¿Æ¥Åä
+		// ç¡®ä¿äº¤æ¢é“¾å›¾åƒæ•°é‡ä¸æœŸæœ›çš„ç¼“å†²æ•°é‡åŒ¹é…
 			if (swapchainImages.size() != mBufferCount) {
 				LOG_E("Swapchain image count ({0}) mismatch with buffer count ({1})", 
 				swapchainImages.size(), mBufferCount);
@@ -117,36 +117,36 @@ void AdRenderTarget::ReCreate() {
 			}
 	}
 
-	// ±éÀúÃ¿¸ö»º³åÇø£¬´´½¨¶ÔÓ¦µÄÍ¼Ïñ×ÊÔ´ºÍÖ¡»º³å
+	// éå†æ¯ä¸ªç¼“å†²åŒºï¼Œåˆ›å»ºå¯¹åº”çš„å›¾åƒèµ„æºå’Œå¸§ç¼“å†²
 	for (int i = 0; i < mBufferCount; i++) {
 		std::vector<std::shared_ptr<AdVKImage>> images;
 
-		// ¸ù¾İ¸½¼şÅäÖÃ´´½¨Í¼Ïñ×ÊÔ´
+		// æ ¹æ®é™„ä»¶é…ç½®åˆ›å»ºå›¾åƒèµ„æº
 		for (int j = 0; j < attachments.size(); j++) {
 			Attachment attachment = attachments[j];
 
-			// ÅĞ¶ÏÊÇ·ñÊ¹ÓÃ½»»»Á´Í¼Ïñ
+			// åˆ¤æ–­æ˜¯å¦ä½¿ç”¨äº¤æ¢é“¾å›¾åƒ
 			if (bSwapchainTarget && attachment.finalLayout == VK_IMAGE_LAYOUT_PRESENT_SRC_KHR && attachment.samples == VK_SAMPLE_COUNT_1_BIT) {
-				// °²È«¼ì²é£ºÈ·±£Ë÷ÒıÔÚÓĞĞ§·¶Î§ÄÚ
+				// å®‰å…¨æ£€æŸ¥ï¼šç¡®ä¿ç´¢å¼•åœ¨æœ‰æ•ˆèŒƒå›´å†…
 				if (i >= static_cast<int>(swapchainImages.size())) {
 					LOG_E("Invalid swapchain image index: {0}, total images: {1}", 
 						i, swapchainImages.size());
 					return;
 				}
 				
-				// Ê¹ÓÃ½»»»Á´Í¼Ïñ´´½¨Í¼Ïñ×ÊÔ´
+				// ä½¿ç”¨äº¤æ¢é“¾å›¾åƒåˆ›å»ºå›¾åƒèµ„æº
 				LOG_T("Creating framebuffer {0}, using swapchain image {1} for attachment {2}", 
 					i, i, j);
 				images.push_back(std::make_shared<AdVKImage>(device, swapchainImages[i], VkExtent3D{ mExtent.width, mExtent.height, 1 }, attachment.format, attachment.usage));
 			} else {
-				// ´´½¨ÀëÆÁÍ¼Ïñ×ÊÔ´£¨Éî¶È/Ä£°å¸½¼şµÈ£©
+				// åˆ›å»ºç¦»å±å›¾åƒèµ„æºï¼ˆæ·±åº¦/æ¨¡æ¿é™„ä»¶ç­‰ï¼‰
 				LOG_T("Creating framebuffer {0}, creating offscreen image for attachment {1}", 
 					i, j);
 				images.push_back(std::make_shared<AdVKImage>(device, VkExtent3D{ mExtent.width, mExtent.height, 1 }, attachment.format, attachment.usage, attachment.samples));
 			}
 		}
 
-		// ´´½¨Ö¡»º³å¶ÔÏó
+		// åˆ›å»ºå¸§ç¼“å†²å¯¹è±¡
 		LOG_T("Creating framebuffer {0} with {1} attachments", i, images.size());
 		mFrameBuffers[i] = std::make_shared<AdVKFrameBuffer>(device, mRenderPass, images, mExtent.width, mExtent.height);
 		images.clear();
@@ -156,28 +156,28 @@ void AdRenderTarget::ReCreate() {
 }
 
 /**
-* @brief ¿ªÊ¼äÖÈ¾Ä¿±êµÄäÖÈ¾¹ı³Ì
+* @brief å¼€å§‹æ¸²æŸ“ç›®æ ‡çš„æ¸²æŸ“è¿‡ç¨‹
 *
-* @param cmdBuffer VulkanÃüÁî»º³åÇø£¬ÓÃÓÚ¼ÇÂ¼äÖÈ¾ÃüÁî
+* @param cmdBuffer Vulkanå‘½ä»¤ç¼“å†²åŒºï¼Œç”¨äºè®°å½•æ¸²æŸ“å‘½ä»¤
 *
-* ¸Ãº¯Êı¸ºÔğ×¼±¸äÖÈ¾Ä¿±êµÄäÖÈ¾»·¾³£¬°üÀ¨¼ì²é×´Ì¬¡¢¸üĞÂ×ÊÔ´¡¢
-* ÉèÖÃÏà»ú²ÎÊı¡¢»ñÈ¡µ±Ç°»º³åÇøË÷ÒıÒÔ¼°¿ªÊ¼äÖÈ¾Í¨µÀµÈ²Ù×÷¡£
+* è¯¥å‡½æ•°è´Ÿè´£å‡†å¤‡æ¸²æŸ“ç›®æ ‡çš„æ¸²æŸ“ç¯å¢ƒï¼ŒåŒ…æ‹¬æ£€æŸ¥çŠ¶æ€ã€æ›´æ–°èµ„æºã€
+* è®¾ç½®ç›¸æœºå‚æ•°ã€è·å–å½“å‰ç¼“å†²åŒºç´¢å¼•ä»¥åŠå¼€å§‹æ¸²æŸ“é€šé“ç­‰æ“ä½œã€‚
 */
 void AdRenderTarget::Begin(VkCommandBuffer cmdBuffer) {
 	assert(!bBeginTarget && "You should not called Begin() again.");
 
-	// »ñÈ¡äÖÈ¾ÉÏÏÂÎÄºÍ½»»»Á´
+	// è·å–æ¸²æŸ“ä¸Šä¸‹æ–‡å’Œäº¤æ¢é“¾
 	AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 	AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
-	// ¶ÔÓÚ½»»»Á´Ä¿±ê£¬×ÜÊÇ¼ì²é²¢È·±£Ö¡»º³åÓëµ±Ç°½»»»Á´Æ¥Åä
+	// å¯¹äºäº¤æ¢é“¾ç›®æ ‡ï¼Œæ€»æ˜¯æ£€æŸ¥å¹¶ç¡®ä¿å¸§ç¼“å†²ä¸å½“å‰äº¤æ¢é“¾åŒ¹é…
 	if (bSwapchainTarget) {
-		// »ñÈ¡µ±Ç°½»»»Á´µÄ×´Ì¬
+		// è·å–å½“å‰äº¤æ¢é“¾çš„çŠ¶æ€
 		uint32_t currentSwapchainWidth = swapchain->GetWidth();
 		uint32_t currentSwapchainHeight = swapchain->GetHeight();
 		uint32_t currentSwapchainImageCount = swapchain->GetImages().size();
 		
-		// Èç¹ûÖ¡»º³åÊıÁ¿Óëµ±Ç°½»»»Á´Í¼ÏñÊıÁ¿²»Æ¥Åä£¬»òÕß³ß´ç²»Æ¥Åä£¬»òÕßĞèÒª¸üĞÂ£¬ÔòÖØĞÂ´´½¨Ö¡»º³å
+		// å¦‚æœå¸§ç¼“å†²æ•°é‡ä¸å½“å‰äº¤æ¢é“¾å›¾åƒæ•°é‡ä¸åŒ¹é…ï¼Œæˆ–è€…å°ºå¯¸ä¸åŒ¹é…ï¼Œæˆ–è€…éœ€è¦æ›´æ–°ï¼Œåˆ™é‡æ–°åˆ›å»ºå¸§ç¼“å†²
 		if (mBufferCount != currentSwapchainImageCount || 
 			mExtent.width != currentSwapchainWidth || 
 			mExtent.height != currentSwapchainHeight || 
@@ -186,26 +186,26 @@ void AdRenderTarget::Begin(VkCommandBuffer cmdBuffer) {
 			bShouldUpdate = false;
 		}
 		
-		// »ñÈ¡µ±Ç°Í¼ÏñË÷Òı£¬²¢È·±£ËüÔÚÓĞĞ§·¶Î§ÄÚ
+		// è·å–å½“å‰å›¾åƒç´¢å¼•ï¼Œå¹¶ç¡®ä¿å®ƒåœ¨æœ‰æ•ˆèŒƒå›´å†…
 		mCurrentBufferIdx = swapchain->GetCurrentImageIndex();
-		// °²È«¼ì²é£ºÈ·±£Ë÷ÒıÓĞĞ§
+		// å®‰å…¨æ£€æŸ¥ï¼šç¡®ä¿ç´¢å¼•æœ‰æ•ˆ
 		if (mCurrentBufferIdx < 0 || mCurrentBufferIdx >= static_cast<int32_t>(mFrameBuffers.size())) {
 			LOG_W("Invalid current image index: {0}, frame buffer count: {1}", mCurrentBufferIdx, mFrameBuffers.size());
 			mCurrentBufferIdx = 0;
 		}
 	} else {
-		// ¶ÔÓÚ·Ç½»»»Á´Ä¿±ê£¬Ê¹ÓÃÑ­»·Ë÷Òı
+		// å¯¹äºéäº¤æ¢é“¾ç›®æ ‡ï¼Œä½¿ç”¨å¾ªç¯ç´¢å¼•
 		mCurrentBufferIdx = (mCurrentBufferIdx + 1) % mBufferCount;
-		// Èç¹ûĞèÒª¸üĞÂ£¬ÔòÖØĞÂ´´½¨äÖÈ¾Ä¿±ê×ÊÔ´
+		// å¦‚æœéœ€è¦æ›´æ–°ï¼Œåˆ™é‡æ–°åˆ›å»ºæ¸²æŸ“ç›®æ ‡èµ„æº
 		if (bShouldUpdate) {
 			ReCreate();
 			bShouldUpdate = false;
 		}
 	}
 
-	// °²È«¼ì²é£ºÈ·±£µ±Ç°Ö¡»º³å´æÔÚÇÒÓĞĞ§
+	// å®‰å…¨æ£€æŸ¥ï¼šç¡®ä¿å½“å‰å¸§ç¼“å†²å­˜åœ¨ä¸”æœ‰æ•ˆ
 	if (mCurrentBufferIdx >= 0 && mCurrentBufferIdx < static_cast<int32_t>(mFrameBuffers.size())) {
-		// ¿ªÊ¼äÖÈ¾Í¨µÀ
+		// å¼€å§‹æ¸²æŸ“é€šé“
 		mRenderPass->Begin(cmdBuffer, GetFrameBuffer(), mClearValues);
 		bBeginTarget = true;
 	} else {
@@ -214,8 +214,8 @@ void AdRenderTarget::Begin(VkCommandBuffer cmdBuffer) {
 }
 
 	/**
-	 * @brief ½áÊøäÖÈ¾Ä¿±êµÄäÖÈ¾¹ı³Ì
-	 * @param cmdBuffer VulkanÃüÁî»º³åÇø¾ä±ú
+	 * @brief ç»“æŸæ¸²æŸ“ç›®æ ‡çš„æ¸²æŸ“è¿‡ç¨‹
+	 * @param cmdBuffer Vulkanå‘½ä»¤ç¼“å†²åŒºå¥æŸ„
 	 */
 	void AdRenderTarget::End(VkCommandBuffer cmdBuffer) {
 		if (bBeginTarget) {
@@ -225,19 +225,19 @@ void AdRenderTarget::Begin(VkCommandBuffer cmdBuffer) {
 	}
 
 	/**
-	 * @brief ÉèÖÃäÖÈ¾Ä¿±êµÄ³ß´ç
-	 * @param extent ĞÂµÄäÖÈ¾ÇøÓò´óĞ¡
+	 * @brief è®¾ç½®æ¸²æŸ“ç›®æ ‡çš„å°ºå¯¸
+	 * @param extent æ–°çš„æ¸²æŸ“åŒºåŸŸå¤§å°
 	 */
 	void AdRenderTarget::SetExtent(const VkExtent2D& extent) {
-	// ÎŞÂÛ³ß´çÊÇ·ñ±ä»¯£¬Ö»Òªµ÷ÓÃÁËSetExtent£¬¾Í±ê¼ÇÎªĞèÒª¸üĞÂ
-	// ÕâÑù¿ÉÒÔÈ·±£ÔÚ½»»»Á´ÖØ½¨Ê±£¬¼´Ê¹³ß´çÏàÍ¬£¬Ò²»áÖØ½¨Ö¡»º³å
+	// æ— è®ºå°ºå¯¸æ˜¯å¦å˜åŒ–ï¼Œåªè¦è°ƒç”¨äº†SetExtentï¼Œå°±æ ‡è®°ä¸ºéœ€è¦æ›´æ–°
+	// è¿™æ ·å¯ä»¥ç¡®ä¿åœ¨äº¤æ¢é“¾é‡å»ºæ—¶ï¼Œå³ä½¿å°ºå¯¸ç›¸åŒï¼Œä¹Ÿä¼šé‡å»ºå¸§ç¼“å†²
 	mExtent = extent;
 	bShouldUpdate = true;
 }
 
 	/**
-	 * @brief ÉèÖÃÖ¡»º³åÊıÁ¿
-	 * @param bufferCount ĞÂµÄÖ¡»º³åÊıÁ¿
+	 * @brief è®¾ç½®å¸§ç¼“å†²æ•°é‡
+	 * @param bufferCount æ–°çš„å¸§ç¼“å†²æ•°é‡
 	 */
 	void AdRenderTarget::SetBufferCount(uint32_t bufferCount) {
 		mBufferCount = bufferCount;
@@ -245,8 +245,8 @@ void AdRenderTarget::Begin(VkCommandBuffer cmdBuffer) {
 	}
 
 	/**
-	 * @brief ÉèÖÃËùÓĞÑÕÉ«¸½¼şµÄÇå³ıÑÕÉ«Öµ
-	 * @param colorClearValue ÑÕÉ«Çå³ıÖµ½á¹¹Ìå
+	 * @brief è®¾ç½®æ‰€æœ‰é¢œè‰²é™„ä»¶çš„æ¸…é™¤é¢œè‰²å€¼
+	 * @param colorClearValue é¢œè‰²æ¸…é™¤å€¼ç»“æ„ä½“
 	 */
 	void AdRenderTarget::SetColorClearValue(VkClearColorValue colorClearValue) {
 		std::vector<Attachment> renderPassAttachments = mRenderPass->GetAttachments();
@@ -258,8 +258,8 @@ void AdRenderTarget::Begin(VkCommandBuffer cmdBuffer) {
 	}
 
 	/**
-	 * @brief ÉèÖÃËùÓĞÉî¶È/Ä£°å¸½¼şµÄÇå³ıÖµ
-	 * @param depthStencilValue Éî¶È/Ä£°åÇå³ıÖµ½á¹¹Ìå
+	 * @brief è®¾ç½®æ‰€æœ‰æ·±åº¦/æ¨¡æ¿é™„ä»¶çš„æ¸…é™¤å€¼
+	 * @param depthStencilValue æ·±åº¦/æ¨¡æ¿æ¸…é™¤å€¼ç»“æ„ä½“
 	 */
 	void AdRenderTarget::SetDepthStencilClearValue(VkClearDepthStencilValue depthStencilValue) {
 		std::vector<Attachment> renderPassAttachments = mRenderPass->GetAttachments();
@@ -271,9 +271,9 @@ void AdRenderTarget::Begin(VkCommandBuffer cmdBuffer) {
 	}
 
 	/**
-	 * @brief ÉèÖÃÖ¸¶¨Ë÷ÒıµÄÑÕÉ«¸½¼şÇå³ıÑÕÉ«Öµ
-	 * @param attachmentIndex ¸½¼şË÷Òı
-	 * @param colorClearValue ÑÕÉ«Çå³ıÖµ½á¹¹Ìå
+	 * @brief è®¾ç½®æŒ‡å®šç´¢å¼•çš„é¢œè‰²é™„ä»¶æ¸…é™¤é¢œè‰²å€¼
+	 * @param attachmentIndex é™„ä»¶ç´¢å¼•
+	 * @param colorClearValue é¢œè‰²æ¸…é™¤å€¼ç»“æ„ä½“
 	 */
 	void AdRenderTarget::SetColorClearValue(uint32_t attachmentIndex, VkClearColorValue colorClearValue) {
 		std::vector<Attachment> renderPassAttachments = mRenderPass->GetAttachments();
@@ -285,9 +285,9 @@ void AdRenderTarget::Begin(VkCommandBuffer cmdBuffer) {
 	}
 
 	/**
-	 * @brief ÉèÖÃÖ¸¶¨Ë÷ÒıµÄÉî¶È/Ä£°å¸½¼şÇå³ıÖµ
-	 * @param attachmentIndex ¸½¼şË÷Òı
-	 * @param depthStencilValue Éî¶È/Ä£°åÇå³ıÖµ½á¹¹Ìå
+	 * @brief è®¾ç½®æŒ‡å®šç´¢å¼•çš„æ·±åº¦/æ¨¡æ¿é™„ä»¶æ¸…é™¤å€¼
+	 * @param attachmentIndex é™„ä»¶ç´¢å¼•
+	 * @param depthStencilValue æ·±åº¦/æ¨¡æ¿æ¸…é™¤å€¼ç»“æ„ä½“
 	 */
 	void AdRenderTarget::SetDepthStencilClearValue(uint32_t attachmentIndex, VkClearDepthStencilValue depthStencilValue) {
 		std::vector<Attachment> renderPassAttachments = mRenderPass->GetAttachments();

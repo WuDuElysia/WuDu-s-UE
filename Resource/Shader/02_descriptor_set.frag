@@ -1,5 +1,5 @@
 #version 450
-
+#extension GL_KHR_vulkan_glsl : enable
 layout(location=1) in vec2 v_Texcoord;
 layout(set=0, binding=2) uniform sampler2D u_texture0;
 layout(set=0, binding=3) uniform sampler2D u_texture1;

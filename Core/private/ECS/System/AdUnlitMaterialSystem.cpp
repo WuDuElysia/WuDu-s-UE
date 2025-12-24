@@ -23,12 +23,12 @@ namespace WuDu {
                 // 创建帧UBO描述符集布局：用于传递投影矩阵、视图矩阵等每帧不变的数据
                 {
                         const std::vector<VkDescriptorSetLayoutBinding> bindings = {
-                           {
-                               .binding = 0,
-                               .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-                               .descriptorCount = 1,
-                               .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
-                           }
+                                {
+                                        .binding = 0,
+                                        .descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                                        .descriptorCount = 1,
+                                        .stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT,
+                                }
                         };
                         mFrameUboDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
                 }
@@ -91,7 +91,7 @@ namespace WuDu {
                         }
                 };
                 std::vector<VkVertexInputAttributeDescription> vertexAttrs = {
-                    {
+                        {
                                 .location = 0,                         // 属性位置 0：顶点位置
                                 .binding = 0,                          // 来自绑定 0
                                 .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
@@ -104,19 +104,19 @@ namespace WuDu {
                                 .offset = offsetof(AdVertex, TexCoord)
                         },
                         {
-                                .location = 2,                         // 属性位置 2：法线
+                                .location = 2,                     //法线    
                                 .binding = 0,
                                 .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
                                 .offset = offsetof(AdVertex, Normal)
                         },
                         {
-                                .location = 3,                         // 属性位置 2：法线
+                                .location = 3,                         
                                 .binding = 0,
                                 .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
                                 .offset = offsetof(AdVertex, Tangent)
                         },
                         {
-                                .location = 4,                         // 属性位置 2：法线
+                                .location = 4,                         
                                 .binding = 0,
                                 .format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
                                 .offset = offsetof(AdVertex, Bitangent)

@@ -4,17 +4,17 @@
 #include "Adlog.h"
 
 namespace WuDu {
-	// ¹¹Ôìº¯Êı£ºAdVKRenderPass
-	// ÃèÊö£º³õÊ¼»¯äÖÈ¾Í¨µÀ£¬°üÀ¨¸½¼şºÍ×ÓÍ¨µÀµÄÉèÖÃ
-	// ²ÎÊı£º
-	// - device: Éè±¸Ö¸Õë£¬ÓÃÓÚ´´½¨äÖÈ¾Í¨µÀ
-	// - attachments: ¸½¼şÁĞ±í£¬¶¨ÒåÁËäÖÈ¾¹ı³ÌÖĞÊ¹ÓÃµÄÍ¼Ïñ×ÊÔ´
-	// - subPasses: ×ÓÍ¨µÀÁĞ±í£¬¶¨ÒåÁËäÖÈ¾Á÷³ÌºÍÒÀÀµ¹ØÏµ
+	// æ„é€ å‡½æ•°ï¼šAdVKRenderPass
+	// æè¿°ï¼šåˆå§‹åŒ–æ¸²æŸ“é€šé“ï¼ŒåŒ…æ‹¬é™„ä»¶å’Œå­é€šé“çš„è®¾ç½®
+	// å‚æ•°ï¼š
+	// - device: è®¾å¤‡æŒ‡é’ˆï¼Œç”¨äºåˆ›å»ºæ¸²æŸ“é€šé“
+	// - attachments: é™„ä»¶åˆ—è¡¨ï¼Œå®šä¹‰äº†æ¸²æŸ“è¿‡ç¨‹ä¸­ä½¿ç”¨çš„å›¾åƒèµ„æº
+	// - subPasses: å­é€šé“åˆ—è¡¨ï¼Œå®šä¹‰äº†æ¸²æŸ“æµç¨‹å’Œä¾èµ–å…³ç³»
 	AdVKRenderPass::AdVKRenderPass(AdVKDevice* device, const std::vector<Attachment>& attachments, const std::vector<RenderSubPass>& subPasses)
 		: mDevice(device), mAttachments(attachments), mSubPasses(subPasses) {
 
 
-		// Èç¹ûÃ»ÓĞ×ÓÍ¨µÀÅäÖÃ£¬ÔòÉèÖÃÄ¬ÈÏµÄ×ÓÍ¨µÀºÍ¸½¼ş
+		// å¦‚æœæ²¡æœ‰å­é€šé“é…ç½®ï¼Œåˆ™è®¾ç½®é»˜è®¤çš„å­é€šé“å’Œé™„ä»¶
 		if (mSubPasses.empty()) {
 			mAttachments = { {
 				.format = device->GetSettings().surfaceFormat,
@@ -28,27 +28,27 @@ namespace WuDu {
 			mSubPasses = { {.colorAttachments = { 0 }, .sampleCount = VK_SAMPLE_COUNT_1_BIT } };
 		}
 
-		// ×¼±¸×ÓÍ¨µÀÃèÊö¡¢¸½¼şÒıÓÃµÈÊı¾İ½á¹¹
-		// ¸ù¾İ×ÓÍ¨µÀµÄÊıÁ¿³õÊ¼»¯×ÓÍ¨µÀÃèÊöÏòÁ¿
+		// å‡†å¤‡å­é€šé“æè¿°ã€é™„ä»¶å¼•ç”¨ç­‰æ•°æ®ç»“æ„
+		// æ ¹æ®å­é€šé“çš„æ•°é‡åˆå§‹åŒ–å­é€šé“æè¿°å‘é‡
 		std::vector<VkSubpassDescription> subpassDescriptions(mSubPasses.size());
-		// ³õÊ¼»¯ÊäÈë¸½¼şÒıÓÃµÄ¶şÎ¬ÏòÁ¿£¬Ã¿¸ö×ÓÍ¨µÀ¿ÉÒÔÓĞ¶à¸öÊäÈë¸½¼ş
+		// åˆå§‹åŒ–è¾“å…¥é™„ä»¶å¼•ç”¨çš„äºŒç»´å‘é‡ï¼Œæ¯ä¸ªå­é€šé“å¯ä»¥æœ‰å¤šä¸ªè¾“å…¥é™„ä»¶
 		std::vector<std::vector<VkAttachmentReference>> inputAttachmentRefs(mSubPasses.size());
-		// ³õÊ¼»¯ÑÕÉ«¸½¼şÒıÓÃµÄ¶şÎ¬ÏòÁ¿£¬Ã¿¸ö×ÓÍ¨µÀ¿ÉÒÔÓĞ¶à¸öÑÕÉ«¸½¼ş
+		// åˆå§‹åŒ–é¢œè‰²é™„ä»¶å¼•ç”¨çš„äºŒç»´å‘é‡ï¼Œæ¯ä¸ªå­é€šé“å¯ä»¥æœ‰å¤šä¸ªé¢œè‰²é™„ä»¶
 		std::vector<std::vector<VkAttachmentReference>> colorAttachmentRefs(mSubPasses.size());
-		// ³õÊ¼»¯Éî¶ÈÄ£°å¸½¼şÒıÓÃµÄ¶şÎ¬ÏòÁ¿£¬Ã¿¸ö×ÓÍ¨µÀ¿ÉÒÔÓĞ¶à¸öÉî¶ÈÄ£°å¸½¼ş
+		// åˆå§‹åŒ–æ·±åº¦æ¨¡æ¿é™„ä»¶å¼•ç”¨çš„äºŒç»´å‘é‡ï¼Œæ¯ä¸ªå­é€šé“å¯ä»¥æœ‰å¤šä¸ªæ·±åº¦æ¨¡æ¿é™„ä»¶
 		std::vector<std::vector<VkAttachmentReference>> depthStencilAttachmentRefs(mSubPasses.size());
-		// ³õÊ¼»¯½âÎö¸½¼şÒıÓÃµÄÏòÁ¿£¬Ã¿¸ö×ÓÍ¨µÀ¿ÉÒÔÓĞÒ»¸ö½âÎö¸½¼ş
+		// åˆå§‹åŒ–è§£æé™„ä»¶å¼•ç”¨çš„å‘é‡ï¼Œæ¯ä¸ªå­é€šé“å¯ä»¥æœ‰ä¸€ä¸ªè§£æé™„ä»¶
 		std::vector<VkAttachmentReference> resolveAttachmentRefs(mSubPasses.size());
 
 		for (int i = 0; i < mSubPasses.size(); i++) {
 			RenderSubPass subpass = mSubPasses[i];
 
-			// ÉèÖÃÊäÈë¸½¼şÒıÓÃ
+			// è®¾ç½®è¾“å…¥é™„ä»¶å¼•ç”¨
 			for (const auto& inputAttachment : subpass.inputAttachments) {
 				inputAttachmentRefs[i].push_back({ inputAttachment, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL });
 			}
 
-			// ÉèÖÃÑÕÉ«¸½¼şÒıÓÃ£¬²¢¸ù¾İÑù±¾ÊıÉèÖÃ¸½¼şÊôĞÔ
+			// è®¾ç½®é¢œè‰²é™„ä»¶å¼•ç”¨ï¼Œå¹¶æ ¹æ®æ ·æœ¬æ•°è®¾ç½®é™„ä»¶å±æ€§
 			for (const auto& colorAttachment : subpass.colorAttachments) {
 				colorAttachmentRefs[i].push_back({ colorAttachment, VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL });
 				mAttachments[colorAttachment].samples = subpass.sampleCount;
@@ -57,13 +57,13 @@ namespace WuDu {
 				}
 			}
 
-			// ÉèÖÃÉî¶È/Ä£°å¸½¼şÒıÓÃ£¬²¢¸ù¾İÑù±¾ÊıÉèÖÃ¸½¼şÊôĞÔ
+			// è®¾ç½®æ·±åº¦/æ¨¡æ¿é™„ä»¶å¼•ç”¨ï¼Œå¹¶æ ¹æ®æ ·æœ¬æ•°è®¾ç½®é™„ä»¶å±æ€§
 			for (const auto& depthStencilAttachment : subpass.depthStencilAttachments) {
 				depthStencilAttachmentRefs[i].push_back({ depthStencilAttachment, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL });
 				mAttachments[depthStencilAttachment].samples = subpass.sampleCount;
 			}
 
-			// Èç¹ûÑù±¾Êı´óÓÚ1£¬Ìí¼Ó½âÎö¸½¼ş
+			// å¦‚æœæ ·æœ¬æ•°å¤§äº1ï¼Œæ·»åŠ è§£æé™„ä»¶
 			if (subpass.sampleCount > VK_SAMPLE_COUNT_1_BIT) {
 				mAttachments.emplace_back(
 					device->GetSettings().surfaceFormat,
@@ -79,7 +79,7 @@ namespace WuDu {
 				resolveAttachmentRefs[i] = { static_cast<uint32_t>(mAttachments.size() - 1), VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL };
 			}
 
-			// Ìî³ä×ÓÍ¨µÀÃèÊö½á¹¹
+			// å¡«å……å­é€šé“æè¿°ç»“æ„
 			subpassDescriptions[i].flags = 0;
 			subpassDescriptions[i].pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
 			subpassDescriptions[i].inputAttachmentCount = inputAttachmentRefs[i].size();
@@ -92,78 +92,78 @@ namespace WuDu {
 			subpassDescriptions[i].pPreserveAttachments = nullptr;
 		}
 
-		// ÉèÖÃ×ÓÍ¨µÀ¼äµÄÒÀÀµ¹ØÏµ
-		// ¸ù¾İ×ÓÍ¨µÀÊıÁ¿³õÊ¼»¯ÒÀÀµÏòÁ¿£¬´óĞ¡Îª×ÓÍ¨µÀÊıÁ¿¼õÒ»
+		// è®¾ç½®å­é€šé“é—´çš„ä¾èµ–å…³ç³»
+		// æ ¹æ®å­é€šé“æ•°é‡åˆå§‹åŒ–ä¾èµ–å‘é‡ï¼Œå¤§å°ä¸ºå­é€šé“æ•°é‡å‡ä¸€
 		std::vector<VkSubpassDependency> dependencies(mSubPasses.size() - 1);
 
-		// µ±×ÓÍ¨µÀÊıÁ¿´óÓÚ1Ê±£¬ÅäÖÃ×ÓÍ¨µÀ¼äµÄÒÀÀµ¹ØÏµ
+		// å½“å­é€šé“æ•°é‡å¤§äº1æ—¶ï¼Œé…ç½®å­é€šé“é—´çš„ä¾èµ–å…³ç³»
 		if (mSubPasses.size() > 1) {
 			for (int i = 0; i < dependencies.size(); i++) {
-				// ÉèÖÃµ±Ç°×ÓÍ¨µÀÎªÒÀÀµµÄÔ´×ÓÍ¨µÀ
+				// è®¾ç½®å½“å‰å­é€šé“ä¸ºä¾èµ–çš„æºå­é€šé“
 				dependencies[i].srcSubpass = i;
-				// ÉèÖÃÏÂÒ»¸ö×ÓÍ¨µÀÎªÒÀÀµµÄÄ¿±ê×ÓÍ¨µÀ
+				// è®¾ç½®ä¸‹ä¸€ä¸ªå­é€šé“ä¸ºä¾èµ–çš„ç›®æ ‡å­é€šé“
 				dependencies[i].dstSubpass = i + 1;
-				// Ô´×ÓÍ¨µÀµÄ¹ÜµÀ½×¶ÎÎªÑÕÉ«¸½¼şÊä³ö½×¶Î
+				// æºå­é€šé“çš„ç®¡é“é˜¶æ®µä¸ºé¢œè‰²é™„ä»¶è¾“å‡ºé˜¶æ®µ
 				dependencies[i].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-				// Ä¿±ê×ÓÍ¨µÀµÄ¹ÜµÀ½×¶ÎÎªÆ¬¶Î×ÅÉ«Æ÷½×¶Î
+				// ç›®æ ‡å­é€šé“çš„ç®¡é“é˜¶æ®µä¸ºç‰‡æ®µç€è‰²å™¨é˜¶æ®µ
 				dependencies[i].dstStageMask = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-				// Ô´×ÓÍ¨µÀµÄ·ÃÎÊÀàĞÍÎªÑÕÉ«¸½¼şĞ´Èë
+				// æºå­é€šé“çš„è®¿é—®ç±»å‹ä¸ºé¢œè‰²é™„ä»¶å†™å…¥
 				dependencies[i].srcAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-				// Ä¿±ê×ÓÍ¨µÀµÄ·ÃÎÊÀàĞÍÎªÊäÈë¸½¼ş¶ÁÈ¡
+				// ç›®æ ‡å­é€šé“çš„è®¿é—®ç±»å‹ä¸ºè¾“å…¥é™„ä»¶è¯»å–
 				dependencies[i].dstAccessMask = VK_ACCESS_INPUT_ATTACHMENT_READ_BIT;
-				// ÉèÖÃÒÀÀµ±êÖ¾Îª°´ÇøÓòÒÀÀµ
+				// è®¾ç½®ä¾èµ–æ ‡å¿—ä¸ºæŒ‰åŒºåŸŸä¾èµ–
 				dependencies[i].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 			}
 		}
 
-		// ×¼±¸äÖÈ¾Í¨µÀ´´½¨ĞÅÏ¢
-		// ´´½¨Ò»¸ö´æ´¢VkAttachmentDescription¶ÔÏóµÄÏòÁ¿£¬ÓÃÓÚÃèÊöäÖÈ¾¸½¼şµÄÊôĞÔ
+		// å‡†å¤‡æ¸²æŸ“é€šé“åˆ›å»ºä¿¡æ¯
+		// åˆ›å»ºä¸€ä¸ªå­˜å‚¨VkAttachmentDescriptionå¯¹è±¡çš„å‘é‡ï¼Œç”¨äºæè¿°æ¸²æŸ“é™„ä»¶çš„å±æ€§
 		std::vector<VkAttachmentDescription> vkAttachments;
 
-		// Ô¤ÏÈ·ÖÅä×ã¹»µÄ¿Õ¼ä£¬ÒÔÌá¸ßÄÚ´æÊ¹ÓÃĞ§ÂÊºÍĞÔÄÜ
+		// é¢„å…ˆåˆ†é…è¶³å¤Ÿçš„ç©ºé—´ï¼Œä»¥æé«˜å†…å­˜ä½¿ç”¨æ•ˆç‡å’Œæ€§èƒ½
 		vkAttachments.reserve(mAttachments.size());
 
-		// ±éÀúmAttachments¼¯ºÏÖĞµÄÃ¿¸ö¸½¼şÃèÊö¶ÔÏó
+		// éå†mAttachmentsé›†åˆä¸­çš„æ¯ä¸ªé™„ä»¶æè¿°å¯¹è±¡
 		for (const auto& attachment : mAttachments) {
-			// ½«µ±Ç°¸½¼şµÄÊôĞÔ×ª»»²¢¸´ÖÆµ½VkAttachmentDescription½á¹¹ÌåÖĞ
+			// å°†å½“å‰é™„ä»¶çš„å±æ€§è½¬æ¢å¹¶å¤åˆ¶åˆ°VkAttachmentDescriptionç»“æ„ä½“ä¸­
 			vkAttachments.push_back({
-			    .flags = 0, // ±£Áô×Ö¶Î£¬µ±Ç°Î´Ê¹ÓÃ
-			    .format = attachment.format, // Ö¸¶¨¸½¼şµÄ¸ñÊ½
-			    .samples = attachment.samples, // Ö¸¶¨¸½¼şµÄÑù±¾Êı£¬ÓÃÓÚ¶à²ÉÑù¿¹¾â³İ
-			    .loadOp = attachment.loadOp, // Ö¸¶¨ÔÚäÖÈ¾pass¿ªÊ¼Ê±ÈçºÎ´¦Àí¸½¼şµÄÄÚÈİ
-			    .storeOp = attachment.storeOp, // Ö¸¶¨ÔÚäÖÈ¾pass½áÊøÊ±ÈçºÎ´¦Àí¸½¼şµÄÄÚÈİ
-			    .stencilLoadOp = attachment.stencilLoadOp, // Ö¸¶¨ÔÚäÖÈ¾pass¿ªÊ¼Ê±ÈçºÎ´¦ÀíÄ£°å¸½¼şµÄÄÚÈİ
-			    .stencilStoreOp = attachment.stencilStoreOp, // Ö¸¶¨ÔÚäÖÈ¾pass½áÊøÊ±ÈçºÎ´¦ÀíÄ£°å¸½¼şµÄÄÚÈİ
-			    .initialLayout = attachment.initialLayout, // Ö¸¶¨¸½¼şÔÚäÖÈ¾pass¿ªÊ¼Ê±µÄ²¼¾Ö
-			    .finalLayout = attachment.finalLayout // Ö¸¶¨¸½¼şÔÚäÖÈ¾pass½áÊøÊ±µÄ²¼¾Ö
+			    .flags = 0, // ä¿ç•™å­—æ®µï¼Œå½“å‰æœªä½¿ç”¨
+			    .format = attachment.format, // æŒ‡å®šé™„ä»¶çš„æ ¼å¼
+			    .samples = attachment.samples, // æŒ‡å®šé™„ä»¶çš„æ ·æœ¬æ•°ï¼Œç”¨äºå¤šé‡‡æ ·æŠ—é”¯é½¿
+			    .loadOp = attachment.loadOp, // æŒ‡å®šåœ¨æ¸²æŸ“passå¼€å§‹æ—¶å¦‚ä½•å¤„ç†é™„ä»¶çš„å†…å®¹
+			    .storeOp = attachment.storeOp, // æŒ‡å®šåœ¨æ¸²æŸ“passç»“æŸæ—¶å¦‚ä½•å¤„ç†é™„ä»¶çš„å†…å®¹
+			    .stencilLoadOp = attachment.stencilLoadOp, // æŒ‡å®šåœ¨æ¸²æŸ“passå¼€å§‹æ—¶å¦‚ä½•å¤„ç†æ¨¡æ¿é™„ä»¶çš„å†…å®¹
+			    .stencilStoreOp = attachment.stencilStoreOp, // æŒ‡å®šåœ¨æ¸²æŸ“passç»“æŸæ—¶å¦‚ä½•å¤„ç†æ¨¡æ¿é™„ä»¶çš„å†…å®¹
+			    .initialLayout = attachment.initialLayout, // æŒ‡å®šé™„ä»¶åœ¨æ¸²æŸ“passå¼€å§‹æ—¶çš„å¸ƒå±€
+			    .finalLayout = attachment.finalLayout // æŒ‡å®šé™„ä»¶åœ¨æ¸²æŸ“passç»“æŸæ—¶çš„å¸ƒå±€
 			});
 
 		}
 		
-		// ³õÊ¼»¯VkRenderPassCreateInfo½á¹¹Ìå£¬ÓÃÓÚÃèÊöäÖÈ¾Á÷³ÌµÄ´´½¨ĞÅÏ¢
+		// åˆå§‹åŒ–VkRenderPassCreateInfoç»“æ„ä½“ï¼Œç”¨äºæè¿°æ¸²æŸ“æµç¨‹çš„åˆ›å»ºä¿¡æ¯
 		VkRenderPassCreateInfo renderPassInfo = {
-			// Ö¸¶¨½á¹¹ÌåÀàĞÍ£¬ÕâÀïÊÇäÖÈ¾Á÷³Ì´´½¨ĞÅÏ¢
+			// æŒ‡å®šç»“æ„ä½“ç±»å‹ï¼Œè¿™é‡Œæ˜¯æ¸²æŸ“æµç¨‹åˆ›å»ºä¿¡æ¯
 			.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO,
-			// Á´½ÓÏÂÒ»¸ö½á¹¹Ìå£¬µ±Ç°ÎŞĞèÁ´½ÓÆäËû½á¹¹Ìå
+			// é“¾æ¥ä¸‹ä¸€ä¸ªç»“æ„ä½“ï¼Œå½“å‰æ— éœ€é“¾æ¥å…¶ä»–ç»“æ„ä½“
 			.pNext = nullptr,
-			// ±£Áô×Ö¶Î£¬Ä¿Ç°Î´Ê¹ÓÃ
+			// ä¿ç•™å­—æ®µï¼Œç›®å‰æœªä½¿ç”¨
 			.flags = 0,
-			// ÉèÖÃäÖÈ¾Á÷³ÌÖĞÊ¹ÓÃµÄ¸½¼şÊıÁ¿
+			// è®¾ç½®æ¸²æŸ“æµç¨‹ä¸­ä½¿ç”¨çš„é™„ä»¶æ•°é‡
 			.attachmentCount = static_cast<uint32_t>(vkAttachments.size()),
-			// Ö¸Ïò¸½¼şÃèÊöÊı×é£¬¶¨ÒåÁËäÖÈ¾Á÷³ÌÖĞÊ¹ÓÃµÄÑÕÉ«¡¢Éî¶È»ò stencil ¸½¼ş
+			// æŒ‡å‘é™„ä»¶æè¿°æ•°ç»„ï¼Œå®šä¹‰äº†æ¸²æŸ“æµç¨‹ä¸­ä½¿ç”¨çš„é¢œè‰²ã€æ·±åº¦æˆ– stencil é™„ä»¶
 			.pAttachments = vkAttachments.data(),
-			// ÉèÖÃ×ÓÁ÷³ÌµÄÊıÁ¿
+			// è®¾ç½®å­æµç¨‹çš„æ•°é‡
 			.subpassCount = static_cast<uint32_t>(mSubPasses.size()),
-			// Ö¸Ïò×ÓÁ÷³ÌÃèÊöÊı×é£¬¶¨ÒåÁËäÖÈ¾Á÷³ÌÖĞÃ¿¸ö×ÓÁ÷³ÌµÄĞĞÎª
+			// æŒ‡å‘å­æµç¨‹æè¿°æ•°ç»„ï¼Œå®šä¹‰äº†æ¸²æŸ“æµç¨‹ä¸­æ¯ä¸ªå­æµç¨‹çš„è¡Œä¸º
 			.pSubpasses = subpassDescriptions.data(),
-			// ÉèÖÃÒÀÀµ¹ØÏµµÄÊıÁ¿
+			// è®¾ç½®ä¾èµ–å…³ç³»çš„æ•°é‡
 			.dependencyCount = static_cast<uint32_t>(dependencies.size()),
-			// Ö¸ÏòÒÀÀµ¹ØÏµÃèÊöÊı×é£¬¶¨ÒåÁË×ÓÁ÷³ÌÖ®¼äµÄÒÀÀµ¹ØÏµ£¬ÒÔÈ·±£ÕıÈ·µÄÖ´ĞĞË³Ğò
+			// æŒ‡å‘ä¾èµ–å…³ç³»æè¿°æ•°ç»„ï¼Œå®šä¹‰äº†å­æµç¨‹ä¹‹é—´çš„ä¾èµ–å…³ç³»ï¼Œä»¥ç¡®ä¿æ­£ç¡®çš„æ‰§è¡Œé¡ºåº
 			.pDependencies = dependencies.data()
 		};
-		// ´´½¨äÖÈ¾Í¨µÀ
+		// åˆ›å»ºæ¸²æŸ“é€šé“
 		CALL_VK(vkCreateRenderPass(mDevice->GetHandle(), &renderPassInfo, nullptr, &mHandle));
-		// ÈÕÖ¾Êä³öäÖÈ¾Í¨µÀ´´½¨ĞÅÏ¢
+		// æ—¥å¿—è¾“å‡ºæ¸²æŸ“é€šé“åˆ›å»ºä¿¡æ¯
 		LOG_T("RenderPass {0} : {1}, attachment count: {2}, subpass count: {3}", __FUNCTION__, (void*)mHandle, mAttachments.size(), mSubPasses.size());
 	}
 

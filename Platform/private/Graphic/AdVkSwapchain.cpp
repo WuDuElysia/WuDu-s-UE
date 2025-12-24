@@ -12,21 +12,21 @@ namespace WuDu {
 		VK_D(SwapchainKHR, mDevice->GetHandle(), mHandle);
 	}
 
-	// ÖØĞÂ´´½¨½»»»Á´
+	// é‡æ–°åˆ›å»ºäº¤æ¢é“¾
 	bool AdVKSwapchain::ReCreate() {
-		// ·Ö¸ôÈÕÖ¾Êä³ö£¬±ãÓÚÔÄ¶Á
+		// åˆ†éš”æ—¥å¿—è¾“å‡ºï¼Œä¾¿äºé˜…è¯»
 		LOG_D("-----------------------------");
-		// ÅäÖÃ±íÃæÄÜÁ¦
+		// é…ç½®è¡¨é¢èƒ½åŠ›
 		SetupSurfaceCapabilities();
-		// ÈÕÖ¾Êä³öµ±Ç°À©Õ¹¡¢±íÃæ¸ñÊ½ºÍ³ÊÏÖÄ£Ê½
+		// æ—¥å¿—è¾“å‡ºå½“å‰æ‰©å±•ã€è¡¨é¢æ ¼å¼å’Œå‘ˆç°æ¨¡å¼
 		LOG_D("currentExtent : {0} x {1}", mSurfaceInfo.capabilities.currentExtent.width, mSurfaceInfo.capabilities.currentExtent.height);
 		LOG_D("surfaceFormat : {0}", vk_format_string(mSurfaceInfo.surfaceFormat.format));
 		LOG_D("presentMode   : {0}", vk_present_mode_string(mSurfaceInfo.presentMode));
 		LOG_D("-----------------------------");
 
-		// ³õÊ¼»¯Í¼ÏñÊıÁ¿
+		// åˆå§‹åŒ–å›¾åƒæ•°é‡
 		uint32_t imageCount = mDevice->GetSettings().swapchainImageCount;
-		// È·±£Í¼ÏñÊıÁ¿ÔÚ±íÃæÄÜÁ¦µÄ×îĞ¡ºÍ×î´óÍ¼ÏñÊıÁ¿Ö®¼ä
+		// ç¡®ä¿å›¾åƒæ•°é‡åœ¨è¡¨é¢èƒ½åŠ›çš„æœ€å°å’Œæœ€å¤§å›¾åƒæ•°é‡ä¹‹é—´
 		if (imageCount < mSurfaceInfo.capabilities.minImageCount && mSurfaceInfo.capabilities.minImageCount > 0) {
 			imageCount = mSurfaceInfo.capabilities.minImageCount;
 		}
@@ -34,10 +34,10 @@ namespace WuDu {
 			imageCount = mSurfaceInfo.capabilities.maxImageCount;
 		}
 
-		// È·¶¨Í¼Ïñ¹²ÏíÄ£Ê½ºÍ¶ÓÁĞ¼ÒÍ¥Ë÷Òı
-		/*Õâ¶Î´úÂëÓÃÓÚÉèÖÃ Vulkan Í¼ÏñµÄ¹²ÏíÄ£Ê½¼°Ïà¹ØµÄ¶ÓÁĞ¼Ò×åË÷Òı£¬¾ßÌå¹¦ÄÜÈçÏÂ£º
-		Èç¹ûÍ¼ĞÎºÍ³ÊÏÖ¶ÓÁĞ¼Ò×åÏàÍ¬£¬ÔòÊ¹ÓÃ¶ÀÕ¼Ä£Ê½£¨VK_SHARING_MODE_EXCLUSIVE£©£¬ÎŞĞèÖ¸¶¨¶ÓÁĞ¼Ò×åË÷Òı¡£
-		·ñÔòÊ¹ÓÃ²¢·¢Ä£Ê½£¨VK_SHARING_MODE_CONCURRENT£©£¬²¢Ö¸¶¨Á½¸ö²»Í¬µÄ¶ÓÁĞ¼Ò×åË÷Òı£¬·Ö±ğÓÃÓÚÍ¼ĞÎºÍ³ÊÏÖ²Ù×÷¡£*/
+		// ç¡®å®šå›¾åƒå…±äº«æ¨¡å¼å’Œé˜Ÿåˆ—å®¶åº­ç´¢å¼•
+		/*è¿™æ®µä»£ç ç”¨äºè®¾ç½® Vulkan å›¾åƒçš„å…±äº«æ¨¡å¼åŠç›¸å…³çš„é˜Ÿåˆ—å®¶æ—ç´¢å¼•ï¼Œå…·ä½“åŠŸèƒ½å¦‚ä¸‹ï¼š
+		å¦‚æœå›¾å½¢å’Œå‘ˆç°é˜Ÿåˆ—å®¶æ—ç›¸åŒï¼Œåˆ™ä½¿ç”¨ç‹¬å æ¨¡å¼ï¼ˆVK_SHARING_MODE_EXCLUSIVEï¼‰ï¼Œæ— éœ€æŒ‡å®šé˜Ÿåˆ—å®¶æ—ç´¢å¼•ã€‚
+		å¦åˆ™ä½¿ç”¨å¹¶å‘æ¨¡å¼ï¼ˆVK_SHARING_MODE_CONCURRENTï¼‰ï¼Œå¹¶æŒ‡å®šä¸¤ä¸ªä¸åŒçš„é˜Ÿåˆ—å®¶æ—ç´¢å¼•ï¼Œåˆ†åˆ«ç”¨äºå›¾å½¢å’Œå‘ˆç°æ“ä½œã€‚*/
 		VkSharingMode imageSharingMode;
 		uint32_t queueFamilyIndexCount;
 		uint32_t pQueueFamilyIndices[2] = { 0, 0 };
@@ -52,66 +52,66 @@ namespace WuDu {
 			pQueueFamilyIndices[1] = mContext->GetPresentQueueFamilyInfo().queueFamilyIndex;
 		}
 
-		// ±£´æ¾ÉµÄ½»»»Á´¾ä±ú
+		// ä¿å­˜æ—§çš„äº¤æ¢é“¾å¥æŸ„
 		VkSwapchainKHR oldSwapchain = mHandle;
 
-		// Ìî³ä½»»»Á´´´½¨ĞÅÏ¢½á¹¹Ìå
+		// å¡«å……äº¤æ¢é“¾åˆ›å»ºä¿¡æ¯ç»“æ„ä½“
 		VkSwapchainCreateInfoKHR swapchainInfo = {
-			// Ö¸¶¨½á¹¹ÌåÀàĞÍ
+			// æŒ‡å®šç»“æ„ä½“ç±»å‹
 			swapchainInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR,
-			// Ö¸ÏòÏÂÒ»¸ö½á¹¹ÌåµÄÖ¸Õë£¬´Ë´¦²»ĞèÒªÁ´½ÓÆäËû½á¹¹Ìå
+			// æŒ‡å‘ä¸‹ä¸€ä¸ªç»“æ„ä½“çš„æŒ‡é’ˆï¼Œæ­¤å¤„ä¸éœ€è¦é“¾æ¥å…¶ä»–ç»“æ„ä½“
 			swapchainInfo.pNext = nullptr,
-			// ±£Áô×Ö¶Î£¬ÓÃÓÚÎ´À´Ê¹ÓÃ£¬Ä¿Ç°Ó¦ÉèÖÃÎª0
+			// ä¿ç•™å­—æ®µï¼Œç”¨äºæœªæ¥ä½¿ç”¨ï¼Œç›®å‰åº”è®¾ç½®ä¸º0
 			swapchainInfo.flags = 0,
-			// ·ÖÅä¸ø½»»»Á´µÄ±íÃæ
+			// åˆ†é…ç»™äº¤æ¢é“¾çš„è¡¨é¢
 			swapchainInfo.surface = mContext->GetSurface(),
-			// ×îĞ¡Í¼ÏñÊıÁ¿£¬Ó°ÏìäÖÈ¾ĞÔÄÜºÍÄÚ´æÊ¹ÓÃ
+			// æœ€å°å›¾åƒæ•°é‡ï¼Œå½±å“æ¸²æŸ“æ€§èƒ½å’Œå†…å­˜ä½¿ç”¨
 			swapchainInfo.minImageCount = imageCount,
-			// Í¼ÏñµÄ¸ñÊ½
+			// å›¾åƒçš„æ ¼å¼
 			swapchainInfo.imageFormat = mSurfaceInfo.surfaceFormat.format,
-			// Í¼ÏñµÄÑÕÉ«¿Õ¼ä
+			// å›¾åƒçš„é¢œè‰²ç©ºé—´
 			swapchainInfo.imageColorSpace = mSurfaceInfo.surfaceFormat.colorSpace,
-			// Í¼ÏñµÄ·Ö±æÂÊ
+			// å›¾åƒçš„åˆ†è¾¨ç‡
 			swapchainInfo.imageExtent = mSurfaceInfo.capabilities.currentExtent,
-			// Í¼ÏñµÄ²ãÊı£¬Í¨³£Îª1£¬ÓÃÓÚ2DäÖÈ¾
+			// å›¾åƒçš„å±‚æ•°ï¼Œé€šå¸¸ä¸º1ï¼Œç”¨äº2Dæ¸²æŸ“
 			swapchainInfo.imageArrayLayers = 1,
-			// Í¼ÏñµÄÊ¹ÓÃ·½Ê½£¬´Ë´¦×÷ÎªÑÕÉ«¸½¼ş
+			// å›¾åƒçš„ä½¿ç”¨æ–¹å¼ï¼Œæ­¤å¤„ä½œä¸ºé¢œè‰²é™„ä»¶
 			swapchainInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT,
-			// Í¼Ïñ¹²ÏíÄ£Ê½£¬¾ö¶¨ÈçºÎÔÚ¶ÓÁĞÖ®¼ä¹²ÏíÍ¼Ïñ
+			// å›¾åƒå…±äº«æ¨¡å¼ï¼Œå†³å®šå¦‚ä½•åœ¨é˜Ÿåˆ—ä¹‹é—´å…±äº«å›¾åƒ
 			swapchainInfo.imageSharingMode = imageSharingMode,
-			// ¶ÓÁĞ×åË÷ÒıÊıÁ¿£¬ÓÃÓÚÖ§³ÖÍ¼Ïñ¹²ÏíÄ£Ê½
+			// é˜Ÿåˆ—æ—ç´¢å¼•æ•°é‡ï¼Œç”¨äºæ”¯æŒå›¾åƒå…±äº«æ¨¡å¼
 			swapchainInfo.queueFamilyIndexCount = queueFamilyIndexCount,
-			// ¶ÓÁĞ×åË÷ÒıÖ¸Õë£¬Ö¸¶¨²ÎÓëÍ¼Ïñ¹²ÏíµÄ¶ÓÁĞ×å
+			// é˜Ÿåˆ—æ—ç´¢å¼•æŒ‡é’ˆï¼ŒæŒ‡å®šå‚ä¸å›¾åƒå…±äº«çš„é˜Ÿåˆ—æ—
 			swapchainInfo.pQueueFamilyIndices = pQueueFamilyIndices,
-			// ±íÃæ±ä»»·½Ê½£¬´Ë´¦ÉèÖÃÎªÎŞ±ä»»
+			// è¡¨é¢å˜æ¢æ–¹å¼ï¼Œæ­¤å¤„è®¾ç½®ä¸ºæ— å˜æ¢
 			swapchainInfo.preTransform = VK_SURFACE_TRANSFORM_IDENTITY_BIT_KHR,
-			// ×éºÏalphaÖµ£¬´Ë´¦ÉèÖÃÎª¼Ì³Ğ
+			// ç»„åˆalphaå€¼ï¼Œæ­¤å¤„è®¾ç½®ä¸ºç»§æ‰¿
 			swapchainInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR,
 			//swapchainInfo.compositeAlpha = VK_COMPOSITE_ALPHA_INHERIT_BIT_KHR,
-			// ³ÊÏÖÄ£Ê½£¬Ó°ÏìäÖÈ¾µÄÁ÷³©ĞÔºÍÑÓ³Ù
+			// å‘ˆç°æ¨¡å¼ï¼Œå½±å“æ¸²æŸ“çš„æµç•…æ€§å’Œå»¶è¿Ÿ
 			swapchainInfo.presentMode = mSurfaceInfo.presentMode,
-			// ÊÇ·ñÔÊĞíÍ¼Ïñ±»²Ã¼ô£¬¼õÉÙĞèÒª³ÊÏÖµÄÏñËØÊıÁ¿
+			// æ˜¯å¦å…è®¸å›¾åƒè¢«è£å‰ªï¼Œå‡å°‘éœ€è¦å‘ˆç°çš„åƒç´ æ•°é‡
 			swapchainInfo.clipped = VK_FALSE,
-			// ¾ÉµÄ½»»»Á´£¬ÓÃÓÚ½»»»Á´µÄÖØ½¨
+			// æ—§çš„äº¤æ¢é“¾ï¼Œç”¨äºäº¤æ¢é“¾çš„é‡å»º
 			swapchainInfo.oldSwapchain = oldSwapchain
 		};
 
-		// ´´½¨½»»»Á´
+		// åˆ›å»ºäº¤æ¢é“¾
 		VkResult ret = vkCreateSwapchainKHR(mDevice->GetHandle(), &swapchainInfo, nullptr, &mHandle);
 		if (ret != VK_SUCCESS) {
 			LOG_E("{0} : {1}", __FUNCTION__, vk_result_string(ret));
 			return false;
 		}
 
-		// ÈÕÖ¾Êä³ö½»»»Á´´´½¨ĞÅÏ¢
+		// æ—¥å¿—è¾“å‡ºäº¤æ¢é“¾åˆ›å»ºä¿¡æ¯
 		LOG_T("Swapchain {0} : old: {1}, new: {2}, image count: {3}, format: {4}, present mode : {5}", __FUNCTION__, (void*)oldSwapchain, (void*)mHandle, imageCount,
 			vk_format_string(mSurfaceInfo.surfaceFormat.format), vk_present_mode_string(mSurfaceInfo.presentMode));
-		// Ö»ÓĞÔÚ³É¹¦´´½¨ĞÂ½»»»Á´ºó£¬²ÅÏú»Ù¾É½»»»Á´
+		// åªæœ‰åœ¨æˆåŠŸåˆ›å»ºæ–°äº¤æ¢é“¾åï¼Œæ‰é”€æ¯æ—§äº¤æ¢é“¾
 		if (oldSwapchain != VK_NULL_HANDLE) {
 			LOG_T("Swapchain {0} : destroy old: {1}", __FUNCTION__, (void*)oldSwapchain);
 			vkDestroySwapchainKHR(mDevice->GetHandle(), oldSwapchain, nullptr);
 		}
-		// »ñÈ¡½»»»Á´Í¼ÏñÊıÁ¿²¢µ÷ÕûÍ¼ÏñÊı×é´óĞ¡
+		// è·å–äº¤æ¢é“¾å›¾åƒæ•°é‡å¹¶è°ƒæ•´å›¾åƒæ•°ç»„å¤§å°
 		uint32_t swapchainImageCount;
 		ret = vkGetSwapchainImagesKHR(mDevice->GetHandle(), mHandle, &swapchainImageCount, nullptr);
 		mImages.resize(swapchainImageCount);
@@ -119,15 +119,15 @@ namespace WuDu {
 		return ret == VK_SUCCESS;
 	}
 
-	// ÉèÖÃ½»»»Á´µÄ±íÃæÄÜÁ¦
+	// è®¾ç½®äº¤æ¢é“¾çš„è¡¨é¢èƒ½åŠ›
 	void AdVKSwapchain::SetupSurfaceCapabilities() {
-		// »ñÈ¡ÎïÀíÉè±¸µÄ±íÃæÄÜÁ¦
+		// è·å–ç‰©ç†è®¾å¤‡çš„è¡¨é¢èƒ½åŠ›
 		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(mContext->GetPhyDevice(), mContext->GetSurface(), &mSurfaceInfo.capabilities);
 
-		// »ñÈ¡Éè±¸µÄÉèÖÃ
+		// è·å–è®¾å¤‡çš„è®¾ç½®
 		AdVkSettings settings = mDevice->GetSettings();
 
-		// »ñÈ¡±íÃæ¸ñÊ½ÊıÁ¿
+		// è·å–è¡¨é¢æ ¼å¼æ•°é‡
 		uint32_t formatCount;
 		CALL_VK(vkGetPhysicalDeviceSurfaceFormatsKHR(mContext->GetPhyDevice(), mContext->GetSurface(), &formatCount, nullptr));
 		if (formatCount == 0) {
@@ -135,11 +135,11 @@ namespace WuDu {
 			return;
 		}
 
-		// ¸ù¾İ¸ñÊ½ÊıÁ¿´´½¨¸ñÊ½Êı×é²¢»ñÈ¡¸ñÊ½ĞÅÏ¢
+		// æ ¹æ®æ ¼å¼æ•°é‡åˆ›å»ºæ ¼å¼æ•°ç»„å¹¶è·å–æ ¼å¼ä¿¡æ¯
 		std::vector<VkSurfaceFormatKHR> formats(formatCount);
 		CALL_VK(vkGetPhysicalDeviceSurfaceFormatsKHR(mContext->GetPhyDevice(), mContext->GetSurface(), &formatCount, formats.data()));
 
-		// ²éÕÒÉè±¸ÉèÖÃÖĞÖ¸¶¨µÄ±íÃæ¸ñÊ½
+		// æŸ¥æ‰¾è®¾å¤‡è®¾ç½®ä¸­æŒ‡å®šçš„è¡¨é¢æ ¼å¼
 		int32_t foundFormatIndex = -1;
 		for (int i = 0; i < formatCount; i++) {
 			if (formats[i].format == settings.surfaceFormat && formats[i].colorSpace == VK_COLORSPACE_SRGB_NONLINEAR_KHR) {
@@ -148,13 +148,13 @@ namespace WuDu {
 			}
 		}
 
-		// Èç¹ûÎ´ÕÒµ½Ö¸¶¨¸ñÊ½£¬ÔòÊ¹ÓÃµÚÒ»¸ö¸ñÊ½
+		// å¦‚æœæœªæ‰¾åˆ°æŒ‡å®šæ ¼å¼ï¼Œåˆ™ä½¿ç”¨ç¬¬ä¸€ä¸ªæ ¼å¼
 		if (foundFormatIndex == -1) {
 			foundFormatIndex = 0;
 		}
 		mSurfaceInfo.surfaceFormat = formats[foundFormatIndex];
 
-		// »ñÈ¡±íÃæ³ÊÏÖÄ£Ê½ÊıÁ¿
+		// è·å–è¡¨é¢å‘ˆç°æ¨¡å¼æ•°é‡
 		uint32_t presentModeCount;
 		CALL_VK(vkGetPhysicalDeviceSurfacePresentModesKHR(mContext->GetPhyDevice(), mContext->GetSurface(), &presentModeCount, nullptr));
 		if (presentModeCount == 0) {
@@ -162,11 +162,11 @@ namespace WuDu {
 			return;
 		}
 
-		// ¸ù¾İ³ÊÏÖÄ£Ê½ÊıÁ¿´´½¨³ÊÏÖÄ£Ê½Êı×é²¢»ñÈ¡³ÊÏÖÄ£Ê½ĞÅÏ¢
+		// æ ¹æ®å‘ˆç°æ¨¡å¼æ•°é‡åˆ›å»ºå‘ˆç°æ¨¡å¼æ•°ç»„å¹¶è·å–å‘ˆç°æ¨¡å¼ä¿¡æ¯
 		std::vector<VkPresentModeKHR> presentModes(presentModeCount);
 		CALL_VK(vkGetPhysicalDeviceSurfacePresentModesKHR(mContext->GetPhyDevice(), mContext->GetSurface(), &presentModeCount, presentModes.data()));
 
-		// ²éÕÒÉè±¸ÉèÖÃÖĞÖ¸¶¨µÄ³ÊÏÖÄ£Ê½
+		// æŸ¥æ‰¾è®¾å¤‡è®¾ç½®ä¸­æŒ‡å®šçš„å‘ˆç°æ¨¡å¼
 		VkPresentModeKHR preferredPresentMode = settings.presentMode;
 		int32_t foundPresentModeIndex = -1;
 		for (int i = 0; i < presentModeCount; i++) {
@@ -176,7 +176,7 @@ namespace WuDu {
 			}
 		}
 
-		// Èç¹ûÕÒµ½Ö¸¶¨µÄ³ÊÏÖÄ£Ê½£¬ÔòÊ¹ÓÃËü£»·ñÔòÊ¹ÓÃµÚÒ»¸ö³ÊÏÖÄ£Ê½
+		// å¦‚æœæ‰¾åˆ°æŒ‡å®šçš„å‘ˆç°æ¨¡å¼ï¼Œåˆ™ä½¿ç”¨å®ƒï¼›å¦åˆ™ä½¿ç”¨ç¬¬ä¸€ä¸ªå‘ˆç°æ¨¡å¼
 		if (foundPresentModeIndex >= 0) {
 			mSurfaceInfo.presentMode = presentModes[foundPresentModeIndex];
 		}
@@ -186,49 +186,49 @@ namespace WuDu {
 	}
 
 	/**
-	* @brief »ñÈ¡½»»»Á´ÖĞµÄÏÂÒ»¸ö¿ÉÓÃÍ¼Ïñ
+	* @brief è·å–äº¤æ¢é“¾ä¸­çš„ä¸‹ä¸€ä¸ªå¯ç”¨å›¾åƒ
 	*
-	* ¸Ãº¯ÊıÍ¨¹ıvkAcquireNextImageKHR´Ó½»»»Á´ÖĞ»ñÈ¡Ò»¸ö¿ÉÓÃµÄÍ¼Ïñ£¬²¢¿ÉÑ¡µØÊ¹ÓÃĞÅºÅÁ¿»òÎ§À¸À´Í¬²½
+	* è¯¥å‡½æ•°é€šè¿‡vkAcquireNextImageKHRä»äº¤æ¢é“¾ä¸­è·å–ä¸€ä¸ªå¯ç”¨çš„å›¾åƒï¼Œå¹¶å¯é€‰åœ°ä½¿ç”¨ä¿¡å·é‡æˆ–å›´æ æ¥åŒæ­¥
 	*
-	* @param outImageIndex Ö¸ÏòÒ»¸öÕûÊıµÄÖ¸Õë£¬ÓÃÓÚ´æ´¢»ñÈ¡µÄÍ¼ÏñË÷Òı
-	* @param semaphore ¿ÉÑ¡µÄĞÅºÅÁ¿£¬ÓÃÓÚÔÚÍ¼Ïñ»ñÈ¡ºó·¢³öĞÅºÅ
-	* @param fence ¿ÉÑ¡µÄÎ§À¸£¬ÓÃÓÚÔÚÍ¼Ïñ»ñÈ¡ºó·¢³öĞÅºÅ
-	* @return VkResult ·µ»Ø»ñÈ¡Í¼ÏñµÄ½á¹û£¬¿ÉÄÜÎªVK_SUCCESS¡¢VK_SUBOPTIMAL_KHR»òÆäËû´íÎó´úÂë
+	* @param outImageIndex æŒ‡å‘ä¸€ä¸ªæ•´æ•°çš„æŒ‡é’ˆï¼Œç”¨äºå­˜å‚¨è·å–çš„å›¾åƒç´¢å¼•
+	* @param semaphore å¯é€‰çš„ä¿¡å·é‡ï¼Œç”¨äºåœ¨å›¾åƒè·å–åå‘å‡ºä¿¡å·
+	* @param fence å¯é€‰çš„å›´æ ï¼Œç”¨äºåœ¨å›¾åƒè·å–åå‘å‡ºä¿¡å·
+	* @return VkResult è¿”å›è·å–å›¾åƒçš„ç»“æœï¼Œå¯èƒ½ä¸ºVK_SUCCESSã€VK_SUBOPTIMAL_KHRæˆ–å…¶ä»–é”™è¯¯ä»£ç 
 	*/
 	VkResult AdVKSwapchain::AcquireImage(uint32_t& outImageIndex, VkSemaphore semaphore, VkFence fence) {
 		uint32_t imageIndex;
-		// µ÷ÓÃvkAcquireNextImageKHR»ñÈ¡ÏÂÒ»¸ö¿ÉÓÃÍ¼ÏñµÄË÷Òı
+		// è°ƒç”¨vkAcquireNextImageKHRè·å–ä¸‹ä¸€ä¸ªå¯ç”¨å›¾åƒçš„ç´¢å¼•
 		VkResult ret = vkAcquireNextImageKHR(mDevice->GetHandle(), mHandle, UINT64_MAX, semaphore, fence, &imageIndex);
 
-		// Èç¹ûÌá¹©ÁËÎ§À¸£¬ÔòµÈ´ıÎ§À¸±»´¥·¢²¢ÖØÖÃÎ§À¸
+		// å¦‚æœæä¾›äº†å›´æ ï¼Œåˆ™ç­‰å¾…å›´æ è¢«è§¦å‘å¹¶é‡ç½®å›´æ 
 		if (fence != VK_NULL_HANDLE) {
 			CALL_VK(vkWaitForFences(mDevice->GetHandle(), 1, &fence, VK_FALSE, UINT64_MAX));
 			CALL_VK(vkResetFences(mDevice->GetHandle(), 1, &fence));
 		}
 
-		// Èç¹û³É¹¦»ñÈ¡ÁËÍ¼Ïñ»òÍ¼Ïñ×´Ì¬Îª´ÎÓÅ£¬¸üĞÂÍâ²¿ºÍÄÚ²¿µÄµ±Ç°Í¼ÏñË÷Òı
+		// å¦‚æœæˆåŠŸè·å–äº†å›¾åƒæˆ–å›¾åƒçŠ¶æ€ä¸ºæ¬¡ä¼˜ï¼Œæ›´æ–°å¤–éƒ¨å’Œå†…éƒ¨çš„å½“å‰å›¾åƒç´¢å¼•
 		if (ret == VK_SUCCESS || ret == VK_SUBOPTIMAL_KHR) {
 			outImageIndex = imageIndex;
 			mCurrentImageIndex = imageIndex;
 		}
 
-		// ·µ»Ø»ñÈ¡Í¼ÏñµÄ½á¹û
+		// è¿”å›è·å–å›¾åƒçš„ç»“æœ
 		return ret;
 	}
 
 	/**
-	* @brief Ìá½»²¢³ÊÏÖ½»»»Á´Í¼Ïñµ½ÆÁÄ»
+	* @brief æäº¤å¹¶å‘ˆç°äº¤æ¢é“¾å›¾åƒåˆ°å±å¹•
 	*
-	* ¸Ãº¯Êı¸ºÔğ½«Ö¸¶¨Ë÷ÒıµÄ½»»»Á´Í¼ÏñÌá½»µ½³ÊÏÖ¶ÓÁĞ½øĞĞÏÔÊ¾£¬
-	* ²¢µÈ´ıÖ¸¶¨µÄĞÅºÅÁ¿È·±£äÖÈ¾Íê³ÉºóÔÙ½øĞĞ³ÊÏÖ²Ù×÷¡£
+	* è¯¥å‡½æ•°è´Ÿè´£å°†æŒ‡å®šç´¢å¼•çš„äº¤æ¢é“¾å›¾åƒæäº¤åˆ°å‘ˆç°é˜Ÿåˆ—è¿›è¡Œæ˜¾ç¤ºï¼Œ
+	* å¹¶ç­‰å¾…æŒ‡å®šçš„ä¿¡å·é‡ç¡®ä¿æ¸²æŸ“å®Œæˆåå†è¿›è¡Œå‘ˆç°æ“ä½œã€‚
 	*
-	* @param imageIndex Òª³ÊÏÖµÄ½»»»Á´Í¼ÏñË÷Òı
-	* @param waitSemaphores µÈ´ıµÄ Vulkan ĞÅºÅÁ¿ÁĞ±í£¬È·±£ÔÚÕâĞ©ĞÅºÅÁ¿·¢³öĞÅºÅºó²Å¿ªÊ¼³ÊÏÖ
+	* @param imageIndex è¦å‘ˆç°çš„äº¤æ¢é“¾å›¾åƒç´¢å¼•
+	* @param waitSemaphores ç­‰å¾…çš„ Vulkan ä¿¡å·é‡åˆ—è¡¨ï¼Œç¡®ä¿åœ¨è¿™äº›ä¿¡å·é‡å‘å‡ºä¿¡å·åæ‰å¼€å§‹å‘ˆç°
 	*
-	* @return VkResult Vulkan API µ÷ÓÃ½á¹û£¬VK_SUCCESS ±íÊ¾³É¹¦£¬ÆäËûÖµ±íÊ¾³ÊÏÖ¹ı³ÌÖĞ³öÏÖ´íÎó
+	* @return VkResult Vulkan API è°ƒç”¨ç»“æœï¼ŒVK_SUCCESS è¡¨ç¤ºæˆåŠŸï¼Œå…¶ä»–å€¼è¡¨ç¤ºå‘ˆç°è¿‡ç¨‹ä¸­å‡ºç°é”™è¯¯
 	*/
 	VkResult AdVKSwapchain::Present(int32_t imageIndex, const std::vector<VkSemaphore>& waitSemaphores) {
-		// ÅäÖÃ³ÊÏÖĞÅÏ¢½á¹¹Ìå
+		// é…ç½®å‘ˆç°ä¿¡æ¯ç»“æ„ä½“
 		VkPresentInfoKHR presentInfo = {
 			presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
 			presentInfo.pNext = nullptr,
@@ -239,10 +239,10 @@ namespace WuDu {
 			presentInfo.pImageIndices = reinterpret_cast<const uint32_t*>(&imageIndex)
 		};
 
-		// Ìá½»³ÊÏÖÇëÇóµ½¶ÓÁĞ
+		// æäº¤å‘ˆç°è¯·æ±‚åˆ°é˜Ÿåˆ—
 		VkResult ret = vkQueuePresentKHR(mDevice->GetFirstPresentQueue()->GetHandle(), &presentInfo);
 
-		// µÈ´ı³ÊÏÖ¶ÓÁĞ¿ÕÏĞ£¬È·±£³ÊÏÖ²Ù×÷Íê³É
+		// ç­‰å¾…å‘ˆç°é˜Ÿåˆ—ç©ºé—²ï¼Œç¡®ä¿å‘ˆç°æ“ä½œå®Œæˆ
 		mDevice->GetFirstPresentQueue()->WaitIdle();
 
 		return ret;
