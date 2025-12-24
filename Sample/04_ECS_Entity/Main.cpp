@@ -129,8 +129,13 @@ protected:
 			}*/
 			Vertices = meshes[0].Vertices;
 			Indices = meshes[0].Indices;
+			mModelMeshes.emplace_back(std::make_shared<WuDu::AdMesh>(Vertices, Indices));
 		}
-		mModelMesh = std::make_shared<WuDu::AdMesh>(Vertices, Indices);
+		else {
+			mModelMeshes.emplace_back(std::make_shared<WuDu::AdMesh>(vertices, indices));
+		}
+		//mModelMesh = std::make_shared<WuDu::AdMesh>(Vertices, Indices);
+		//mModelMeshes.emplace_back(std::make_shared<WuDu::AdMesh>(Vertices,Indices));
 
 		// 创建材质
 		mBaseMaterial = std::shared_ptr<WuDu::AdUnlitMaterial>(WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdUnlitMaterial>());
@@ -189,61 +194,16 @@ protected:
 		mGuiSystem->AddSceneEditor();
 
 
-		// 创建多个立方体实体，并设置其材质和变换属性
+		// 创建多个实体，并设置其材质和变换属性
 		{
-			mCubes.emplace_back(scene->CreateEntity("Cube 0"));
+			mCubes.emplace_back(scene->CreateEntity("MiG-29"));
 			auto& materialComp = mCubes[0]->AddComponent<WuDu::AdUnlitMaterialComponent>();
-			materialComp.AddMesh(mCubeMesh.get(), mBaseMaterial.get());
+			materialComp.AddMesh(mModelMeshes[0].get(), mBaseMaterial.get());
 			auto& transComp = mCubes[0]->GetComponent<WuDu::AdTransformComponent>();
-			transComp.scale = { 1.f, 1.f, 1.f };
-			transComp.position = { 0.f, 0.f, 0.0f };
-			transComp.rotation = { 17.f, 30.f, 0.f };
-		}
-		{
-			mCubes.emplace_back(scene->CreateEntity("Cube 1"));
-			auto& materialComp = mCubes[1]->AddComponent<WuDu::AdUnlitMaterialComponent>();
-			materialComp.AddMesh(mCubeMesh.get(), mBaseMaterial.get());
-			auto& transComp = mCubes[1]->GetComponent<WuDu::AdTransformComponent>();
-			transComp.scale = { 0.5f, 0.5f, 0.5f };
-			transComp.position = { -1.f, 0.f, 0.0f };
-			transComp.rotation = { 17.f, 30.f, 0.f };
-		}
-		{
-			mCubes.emplace_back(scene->CreateEntity("Cube 2"));
-			auto& materialComp = mCubes[2]->AddComponent<WuDu::AdUnlitMaterialComponent>();
-			materialComp.AddMesh(mCubeMesh.get(), mBaseMaterial.get());
-			auto& transComp = mCubes[2]->GetComponent<WuDu::AdTransformComponent>();
-			transComp.scale = { 0.5f, 0.5f, 0.5f };
-			transComp.position = { 1.f, 0.f, 0.0f };
-			transComp.rotation = { 17.f, 30.f, 0.f };
-		}
-		{
-			mCubes.emplace_back(scene->CreateEntity("Cube 3"));
-			auto& materialComp = mCubes[3]->AddComponent<WuDu::AdUnlitMaterialComponent>();
-			materialComp.AddMesh(mCubeMesh.get(), mBaseMaterial.get());
-			auto& transComp = mCubes[3]->GetComponent<WuDu::AdTransformComponent>();
-			transComp.scale = { 0.5f, 0.5f, 0.5f };
-			transComp.position = { 0.f, 1.f, -1.0f };
-			transComp.rotation = { 17.f, 30.f, 0.f };
-		}
-		{
-			mCubes.emplace_back(scene->CreateEntity("Phainon"));
-			auto& materialComp = mCubes[4]->AddComponent<WuDu::AdUnlitMaterialComponent>();
-			materialComp.AddMesh(mModelMesh.get(), mBaseMaterial.get());
-			auto& transComp = mCubes[4]->GetComponent<WuDu::AdTransformComponent>();
-			transComp.scale = { 1.f, 1.f, 1.f };
+			transComp.scale = { 0.4f, 0.4f, 0.4f };
 			transComp.position = { 0.f, 0.f, 0.0f };
 			transComp.rotation = { 0.f, 0.f, 0.f };
 		}
-		/*{
-			mCubes.emplace_back(scene->CreateEntity("Phainon"));
-			auto& materialComp = mCubes[5]->AddComponent<WuDu::AdUnlitMaterialComponent>();
-			materialComp.AddMesh(mModelMesh.get(), mBaseMaterial.get());
-			auto& transComp = mCubes[5]->GetComponent<WuDu::AdTransformComponent>();
-			transComp.scale = { 1.f, 1.f, 1.f };
-			transComp.position = { 0.f, 0.f, 0.0f };
-			transComp.rotation = { 0.f, 0.f, 0.f };
-		}*/
 	}
 
 	void OnUpdate(float deltaTime) override {
@@ -269,32 +229,6 @@ protected:
 			}
 		}
 
-		// 更新 Cube 1 - 绕X轴旋转
-		if (mCubes[1] && mCubes[1]->HasComponent<WuDu::AdTransformComponent>()) {
-			auto& transComp = mCubes[1]->GetComponent<WuDu::AdTransformComponent>();
-			transComp.rotation.x += rotationSpeed * deltaTime;
-			if (transComp.rotation.x >= 360.0f) {
-				transComp.rotation.x -= 360.0f;
-			}
-		}
-
-		// 更新 Cube 2 - 绕Z轴旋转
-		if (mCubes[2] && mCubes[2]->HasComponent<WuDu::AdTransformComponent>()) {
-			auto& transComp = mCubes[2]->GetComponent<WuDu::AdTransformComponent>();
-			transComp.rotation.z += rotationSpeed * deltaTime;
-			if (transComp.rotation.z >= 360.0f) {
-				transComp.rotation.z -= 360.0f;
-			}
-		}
-		// 更新 Cube 3 - 绕Z轴旋转
-		if (mCubes[3] && mCubes[3]->HasComponent<WuDu::AdTransformComponent>()) {
-			auto& transComp = mCubes[3]->GetComponent<WuDu::AdTransformComponent>();
-			transComp.rotation.z += rotationSpeed * deltaTime;
-
-			if (transComp.rotation.z >= 360.0f) {
-				transComp.rotation.z -= 360.0f;
-			}
-		}
 	}
 
 	/**
@@ -380,6 +314,7 @@ private:
 	std::vector<VkCommandBuffer> mCmdBuffers;               ///< 命令缓冲区数组
 	std::shared_ptr<WuDu::AdMesh> mCubeMesh;                 ///< 立方体网格对象
 	std::shared_ptr<WuDu::AdMesh> mModelMesh;
+	std::vector<std::shared_ptr<WuDu::AdMesh>> mModelMeshes;		//模型网格体组
 	std::vector<WuDu::AdEntity*> mCubes;
 
 	std::unique_ptr<WuDu::AdCameraControllerManager> m_CameraController;  ///< 相机控制器管理器

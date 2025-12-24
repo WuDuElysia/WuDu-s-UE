@@ -1,8 +1,7 @@
-#ifndef ADUNLITMATERIALSYSTEM_H
-#define ADUNLITMATERIALSYSTEM_H
+#pragma once
 
 #include "ECS/System/AdMaterialSystem.h"
-#include "ECS/Component/Material/AdUnlitMaterialComponent.h"
+#include "ECS/Component/Material/AdPBRMaterialComponent.h"
 
 namespace WuDu {
 #define NUM_MATERIAL_BATCH              16
@@ -13,16 +12,16 @@ namespace WuDu {
         class AdVKDescriptorSetLayout;
         class AdVKDescriptorPool;
 
-        class AdUnlitMaterialSystem : public AdMaterialSystem {
+        class AdPBRMaterialSystem : public AdMaterialSystem {
         public:
                 void OnInit(AdVKRenderPass* renderPass) override;
-                void OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) override;
+                void OnRender(VkCommandBuffer cmdbuffer, AdRenderTarget* renderTarget) override;
                 void OnDestroy() override;
         private:
                 void ReCreateMaterialDescPool(uint32_t materialCount);
                 void UpdateFrameUboDescSet(AdRenderTarget* renderTarget);
-                void UpdateMaterialParamsDescSet(VkDescriptorSet descSet, AdUnlitMaterial* material);
-                void UpdateMaterialResourceDescSet(VkDescriptorSet descSet, AdUnlitMaterial* material);
+                void UpdateMaterialParamsDescSet(VkDescriptorSet descSet, AdPBRMaterial* metarial);
+                void UpdateMaterialResourceDescSet(VkDescriptorSet descSet, AdPBRMaterial* material);
 
                 std::shared_ptr<AdVKDescriptorSetLayout> mFrameUboDescSetLayout;
                 std::shared_ptr<AdVKDescriptorSetLayout> mMaterialParamDescSetLayout;
@@ -46,5 +45,3 @@ namespace WuDu {
 
         };
 }
-
-#endif

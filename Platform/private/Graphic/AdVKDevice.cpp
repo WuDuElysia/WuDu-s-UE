@@ -13,24 +13,24 @@ namespace WuDu {
     #endif
 	};
 
-	// ¹¹Ôìº¯Êı: ³õÊ¼»¯AdVKDevice¶ÔÏó
-	// ²ÎÊı:
-	// - context: Ö¸ÏòAdVKGraphicContext¶ÔÏóµÄÖ¸Õë£¬ÓÃÓÚ»ñÈ¡Í¼ĞÎºÍÏÔÊ¾¶ÓÁĞ¼Ò×åĞÅÏ¢
-	// - graphicQueueCount: Í¼ĞÎ¶ÓÁĞµÄÊıÁ¿
-	// - presentQueueCount: ÏÔÊ¾¶ÓÁĞµÄÊıÁ¿
-	// - settings: VulkanÉèÖÃ£¬ÓÃÓÚÉè±¸ÅäÖÃ
+	// æ„é€ å‡½æ•°: åˆå§‹åŒ–AdVKDeviceå¯¹è±¡
+	// å‚æ•°:
+	// - context: æŒ‡å‘AdVKGraphicContextå¯¹è±¡çš„æŒ‡é’ˆï¼Œç”¨äºè·å–å›¾å½¢å’Œæ˜¾ç¤ºé˜Ÿåˆ—å®¶æ—ä¿¡æ¯
+	// - graphicQueueCount: å›¾å½¢é˜Ÿåˆ—çš„æ•°é‡
+	// - presentQueueCount: æ˜¾ç¤ºé˜Ÿåˆ—çš„æ•°é‡
+	// - settings: Vulkanè®¾ç½®ï¼Œç”¨äºè®¾å¤‡é…ç½®
 	AdVKDevice::AdVKDevice(AdVKGraphicContext* context, uint32_t graphicQueueCount, uint32_t presentQueueCount, const AdVkSettings& settings) : mContext(context), mSettings(settings) {
-		// ¼ì²écontextÊÇ·ñÎªnullptr
+		// æ£€æŸ¥contextæ˜¯å¦ä¸ºnullptr
 		if (!context) {
 			LOG_E("Must create a vulkan graphic context before create device.");
 			return;
 		}
 
-		// »ñÈ¡Í¼ĞÎºÍÏÔÊ¾¶ÓÁĞ¼Ò×åĞÅÏ¢
+		// è·å–å›¾å½¢å’Œæ˜¾ç¤ºé˜Ÿåˆ—å®¶æ—ä¿¡æ¯
 		QueueFamilyInfo graphicQueueFamilyInfo = context->GetGraphicQueueFamilyInfo();
 		QueueFamilyInfo presentQueueFamilyInfo = context->GetPresentQueueFamilyInfo();
 
-		// ¼ì²éÇëÇóµÄ¶ÓÁĞÊıÁ¿ÊÇ·ñ³¬¹ı¶ÓÁĞ¼Ò×åµÄÊµ¼ÊÊıÁ¿
+		// æ£€æŸ¥è¯·æ±‚çš„é˜Ÿåˆ—æ•°é‡æ˜¯å¦è¶…è¿‡é˜Ÿåˆ—å®¶æ—çš„å®é™…æ•°é‡
 		if (graphicQueueCount > graphicQueueFamilyInfo.queueCount) {
 			LOG_E("this queue family has {0} queue, but request {1}", graphicQueueFamilyInfo.queueCount, graphicQueueCount);
 			return;
@@ -40,11 +40,11 @@ namespace WuDu {
 			return;
 		}
 
-		// ³õÊ¼»¯Í¼ĞÎºÍÏÔÊ¾¶ÓÁĞµÄÓÅÏÈ¼¶
+		// åˆå§‹åŒ–å›¾å½¢å’Œæ˜¾ç¤ºé˜Ÿåˆ—çš„ä¼˜å…ˆçº§
 		std::vector<float> graphicQueuePriorities(graphicQueueCount, 0.f);
 		std::vector<float> presentQueuePriorities(graphicQueueCount, 1.f);
 
-		// ¼ì²éÍ¼ĞÎºÍÏÔÊ¾¶ÓÁĞ¼Ò×åË÷ÒıÊÇ·ñÏàÍ¬
+		// æ£€æŸ¥å›¾å½¢å’Œæ˜¾ç¤ºé˜Ÿåˆ—å®¶æ—ç´¢å¼•æ˜¯å¦ç›¸åŒ
 		bool bSameQueueFamilyIndex = context->IsSameGraphicPresentQueueFamily();
 		uint32_t sameQueueCount = graphicQueueCount;
 		if (bSameQueueFamilyIndex) {
@@ -55,7 +55,7 @@ namespace WuDu {
 			graphicQueuePriorities.insert(graphicQueuePriorities.end(), presentQueuePriorities.begin(), presentQueuePriorities.end());
 		}
 
-		// ×¼±¸¶ÓÁĞ´´½¨ĞÅÏ¢
+		// å‡†å¤‡é˜Ÿåˆ—åˆ›å»ºä¿¡æ¯
 		VkDeviceQueueCreateInfo queueInfos[2] = {
 		    {
 			//VkStructureType             sType;
@@ -73,7 +73,7 @@ namespace WuDu {
 		    }
 		};
 
-		// Èç¹ûÍ¼ĞÎºÍÏÔÊ¾¶ÓÁĞ¼Ò×åË÷Òı²»Í¬£¬Ìí¼ÓµÚ¶ş¸ö¶ÓÁĞ´´½¨ĞÅÏ¢
+		// å¦‚æœå›¾å½¢å’Œæ˜¾ç¤ºé˜Ÿåˆ—å®¶æ—ç´¢å¼•ä¸åŒï¼Œæ·»åŠ ç¬¬äºŒä¸ªé˜Ÿåˆ—åˆ›å»ºä¿¡æ¯
 		if (!bSameQueueFamilyIndex) {
 			queueInfos[1] = {
 			    VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
@@ -85,14 +85,14 @@ namespace WuDu {
 			};
 		}
 
-		// Ã¶¾ÙÉè±¸À©Õ¹ÊôĞÔ
+		// æšä¸¾è®¾å¤‡æ‰©å±•å±æ€§
 		uint32_t availableExtensionCount;
 		CALL_VK(vkEnumerateDeviceExtensionProperties(context->GetPhyDevice(), "", &availableExtensionCount, nullptr));
 		std::vector<VkExtensionProperties> availableExtensions(availableExtensionCount);
 		CALL_VK(vkEnumerateDeviceExtensionProperties(context->GetPhyDevice(), "", &availableExtensionCount, availableExtensions.data()));
 
 
-		// ¼ì²é²¢ÆôÓÃÉè±¸À©Õ¹
+		// æ£€æŸ¥å¹¶å¯ç”¨è®¾å¤‡æ‰©å±•
 		uint32_t enableExtensionCount;
 		std::vector<const char*> enableExtensions(32);
 		enableExtensions.push_back(VK_KHR_SWAPCHAIN_EXTENSION_NAME);
@@ -102,12 +102,12 @@ namespace WuDu {
 			return;
 		}
 
-		// 2. ÆôÓÃ¶¯Ì¬äÖÈ¾ÌØĞÔ£¨Í¨¹ıpNextÁ´£©
+		// 2. å¯ç”¨åŠ¨æ€æ¸²æŸ“ç‰¹æ€§ï¼ˆé€šè¿‡pNexté“¾ï¼‰
 		VkPhysicalDeviceDynamicRenderingFeatures dynamicRenderingFeatures = {};
 		dynamicRenderingFeatures.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DYNAMIC_RENDERING_FEATURES;
-		dynamicRenderingFeatures.dynamicRendering = VK_TRUE; // ¹Ø¼ü£ºÆôÓÃÌØĞÔ
+		dynamicRenderingFeatures.dynamicRendering = VK_TRUE; // å…³é”®ï¼šå¯ç”¨ç‰¹æ€§
 
-		// ×¼±¸Éè±¸´´½¨ĞÅÏ¢
+		// å‡†å¤‡è®¾å¤‡åˆ›å»ºä¿¡æ¯
 		VkDeviceCreateInfo deviceInfo = {
 		    deviceInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO,
 		    deviceInfo.pNext = &dynamicRenderingFeatures,
@@ -121,77 +121,77 @@ namespace WuDu {
 		    deviceInfo.pEnabledFeatures = nullptr
 		};
 
-		// ´´½¨Âß¼­Éè±¸
+		// åˆ›å»ºé€»è¾‘è®¾å¤‡
 		CALL_VK(vkCreateDevice(context->GetPhyDevice(), &deviceInfo, nullptr, &mHandle));
 		LOG_T("VkDevice: {0}", (void*)mHandle);
 
-		// »ñÈ¡²¢±£´æÍ¼ĞÎ¶ÓÁĞ
+		// è·å–å¹¶ä¿å­˜å›¾å½¢é˜Ÿåˆ—
 		for (int i = 0; i < graphicQueueCount; i++) {
 			VkQueue queue;
 			vkGetDeviceQueue(mHandle, graphicQueueFamilyInfo.queueFamilyIndex, i, &queue);
 			mGraphicQueues.push_back(std::make_shared<AdVKQueue>(graphicQueueFamilyInfo.queueFamilyIndex, i, queue, false));
 		}
 
-		// »ñÈ¡²¢±£´æÏÔÊ¾¶ÓÁĞ
+		// è·å–å¹¶ä¿å­˜æ˜¾ç¤ºé˜Ÿåˆ—
 		for (int i = 0; i < presentQueueCount; i++) {
 			VkQueue queue;
 			vkGetDeviceQueue(mHandle, presentQueueFamilyInfo.queueFamilyIndex, i, &queue);
 			mPresentQueues.push_back(std::make_shared<AdVKQueue>(presentQueueFamilyInfo.queueFamilyIndex, i, queue, true));
 		}
 
-		// ´´½¨¹ÜµÀ»º´æ
+		// åˆ›å»ºç®¡é“ç¼“å­˜
 		CreatePipelineCache();
 
-		// ´´½¨Ä¬ÈÏÃüÁî³Ø
+		// åˆ›å»ºé»˜è®¤å‘½ä»¤æ± 
 		CreateDefaultCmdPool();
 	}
 
-	// AdVKDeviceÀàµÄÎö¹¹º¯Êı
+	// AdVKDeviceç±»çš„ææ„å‡½æ•°
 	AdVKDevice::~AdVKDevice() {
-		// µÈ´ıÉè±¸¿ÕÏĞ£¬È·±£ËùÓĞÃüÁîÍê³ÉÖ´ĞĞ
+		// ç­‰å¾…è®¾å¤‡ç©ºé—²ï¼Œç¡®ä¿æ‰€æœ‰å‘½ä»¤å®Œæˆæ‰§è¡Œ
 		vkDeviceWaitIdle(mHandle);
-		// ÊÍ·ÅÄ¬ÈÏÃüÁî³Ø
+		// é‡Šæ”¾é»˜è®¤å‘½ä»¤æ± 
 		mDefaultCmdPool = nullptr;
-		// Ïú»Ù¹ÜµÀ»º´æ
+		// é”€æ¯ç®¡é“ç¼“å­˜
 		VK_D(PipelineCache, mHandle, mPipelineCache);
-		// Ïú»ÙÉè±¸
+		// é”€æ¯è®¾å¤‡
 		vkDestroyDevice(mHandle, nullptr);
 	}
 
-	// ´´½¨¹ÜµÀ»º´æ
+	// åˆ›å»ºç®¡é“ç¼“å­˜
 	void AdVKDevice::CreatePipelineCache() {
-		// ³õÊ¼»¯¹ÜµÀ»º´æ´´½¨ĞÅÏ¢
+		// åˆå§‹åŒ–ç®¡é“ç¼“å­˜åˆ›å»ºä¿¡æ¯
 		VkPipelineCacheCreateInfo pipelineCacheInfo = {
 			pipelineCacheInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_CACHE_CREATE_INFO,
 			pipelineCacheInfo.pNext = nullptr,
 			pipelineCacheInfo.flags = 0
 		};
-		// µ÷ÓÃvkCreatePipelineCache´´½¨¹ÜµÀ»º´æ
+		// è°ƒç”¨vkCreatePipelineCacheåˆ›å»ºç®¡é“ç¼“å­˜
 		CALL_VK(vkCreatePipelineCache(mHandle, &pipelineCacheInfo, nullptr, &mPipelineCache));
 	}
 
-	// ´´½¨Ä¬ÈÏÃüÁî³Ø
+	// åˆ›å»ºé»˜è®¤å‘½ä»¤æ± 
 	void AdVKDevice::CreateDefaultCmdPool() {
-		// Ê¹ÓÃ Adele¿âµÄ AdVKCommandPoolÀà´´½¨Ä¬ÈÏÃüÁî³Ø
+		// ä½¿ç”¨ Adeleåº“çš„ AdVKCommandPoolç±»åˆ›å»ºé»˜è®¤å‘½ä»¤æ± 
 		mDefaultCmdPool = std::make_shared<WuDu::AdVKCommandPool>(this, mContext->GetGraphicQueueFamilyInfo().queueFamilyIndex);
 	}
 
-	// »ñÈ¡ÄÚ´æÀàĞÍË÷Òı
+	// è·å–å†…å­˜ç±»å‹ç´¢å¼•
 	int32_t AdVKDevice::GetMemoryIndex(VkMemoryPropertyFlags memProps, uint32_t memoryTypeBits) const {
-		// »ñÈ¡ÎïÀíÉè±¸ÄÚ´æÊôĞÔ
+		// è·å–ç‰©ç†è®¾å¤‡å†…å­˜å±æ€§
 		VkPhysicalDeviceMemoryProperties phyDeviceMemProps = mContext->GetPhyDeviceMemProperties();
-		// ¼ì²éÄÚ´æÀàĞÍÊıÁ¿ÊÇ·ñÎª0
+		// æ£€æŸ¥å†…å­˜ç±»å‹æ•°é‡æ˜¯å¦ä¸º0
 		if (phyDeviceMemProps.memoryTypeCount == 0) {
 			LOG_E("Physical device memory type count is 0");
 			return -1;
 		}
-		// ±éÀúËùÓĞÄÚ´æÀàĞÍ£¬Ñ°ÕÒÆ¥ÅäµÄÄÚ´æÀàĞÍË÷Òı
+		// éå†æ‰€æœ‰å†…å­˜ç±»å‹ï¼Œå¯»æ‰¾åŒ¹é…çš„å†…å­˜ç±»å‹ç´¢å¼•
 		for (int i = 0; i < phyDeviceMemProps.memoryTypeCount; i++) {
 			if (memoryTypeBits & (1 << i) && (phyDeviceMemProps.memoryTypes[i].propertyFlags & memProps) == memProps) {
 				return i;
 			}
 		}
-		// Èç¹ûÕÒ²»µ½Æ¥ÅäµÄÄÚ´æÀàĞÍ£¬¼ÇÂ¼´íÎó²¢·µ»Ø0
+		// å¦‚æœæ‰¾ä¸åˆ°åŒ¹é…çš„å†…å­˜ç±»å‹ï¼Œè®°å½•é”™è¯¯å¹¶è¿”å›0
 		LOG_E("Can not find memory type index: type bit: {0}", memoryTypeBits);
 		return 0;
 	}
@@ -210,42 +210,42 @@ namespace WuDu {
 	}
 
 	/**
-	 * ´´½¨Ò»¸ö¼òµ¥µÄ²ÉÑùÆ÷¶ÔÏó¡£
+	 * åˆ›å»ºä¸€ä¸ªç®€å•çš„é‡‡æ ·å™¨å¯¹è±¡ã€‚
 	 *
-	 * ¸Ãº¯Êı¸ù¾İÖ¸¶¨µÄÂË²¨Æ÷ºÍµØÖ·Ä£Ê½´´½¨Ò»¸öVkSampler¶ÔÏó£¬ÓÃÓÚÎÆÀí²ÉÑù¡£
-	 * ËüÅäÖÃÁË²ÉÑùÆ÷µÄ³£¼ûÊôĞÔ£¬ÈçÎÆÀíÂË²¨¡¢µØÖ·Ä£Ê½µÈ£¬²¢Í¨¹ı Vulkan µÄ
-	 * vkCreateSampler º¯Êı´´½¨²ÉÑùÆ÷¶ÔÏó¡£
+	 * è¯¥å‡½æ•°æ ¹æ®æŒ‡å®šçš„æ»¤æ³¢å™¨å’Œåœ°å€æ¨¡å¼åˆ›å»ºä¸€ä¸ªVkSamplerå¯¹è±¡ï¼Œç”¨äºçº¹ç†é‡‡æ ·ã€‚
+	 * å®ƒé…ç½®äº†é‡‡æ ·å™¨çš„å¸¸è§å±æ€§ï¼Œå¦‚çº¹ç†æ»¤æ³¢ã€åœ°å€æ¨¡å¼ç­‰ï¼Œå¹¶é€šè¿‡ Vulkan çš„
+	 * vkCreateSampler å‡½æ•°åˆ›å»ºé‡‡æ ·å™¨å¯¹è±¡ã€‚
 	 *
-	 * @param filter Ö¸¶¨ÓÃÓÚmagFilterºÍminFilterµÄÂË²¨Æ÷ÀàĞÍ£¬¿ØÖÆÎÆÀí²ÉÑùÊ±µÄÂË²¨·½Ê½¡£
-	 * @param addressMode Ö¸¶¨ÎÆÀí×ø±ê³¬³ö[0, 1]·¶Î§Ê±µÄ´¦Àí·½Ê½¡£
-	 * @param outSampler Ö¸ÏòÒ»¸öVkSampler¶ÔÏóµÄÖ¸Õë£¬ÓÃÓÚ½ÓÊÕ´´½¨µÄ²ÉÑùÆ÷¶ÔÏó¡£
+	 * @param filter æŒ‡å®šç”¨äºmagFilterå’ŒminFilterçš„æ»¤æ³¢å™¨ç±»å‹ï¼Œæ§åˆ¶çº¹ç†é‡‡æ ·æ—¶çš„æ»¤æ³¢æ–¹å¼ã€‚
+	 * @param addressMode æŒ‡å®šçº¹ç†åæ ‡è¶…å‡º[0, 1]èŒƒå›´æ—¶çš„å¤„ç†æ–¹å¼ã€‚
+	 * @param outSampler æŒ‡å‘ä¸€ä¸ªVkSamplerå¯¹è±¡çš„æŒ‡é’ˆï¼Œç”¨äºæ¥æ”¶åˆ›å»ºçš„é‡‡æ ·å™¨å¯¹è±¡ã€‚
 	 *
-	 * @return ·µ»ØVkResultÖµ£¬Ö¸Ê¾´´½¨²Ù×÷µÄ½á¹û¡£VK_SUCCESS±íÊ¾³É¹¦£¬ÆäËûÖµ±íÊ¾²»Í¬µÄ´íÎóÇé¿ö¡£
+	 * @return è¿”å›VkResultå€¼ï¼ŒæŒ‡ç¤ºåˆ›å»ºæ“ä½œçš„ç»“æœã€‚VK_SUCCESSè¡¨ç¤ºæˆåŠŸï¼Œå…¶ä»–å€¼è¡¨ç¤ºä¸åŒçš„é”™è¯¯æƒ…å†µã€‚
 	 */
 	VkResult AdVKDevice::CreateSimpleSampler(VkFilter filter, VkSamplerAddressMode addressMode, VkSampler* outSampler) {
-		// ³õÊ¼»¯VkSamplerCreateInfo½á¹¹Ìå£¬ÉèÖÃ²ÉÑùÆ÷µÄÊôĞÔ¡£
+		// åˆå§‹åŒ–VkSamplerCreateInfoç»“æ„ä½“ï¼Œè®¾ç½®é‡‡æ ·å™¨çš„å±æ€§ã€‚
 		VkSamplerCreateInfo samplerInfo = {
-		    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO, // Ö¸¶¨½á¹¹ÌåÀàĞÍ
-		    samplerInfo.pNext = nullptr, // Ö¸ÏòÏÂÒ»¸ö½á¹¹ÌåµÄÖ¸Õë£¬Í¨³£Îªnullptr
-		    samplerInfo.flags = 0, // ±£Áô×Ö¶Î£¬ÓÃÓÚÎ´À´Ê¹ÓÃ£¬Ä¿Ç°Ó¦ÉèÖÃÎª0
-		    samplerInfo.magFilter = filter, // Ö¸¶¨·Å´óÂË²¨Æ÷
-		    samplerInfo.minFilter = filter, // Ö¸¶¨ËõĞ¡ÂË²¨Æ÷
-		    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR, // Ö¸¶¨ mip Ó³ÉäµÄÂË²¨·½Ê½
-		    samplerInfo.addressModeU = addressMode, // Ö¸¶¨ U ÖáµÄµØÖ·Ä£Ê½
-		    samplerInfo.addressModeV = addressMode, // Ö¸¶¨ V ÖáµÄµØÖ·Ä£Ê½
-		    samplerInfo.addressModeW = addressMode, // Ö¸¶¨ W ÖáµÄµØÖ·Ä£Ê½
-		    samplerInfo.mipLodBias = 0, // mip LOD Æ«²î£¬ÕâÀïÉèÖÃÎª0
-		    samplerInfo.anisotropyEnable = VK_FALSE, // ÊÇ·ñÆôÓÃ¸÷ÏòÒìĞÔ¹ıÂË£¬ÕâÀï½ûÓÃ
-		    samplerInfo.maxAnisotropy = 0, // ×î´ó¸÷ÏòÒìĞÔ³Ì¶È£¬ÓÉÓÚÉÏÒ»Ïî½ûÓÃ£¬ÕâÀïÉèÖÃÎª0
-		    samplerInfo.compareEnable = VK_FALSE, // ÊÇ·ñÆôÓÃÉî¶È±È½Ï£¬ÕâÀï½ûÓÃ
-		    samplerInfo.compareOp = VK_COMPARE_OP_NEVER, // Éî¶È±È½Ï²Ù×÷£¬ÓÉÓÚÉÏÒ»Ïî½ûÓÃ£¬ÕâÀïÉèÖÃÎª´Ó²»±È½Ï
-		    samplerInfo.minLod = 0, // ÔÊĞíµÄ×îĞ¡LOD¼¶±ğ
-		    samplerInfo.maxLod = 1, // ÔÊĞíµÄ×î´óLOD¼¶±ğ
-		    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK, // ±ß¿òÑÕÉ«£¬ÓÃÓÚµØÖ·Ä£Ê½Îª±ß¿òÊ±
-		    samplerInfo.unnormalizedCoordinates = VK_FALSE // ÊÇ·ñÊ¹ÓÃ·Ç±ê×¼»¯×ø±ê£¬ÕâÀï½ûÓÃ
+		    samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO, // æŒ‡å®šç»“æ„ä½“ç±»å‹
+		    samplerInfo.pNext = nullptr, // æŒ‡å‘ä¸‹ä¸€ä¸ªç»“æ„ä½“çš„æŒ‡é’ˆï¼Œé€šå¸¸ä¸ºnullptr
+		    samplerInfo.flags = 0, // ä¿ç•™å­—æ®µï¼Œç”¨äºæœªæ¥ä½¿ç”¨ï¼Œç›®å‰åº”è®¾ç½®ä¸º0
+		    samplerInfo.magFilter = filter, // æŒ‡å®šæ”¾å¤§æ»¤æ³¢å™¨
+		    samplerInfo.minFilter = filter, // æŒ‡å®šç¼©å°æ»¤æ³¢å™¨
+		    samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR, // æŒ‡å®š mip æ˜ å°„çš„æ»¤æ³¢æ–¹å¼
+		    samplerInfo.addressModeU = addressMode, // æŒ‡å®š U è½´çš„åœ°å€æ¨¡å¼
+		    samplerInfo.addressModeV = addressMode, // æŒ‡å®š V è½´çš„åœ°å€æ¨¡å¼
+		    samplerInfo.addressModeW = addressMode, // æŒ‡å®š W è½´çš„åœ°å€æ¨¡å¼
+		    samplerInfo.mipLodBias = 0, // mip LOD åå·®ï¼Œè¿™é‡Œè®¾ç½®ä¸º0
+		    samplerInfo.anisotropyEnable = VK_FALSE, // æ˜¯å¦å¯ç”¨å„å‘å¼‚æ€§è¿‡æ»¤ï¼Œè¿™é‡Œç¦ç”¨
+		    samplerInfo.maxAnisotropy = 0, // æœ€å¤§å„å‘å¼‚æ€§ç¨‹åº¦ï¼Œç”±äºä¸Šä¸€é¡¹ç¦ç”¨ï¼Œè¿™é‡Œè®¾ç½®ä¸º0
+		    samplerInfo.compareEnable = VK_FALSE, // æ˜¯å¦å¯ç”¨æ·±åº¦æ¯”è¾ƒï¼Œè¿™é‡Œç¦ç”¨
+		    samplerInfo.compareOp = VK_COMPARE_OP_NEVER, // æ·±åº¦æ¯”è¾ƒæ“ä½œï¼Œç”±äºä¸Šä¸€é¡¹ç¦ç”¨ï¼Œè¿™é‡Œè®¾ç½®ä¸ºä»ä¸æ¯”è¾ƒ
+		    samplerInfo.minLod = 0, // å…è®¸çš„æœ€å°LODçº§åˆ«
+		    samplerInfo.maxLod = 1, // å…è®¸çš„æœ€å¤§LODçº§åˆ«
+		    samplerInfo.borderColor = VK_BORDER_COLOR_FLOAT_OPAQUE_BLACK, // è¾¹æ¡†é¢œè‰²ï¼Œç”¨äºåœ°å€æ¨¡å¼ä¸ºè¾¹æ¡†æ—¶
+		    samplerInfo.unnormalizedCoordinates = VK_FALSE // æ˜¯å¦ä½¿ç”¨éæ ‡å‡†åŒ–åæ ‡ï¼Œè¿™é‡Œç¦ç”¨
 		};
 
-		// µ÷ÓÃVulkanµÄvkCreateSamplerº¯Êı£¬¸ù¾İÅäÖÃĞÅÏ¢´´½¨²ÉÑùÆ÷¶ÔÏó¡£
+		// è°ƒç”¨Vulkançš„vkCreateSamplerå‡½æ•°ï¼Œæ ¹æ®é…ç½®ä¿¡æ¯åˆ›å»ºé‡‡æ ·å™¨å¯¹è±¡ã€‚
 		return vkCreateSampler(mHandle, &samplerInfo, nullptr, outSampler);
 	}
 }

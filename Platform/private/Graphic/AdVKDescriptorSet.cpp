@@ -4,12 +4,12 @@
 namespace WuDu {
 
         /**
-         * @brief ¹¹Ôìº¯Êı£¬ÓÃÓÚ´´½¨ Vulkan ÃèÊö·û¼¯²¼¾Ö¶ÔÏó
-         * @param device Ö¸Ïò Vulkan Éè±¸¶ÔÏóµÄÖ¸Õë£¬ÓÃÓÚ»ñÈ¡Âß¼­Éè±¸¾ä±ú
-         * @param bindings ÃèÊö·û¼¯²¼¾Ö°ó¶¨ĞÅÏ¢µÄÊı×é£¬¶¨ÒåÁËÃ¿¸ö°ó¶¨µÄÃèÊö·ûÀàĞÍ¡¢ÊıÁ¿ºÍ½×¶ÎµÈ
+         * @brief æ„é€ å‡½æ•°ï¼Œç”¨äºåˆ›å»º Vulkan æè¿°ç¬¦é›†å¸ƒå±€å¯¹è±¡
+         * @param device æŒ‡å‘ Vulkan è®¾å¤‡å¯¹è±¡çš„æŒ‡é’ˆï¼Œç”¨äºè·å–é€»è¾‘è®¾å¤‡å¥æŸ„
+         * @param bindings æè¿°ç¬¦é›†å¸ƒå±€ç»‘å®šä¿¡æ¯çš„æ•°ç»„ï¼Œå®šä¹‰äº†æ¯ä¸ªç»‘å®šçš„æè¿°ç¬¦ç±»å‹ã€æ•°é‡å’Œé˜¶æ®µç­‰
          */
         AdVKDescriptorSetLayout::AdVKDescriptorSetLayout(AdVKDevice* device, const std::vector<VkDescriptorSetLayoutBinding>& bindings) : mDevice(device) {
-                // Ìî³äÃèÊö·û¼¯²¼¾Ö´´½¨ĞÅÏ¢½á¹¹Ìå
+                // å¡«å……æè¿°ç¬¦é›†å¸ƒå±€åˆ›å»ºä¿¡æ¯ç»“æ„ä½“
                 VkDescriptorSetLayoutCreateInfo descriptorSetLayoutInfo = {
                         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO,
                         .pNext = nullptr,
@@ -17,26 +17,26 @@ namespace WuDu {
                         .bindingCount = static_cast<uint32_t>(bindings.size()),
                         .pBindings = bindings.data()
                 };
-                // µ÷ÓÃ Vulkan API ´´½¨ÃèÊö·û¼¯²¼¾Ö£¬²¢¼ì²é½á¹û
+                // è°ƒç”¨ Vulkan API åˆ›å»ºæè¿°ç¬¦é›†å¸ƒå±€ï¼Œå¹¶æ£€æŸ¥ç»“æœ
                 CALL_VK(vkCreateDescriptorSetLayout(mDevice->GetHandle(), &descriptorSetLayoutInfo, nullptr, &mHandle));
         }
 
         /**
-         * @brief Îö¹¹º¯Êı£¬ÓÃÓÚÏú»Ù Vulkan ÃèÊö·û¼¯²¼¾Ö¶ÔÏó
+         * @brief ææ„å‡½æ•°ï¼Œç”¨äºé”€æ¯ Vulkan æè¿°ç¬¦é›†å¸ƒå±€å¯¹è±¡
          */
         AdVKDescriptorSetLayout::~AdVKDescriptorSetLayout() {
-                // Ê¹ÓÃºê VK_D Ïú»ÙÃèÊö·û¼¯²¼¾Ö¶ÔÏó
+                // ä½¿ç”¨å® VK_D é”€æ¯æè¿°ç¬¦é›†å¸ƒå±€å¯¹è±¡
                 VK_D(DescriptorSetLayout, mDevice->GetHandle(), mHandle);
         }
 
         /**
-         * @brief ¹¹Ôìº¯Êı£¬ÓÃÓÚ´´½¨ Vulkan ÃèÊö·û³Ø¶ÔÏó
-         * @param device Ö¸Ïò Vulkan Éè±¸¶ÔÏóµÄÖ¸Õë£¬ÓÃÓÚ»ñÈ¡Âß¼­Éè±¸¾ä±ú
-         * @param maxSets ÃèÊö·û³Ø¿ÉÒÔ·ÖÅäµÄ×î´óÃèÊö·û¼¯ÊıÁ¿
-         * @param poolSizes ÃèÊö·û³ØÖĞÃ¿ÖÖÀàĞÍÃèÊö·ûµÄÊıÁ¿ÅäÖÃ
+         * @brief æ„é€ å‡½æ•°ï¼Œç”¨äºåˆ›å»º Vulkan æè¿°ç¬¦æ± å¯¹è±¡
+         * @param device æŒ‡å‘ Vulkan è®¾å¤‡å¯¹è±¡çš„æŒ‡é’ˆï¼Œç”¨äºè·å–é€»è¾‘è®¾å¤‡å¥æŸ„
+         * @param maxSets æè¿°ç¬¦æ± å¯ä»¥åˆ†é…çš„æœ€å¤§æè¿°ç¬¦é›†æ•°é‡
+         * @param poolSizes æè¿°ç¬¦æ± ä¸­æ¯ç§ç±»å‹æè¿°ç¬¦çš„æ•°é‡é…ç½®
          */
         AdVKDescriptorPool::AdVKDescriptorPool(AdVKDevice* device, uint32_t maxSets, const std::vector<VkDescriptorPoolSize>& poolSizes) : mDevice(device) {
-                // Ìî³äÃèÊö·û³Ø´´½¨ĞÅÏ¢½á¹¹Ìå
+                // å¡«å……æè¿°ç¬¦æ± åˆ›å»ºä¿¡æ¯ç»“æ„ä½“
                 VkDescriptorPoolCreateInfo descriptorPoolInfo = {
                         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO,
                         .pNext = nullptr,
@@ -45,33 +45,33 @@ namespace WuDu {
                         .poolSizeCount = static_cast<uint32_t>(poolSizes.size()),
                         .pPoolSizes = poolSizes.data()
                 };
-                // µ÷ÓÃ Vulkan API ´´½¨ÃèÊö·û³Ø£¬²¢¼ì²é½á¹û
+                // è°ƒç”¨ Vulkan API åˆ›å»ºæè¿°ç¬¦æ± ï¼Œå¹¶æ£€æŸ¥ç»“æœ
                 CALL_VK(vkCreateDescriptorPool(mDevice->GetHandle(), &descriptorPoolInfo, nullptr, &mHandle));
         }
 
         /**
-         * @brief Îö¹¹º¯Êı£¬ÓÃÓÚÏú»Ù Vulkan ÃèÊö·û³Ø¶ÔÏó
+         * @brief ææ„å‡½æ•°ï¼Œç”¨äºé”€æ¯ Vulkan æè¿°ç¬¦æ± å¯¹è±¡
          */
         AdVKDescriptorPool::~AdVKDescriptorPool() {
-                // Ê¹ÓÃºê VK_D Ïú»ÙÃèÊö·û³Ø¶ÔÏó
+                // ä½¿ç”¨å® VK_D é”€æ¯æè¿°ç¬¦æ± å¯¹è±¡
                 VK_D(DescriptorPool, mDevice->GetHandle(), mHandle);
         }
 
         /**
-         * @brief ´ÓÃèÊö·û³ØÖĞ·ÖÅäÖ¸¶¨ÊıÁ¿µÄÃèÊö·û¼¯
-         * @param setLayout ÃèÊö·û¼¯²¼¾Ö¶ÔÏóÖ¸Õë£¬ÓÃÓÚÖ¸¶¨Òª·ÖÅäµÄÃèÊö·û¼¯µÄ²¼¾Ö
-         * @param count Òª·ÖÅäµÄÃèÊö·û¼¯ÊıÁ¿
-         * @return ³É¹¦Ê±·µ»Ø°üº¬·ÖÅäµÄÃèÊö·û¼¯¾ä±úµÄÏòÁ¿£¬Ê§°ÜÊ±·µ»Ø¿ÕÏòÁ¿
+         * @brief ä»æè¿°ç¬¦æ± ä¸­åˆ†é…æŒ‡å®šæ•°é‡çš„æè¿°ç¬¦é›†
+         * @param setLayout æè¿°ç¬¦é›†å¸ƒå±€å¯¹è±¡æŒ‡é’ˆï¼Œç”¨äºæŒ‡å®šè¦åˆ†é…çš„æè¿°ç¬¦é›†çš„å¸ƒå±€
+         * @param count è¦åˆ†é…çš„æè¿°ç¬¦é›†æ•°é‡
+         * @return æˆåŠŸæ—¶è¿”å›åŒ…å«åˆ†é…çš„æè¿°ç¬¦é›†å¥æŸ„çš„å‘é‡ï¼Œå¤±è´¥æ—¶è¿”å›ç©ºå‘é‡
          */
         std::vector<VkDescriptorSet> AdVKDescriptorPool::AllocateDescriptorSet(AdVKDescriptorSetLayout* setLayout, uint32_t count) {
-                // ³õÊ¼»¯ÃèÊö·û¼¯¾ä±úÏòÁ¿ºÍ²¼¾Ö¾ä±úÏòÁ¿
+                // åˆå§‹åŒ–æè¿°ç¬¦é›†å¥æŸ„å‘é‡å’Œå¸ƒå±€å¥æŸ„å‘é‡
                 std::vector<VkDescriptorSet> descriptorSets(count);
                 std::vector<VkDescriptorSetLayout> setLayouts(count);
-                // Ìî³ä²¼¾Ö¾ä±úÏòÁ¿£¬ËùÓĞÃèÊö·û¼¯Ê¹ÓÃÏàÍ¬µÄ²¼¾Ö
+                // å¡«å……å¸ƒå±€å¥æŸ„å‘é‡ï¼Œæ‰€æœ‰æè¿°ç¬¦é›†ä½¿ç”¨ç›¸åŒçš„å¸ƒå±€
                 for (int i = 0; i < count; i++) {
                         setLayouts[i] = setLayout->GetHandle();
                 }
-                // Ìî³äÃèÊö·û¼¯·ÖÅäĞÅÏ¢½á¹¹Ìå
+                // å¡«å……æè¿°ç¬¦é›†åˆ†é…ä¿¡æ¯ç»“æ„ä½“
                 VkDescriptorSetAllocateInfo allocateInfo = {
                         .sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO,
                         .pNext = nullptr,
@@ -79,10 +79,10 @@ namespace WuDu {
                         .descriptorSetCount = count,
                         .pSetLayouts = setLayouts.data()
                 };
-                // µ÷ÓÃ Vulkan API ·ÖÅäÃèÊö·û¼¯
+                // è°ƒç”¨ Vulkan API åˆ†é…æè¿°ç¬¦é›†
                 VkResult ret = vkAllocateDescriptorSets(mDevice->GetHandle(), &allocateInfo, descriptorSets.data());
                 CALL_VK(ret);
-                // Èç¹û·ÖÅäÊ§°Ü£¬ÔòÇå¿Õ·µ»ØµÄÃèÊö·û¼¯ÏòÁ¿
+                // å¦‚æœåˆ†é…å¤±è´¥ï¼Œåˆ™æ¸…ç©ºè¿”å›çš„æè¿°ç¬¦é›†å‘é‡
                 if (ret != VK_SUCCESS) {
                         descriptorSets.clear();
                 }

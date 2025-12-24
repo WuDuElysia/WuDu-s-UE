@@ -3,15 +3,15 @@
 
 namespace WuDu {
 	/**
-	 * @brief ¹¹Ôìº¯Êı£¬´´½¨VulkanÍ¼ÏñÊÓÍ¼¶ÔÏó
-	 * @param device Ö¸ÏòVulkanÉè±¸¶ÔÏóµÄÖ¸Õë£¬ÓÃÓÚ´´½¨Í¼ÏñÊÓÍ¼
-	 * @param image VulkanÍ¼Ïñ¶ÔÏó¾ä±ú£¬Ö¸¶¨Òª´´½¨ÊÓÍ¼µÄÍ¼Ïñ
-	 * @param format Í¼Ïñ¸ñÊ½£¬Ö¸¶¨Í¼ÏñÊÓÍ¼µÄÏñËØ¸ñÊ½
-	 * @param aspectFlags Í¼Ïñ·½Ãæ±êÖ¾£¬Ö¸¶¨Í¼ÏñÊÓÍ¼°üº¬µÄÍ¼Ïñ·½Ãæ£¨ÈçÑÕÉ«¡¢Éî¶ÈµÈ£©
-	 * @note ¸Ã¹¹Ôìº¯Êı»áµ÷ÓÃVulkan API´´½¨Í¼ÏñÊÓÍ¼£¬²¢½«¾ä±ú´æ´¢ÔÚmHandle³ÉÔ±ÖĞ
+	 * @brief æ„é€ å‡½æ•°ï¼Œåˆ›å»ºVulkanå›¾åƒè§†å›¾å¯¹è±¡
+	 * @param device æŒ‡å‘Vulkanè®¾å¤‡å¯¹è±¡çš„æŒ‡é’ˆï¼Œç”¨äºåˆ›å»ºå›¾åƒè§†å›¾
+	 * @param image Vulkanå›¾åƒå¯¹è±¡å¥æŸ„ï¼ŒæŒ‡å®šè¦åˆ›å»ºè§†å›¾çš„å›¾åƒ
+	 * @param format å›¾åƒæ ¼å¼ï¼ŒæŒ‡å®šå›¾åƒè§†å›¾çš„åƒç´ æ ¼å¼
+	 * @param aspectFlags å›¾åƒæ–¹é¢æ ‡å¿—ï¼ŒæŒ‡å®šå›¾åƒè§†å›¾åŒ…å«çš„å›¾åƒæ–¹é¢ï¼ˆå¦‚é¢œè‰²ã€æ·±åº¦ç­‰ï¼‰
+	 * @note è¯¥æ„é€ å‡½æ•°ä¼šè°ƒç”¨Vulkan APIåˆ›å»ºå›¾åƒè§†å›¾ï¼Œå¹¶å°†å¥æŸ„å­˜å‚¨åœ¨mHandleæˆå‘˜ä¸­
 	 */
 	AdVKImageView::AdVKImageView(AdVKDevice* device, VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) : mDevice(device) {
-		// ÅäÖÃÍ¼ÏñÊÓÍ¼´´½¨ĞÅÏ¢½á¹¹Ìå
+		// é…ç½®å›¾åƒè§†å›¾åˆ›å»ºä¿¡æ¯ç»“æ„ä½“
 		VkImageViewCreateInfo imageViewInfo = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO,
 			.pNext = nullptr,
@@ -30,13 +30,13 @@ namespace WuDu {
 				.layerCount = 1
 			}
 		};
-		// µ÷ÓÃVulkan API´´½¨Í¼ÏñÊÓÍ¼
+		// è°ƒç”¨Vulkan APIåˆ›å»ºå›¾åƒè§†å›¾
 		CALL_VK(vkCreateImageView(device->GetHandle(), &imageViewInfo, nullptr, &mHandle));
 	}
 
 	/**
-	 * @brief Îö¹¹º¯Êı£¬Ïú»ÙVulkanÍ¼ÏñÊÓÍ¼¶ÔÏó
-	 * @note ¸ÃÎö¹¹º¯Êı»áµ÷ÓÃVulkan APIÏú»ÙÍ¼ÏñÊÓÍ¼£¬ÊÍ·ÅÏà¹Ø×ÊÔ´
+	 * @brief ææ„å‡½æ•°ï¼Œé”€æ¯Vulkanå›¾åƒè§†å›¾å¯¹è±¡
+	 * @note è¯¥ææ„å‡½æ•°ä¼šè°ƒç”¨Vulkan APIé”€æ¯å›¾åƒè§†å›¾ï¼Œé‡Šæ”¾ç›¸å…³èµ„æº
 	 */
 	AdVKImageView::~AdVKImageView() {
 		VK_D(ImageView, mDevice->GetHandle(), mHandle);

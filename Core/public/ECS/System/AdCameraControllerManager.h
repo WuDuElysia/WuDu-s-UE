@@ -12,7 +12,7 @@ namespace WuDu {
 	private:
 		AdEntity* m_CameraEntity = nullptr;
 
-		// Ê¹ÓÃº¯ÊıÖ¸Õë¶ø²»ÊÇÀàĞÍ×ª»»
+		// ä½¿ç”¨å‡½æ•°æŒ‡é’ˆè€Œä¸æ˜¯ç±»å‹è½¬æ¢
 		std::function<void(float, float)> m_OnMouseMove;
 		std::function<void(float)> m_OnMouseScroll;
 		std::function<void(float)> m_Update;
@@ -72,7 +72,7 @@ namespace WuDu {
 		void HandleMouseClick(WuDu::MouseClickEvent& event) {
 			if (event.GetButton() == GLFW_MOUSE_BUTTON_RIGHT) {
 				m_MouseDragging = true;
-				m_LastMousePos = event.GetPosition();  // ÕâÀïÉèÖÃÆğµã
+				m_LastMousePos = event.GetPosition();  // è¿™é‡Œè®¾ç½®èµ·ç‚¹
 			}
 		}
 
@@ -87,7 +87,7 @@ namespace WuDu {
 				glm::vec2 currentPos = event.GetPosition();
 				glm::vec2 delta = currentPos - m_LastMousePos;
 
-				// µ÷ÓÃÏà»ú¿ØÖÆÆ÷´¦ÀíÊó±êÒÆ¶¯
+				// è°ƒç”¨ç›¸æœºæ§åˆ¶å™¨å¤„ç†é¼ æ ‡ç§»åŠ¨
 				OnMouseMove(delta.x, delta.y);
 
 				m_LastMousePos = currentPos;
@@ -140,7 +140,7 @@ namespace WuDu {
 		void UpdateActiveController() {
 			if (!m_CameraEntity) return;
 
-			// Îª²»Í¬ÀàĞÍµÄÏà»úÉèÖÃ¶ÔÓ¦µÄº¯Êı
+			// ä¸ºä¸åŒç±»å‹çš„ç›¸æœºè®¾ç½®å¯¹åº”çš„å‡½æ•°
 			if (m_CameraEntity->HasComponent<AdFirstPersonCameraComponent>()) {
 				auto& comp = m_CameraEntity->GetComponent<AdFirstPersonCameraComponent>();
 				m_OnMouseMove = [&comp](float dx, float dy) { comp.OnMouseMove(dx, dy); };
@@ -152,7 +152,7 @@ namespace WuDu {
 				auto& comp = m_CameraEntity->GetComponent<AdLookAtCameraComponent>();
 				m_OnMouseMove = [&comp](float dx, float dy) { comp.OnMouseMove(dx, dy); };
 				m_OnMouseScroll = [&comp](float y) { comp.OnMouseScroll(y); };
-				m_Update = [](float dt) { /* LookAtÏà»ú¿ÉÄÜ²»ĞèÒªUpdate */ };
+				m_Update = [](float dt) { /* LookAtç›¸æœºå¯èƒ½ä¸éœ€è¦Update */ };
 				m_SetAspect = [&comp](float a) { comp.SetAspect(a); };
 			}
 			else {
@@ -169,7 +169,7 @@ namespace WuDu {
 			UpdateActiveController();
 		}
 
-		// ´úÀí·½·¨
+		// ä»£ç†æ–¹æ³•
 		void OnMouseMove(float deltaX, float deltaY) {
 			if (m_OnMouseMove) {
 				m_OnMouseMove(deltaX, deltaY);

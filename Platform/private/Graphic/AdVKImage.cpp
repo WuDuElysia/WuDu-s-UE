@@ -4,29 +4,29 @@
 
 namespace WuDu {
 	/**
- * @brief ¹¹Ôìº¯Êı£¬ÓÃÓÚ´´½¨ Vulkan Í¼Ïñ¶ÔÏó¡£
+ * @brief æ„é€ å‡½æ•°ï¼Œç”¨äºåˆ›å»º Vulkan å›¾åƒå¯¹è±¡ã€‚
  *
- * ¸Ã¹¹Ôìº¯Êı»á¸ù¾İ´«ÈëµÄ²ÎÊı´´½¨Ò»¸ö Vulkan Í¼Ïñ£¬²¢ÎªÆä·ÖÅäÉè±¸ÄÚ´æ¡£
- * ¸ù¾İÍ¼Ïñ¸ñÊ½ÊÇ·ñÎªÉî¶È/Ä£°å¸ñÊ½»òÊÇ·ñÆôÓÃ¶àÖØ²ÉÑù£¬Ñ¡ÔñºÏÊÊµÄÍ¼Ïñ²¼¾Ö£¨tiling£©¡£
+ * è¯¥æ„é€ å‡½æ•°ä¼šæ ¹æ®ä¼ å…¥çš„å‚æ•°åˆ›å»ºä¸€ä¸ª Vulkan å›¾åƒï¼Œå¹¶ä¸ºå…¶åˆ†é…è®¾å¤‡å†…å­˜ã€‚
+ * æ ¹æ®å›¾åƒæ ¼å¼æ˜¯å¦ä¸ºæ·±åº¦/æ¨¡æ¿æ ¼å¼æˆ–æ˜¯å¦å¯ç”¨å¤šé‡é‡‡æ ·ï¼Œé€‰æ‹©åˆé€‚çš„å›¾åƒå¸ƒå±€ï¼ˆtilingï¼‰ã€‚
  *
- * @param device Ö¸Ïò Vulkan Éè±¸¶ÔÏóµÄÖ¸Õë£¬ÓÃÓÚ´´½¨Í¼ÏñºÍ·ÖÅäÄÚ´æ¡£
- * @param extent Í¼ÏñµÄ³ß´ç£¨¿í¶È¡¢¸ß¶È¡¢Éî¶È£©¡£
- * @param format Í¼ÏñµÄÏñËØ¸ñÊ½¡£
- * @param usage Í¼ÏñµÄÊ¹ÓÃ±êÖ¾£¬Ö¸¶¨Í¼Ïñ½«±»ÈçºÎÊ¹ÓÃ£¨ÈçÑÕÉ«¸½¼ş¡¢²ÉÑùµÈ£©¡£
- * @param sampleCount Í¼ÏñµÄ²ÉÑùÊı£¬ÓÃÓÚ¶àÖØ²ÉÑù¿¹¾â³İ¡£
+ * @param device æŒ‡å‘ Vulkan è®¾å¤‡å¯¹è±¡çš„æŒ‡é’ˆï¼Œç”¨äºåˆ›å»ºå›¾åƒå’Œåˆ†é…å†…å­˜ã€‚
+ * @param extent å›¾åƒçš„å°ºå¯¸ï¼ˆå®½åº¦ã€é«˜åº¦ã€æ·±åº¦ï¼‰ã€‚
+ * @param format å›¾åƒçš„åƒç´ æ ¼å¼ã€‚
+ * @param usage å›¾åƒçš„ä½¿ç”¨æ ‡å¿—ï¼ŒæŒ‡å®šå›¾åƒå°†è¢«å¦‚ä½•ä½¿ç”¨ï¼ˆå¦‚é¢œè‰²é™„ä»¶ã€é‡‡æ ·ç­‰ï¼‰ã€‚
+ * @param sampleCount å›¾åƒçš„é‡‡æ ·æ•°ï¼Œç”¨äºå¤šé‡é‡‡æ ·æŠ—é”¯é½¿ã€‚
  */
 	AdVKImage::AdVKImage(AdVKDevice* device, VkExtent3D extent, VkFormat format, VkImageUsageFlags usage, VkSampleCountFlagBits sampleCount) : mDevice(device),
 		mExtent(extent),
 		mFormat(format),
 		mUsage(usage) {
-		// ¸ù¾İÍ¼Ïñ¸ñÊ½ºÍ²ÉÑùÊı¾ö¶¨Í¼ÏñµÄÄÚ´æ²¼¾Ö£¨ÏßĞÔ»ò×îÓÅ£©
+		// æ ¹æ®å›¾åƒæ ¼å¼å’Œé‡‡æ ·æ•°å†³å®šå›¾åƒçš„å†…å­˜å¸ƒå±€ï¼ˆçº¿æ€§æˆ–æœ€ä¼˜ï¼‰
 		VkImageTiling tiling = VK_IMAGE_TILING_LINEAR;
 		bool isDepthStencilFormat = IsDepthStencilFormat(format);
 		if (isDepthStencilFormat || sampleCount > VK_SAMPLE_COUNT_1_BIT) {
 			tiling = VK_IMAGE_TILING_OPTIMAL;
 		}
 
-		// Ìî³äÍ¼Ïñ´´½¨ĞÅÏ¢½á¹¹Ìå
+		// å¡«å……å›¾åƒåˆ›å»ºä¿¡æ¯ç»“æ„ä½“
 		VkImageCreateInfo imageInfo = {
 			.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO,
 			.pNext = nullptr,
@@ -45,14 +45,14 @@ namespace WuDu {
 			.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED
 		};
 
-		// ´´½¨ Vulkan Í¼Ïñ¶ÔÏó
+		// åˆ›å»º Vulkan å›¾åƒå¯¹è±¡
 		CALL_VK(vkCreateImage(mDevice->GetHandle(), &imageInfo, nullptr, &mHandle));
 
-		// »ñÈ¡Í¼ÏñÄÚ´æĞèÇó
+		// è·å–å›¾åƒå†…å­˜éœ€æ±‚
 		VkMemoryRequirements memReqs;
 		vkGetImageMemoryRequirements(mDevice->GetHandle(), mHandle, &memReqs);
 
-		// Ìî³äÄÚ´æ·ÖÅäĞÅÏ¢½á¹¹Ìå
+		// å¡«å……å†…å­˜åˆ†é…ä¿¡æ¯ç»“æ„ä½“
 		VkMemoryAllocateInfo allocateInfo = {
 			.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO,
 			.pNext = nullptr,
@@ -60,7 +60,7 @@ namespace WuDu {
 			.memoryTypeIndex = static_cast<uint32_t>(mDevice->GetMemoryIndex(VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, memReqs.memoryTypeBits))
 		};
 
-		// ·ÖÅäÉè±¸ÄÚ´æ²¢°ó¶¨µ½Í¼Ïñ¶ÔÏó
+		// åˆ†é…è®¾å¤‡å†…å­˜å¹¶ç»‘å®šåˆ°å›¾åƒå¯¹è±¡
 		CALL_VK(vkAllocateMemory(mDevice->GetHandle(), &allocateInfo, nullptr, &mMemory));
 		CALL_VK(vkBindImageMemory(mDevice->GetHandle(), mHandle, mMemory, 0));
 	}
@@ -78,15 +78,15 @@ namespace WuDu {
 	}
 
 	/**
- * @brief ½«»º³åÇøÊı¾İ¸´ÖÆµ½Í¼Ïñ
+ * @brief å°†ç¼“å†²åŒºæ•°æ®å¤åˆ¶åˆ°å›¾åƒ
  *
- * ¸Ãº¯Êı½«Ö¸¶¨»º³åÇøÖĞµÄÊı¾İ¸´ÖÆµ½µ±Ç°Í¼Ïñ¶ÔÏóÖĞ£¬Í¨³£ÓÃÓÚÎÆÀí¼ÓÔØµÈ³¡¾°
+ * è¯¥å‡½æ•°å°†æŒ‡å®šç¼“å†²åŒºä¸­çš„æ•°æ®å¤åˆ¶åˆ°å½“å‰å›¾åƒå¯¹è±¡ä¸­ï¼Œé€šå¸¸ç”¨äºçº¹ç†åŠ è½½ç­‰åœºæ™¯
  *
- * @param cmdBuffer VulkanÃüÁî»º³åÇø¾ä±ú£¬ÓÃÓÚ¼ÇÂ¼¸´ÖÆÃüÁî
- * @param buffer Ô´»º³åÇø¶ÔÏóÖ¸Õë£¬°üº¬Òª¸´ÖÆµ½Í¼ÏñµÄÊı¾İ
+ * @param cmdBuffer Vulkanå‘½ä»¤ç¼“å†²åŒºå¥æŸ„ï¼Œç”¨äºè®°å½•å¤åˆ¶å‘½ä»¤
+ * @param buffer æºç¼“å†²åŒºå¯¹è±¡æŒ‡é’ˆï¼ŒåŒ…å«è¦å¤åˆ¶åˆ°å›¾åƒçš„æ•°æ®
  */
 	void AdVKImage::CopyFromBuffer(VkCommandBuffer cmdBuffer, AdVKBuffer* buffer) {
-		// ÅäÖÃ»º³åÇøµ½Í¼ÏñµÄ¸´ÖÆÇøÓò²ÎÊı
+		// é…ç½®ç¼“å†²åŒºåˆ°å›¾åƒçš„å¤åˆ¶åŒºåŸŸå‚æ•°
 		VkBufferImageCopy region = {
 		    .bufferOffset = 0,
 		    .bufferRowLength = mExtent.width,
@@ -100,33 +100,33 @@ namespace WuDu {
 		    .imageOffset = { 0, 0, 0 },
 		    .imageExtent = { mExtent.width, mExtent.height, 1 }
 		};
-		// Ö´ĞĞ»º³åÇøµ½Í¼ÏñµÄÊı¾İ¸´ÖÆ²Ù×÷
+		// æ‰§è¡Œç¼“å†²åŒºåˆ°å›¾åƒçš„æ•°æ®å¤åˆ¶æ“ä½œ
 		vkCmdCopyBufferToImage(cmdBuffer, buffer->GetHandle(), mHandle, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
 	}
 
 	/**
- * @brief ×ª»» Vulkan Í¼ÏñµÄ²¼¾Ö£¨Image Layout Transition£©
+ * @brief è½¬æ¢ Vulkan å›¾åƒçš„å¸ƒå±€ï¼ˆImage Layout Transitionï¼‰
  *
- * ¸Ãº¯ÊıÓÃÓÚÔÚ Vulkan ÖĞ½«Í¼Ïñ´ÓÒ»¸ö²¼¾Ö×ª»»ÎªÁíÒ»¸ö²¼¾Ö¡£Ëü»á¸ù¾İÔ´²¼¾ÖºÍÄ¿±ê²¼¾Ö×Ô¶¯ÉèÖÃÄÚ´æÆÁÕÏ£¨VkImageMemoryBarrier£©£¬
- * ²¢µ÷ÓÃ vkCmdPipelineBarrier ²åÈë¹ÜÏßÆÁÕÏÃüÁîµ½Ö¸¶¨µÄÃüÁî»º³åÇøÖĞ¡£
+ * è¯¥å‡½æ•°ç”¨äºåœ¨ Vulkan ä¸­å°†å›¾åƒä»ä¸€ä¸ªå¸ƒå±€è½¬æ¢ä¸ºå¦ä¸€ä¸ªå¸ƒå±€ã€‚å®ƒä¼šæ ¹æ®æºå¸ƒå±€å’Œç›®æ ‡å¸ƒå±€è‡ªåŠ¨è®¾ç½®å†…å­˜å±éšœï¼ˆVkImageMemoryBarrierï¼‰ï¼Œ
+ * å¹¶è°ƒç”¨ vkCmdPipelineBarrier æ’å…¥ç®¡çº¿å±éšœå‘½ä»¤åˆ°æŒ‡å®šçš„å‘½ä»¤ç¼“å†²åŒºä¸­ã€‚
  *
- * @param cmdBuffer ÃüÁî»º³åÇø£¬ÓÃÓÚ¼ÇÂ¼Í¼Ïñ²¼¾Ö×ª»»µÄ¹ÜÏßÆÁÕÏÃüÁî
- * @param image ĞèÒª½øĞĞ²¼¾Ö×ª»»µÄ Vulkan Í¼Ïñ¶ÔÏó¾ä±ú
- * @param oldLayout µ±Ç°Í¼ÏñµÄ²¼¾Ö
- * @param newLayout Ä¿±êÍ¼ÏñµÄ²¼¾Ö
- * @return Èç¹û³É¹¦²åÈë¹ÜÏßÆÁÕÏ²¢Íê³É²¼¾Ö×ª»»Ôò·µ»Ø true£¬·ñÔò·µ»Ø false
+ * @param cmdBuffer å‘½ä»¤ç¼“å†²åŒºï¼Œç”¨äºè®°å½•å›¾åƒå¸ƒå±€è½¬æ¢çš„ç®¡çº¿å±éšœå‘½ä»¤
+ * @param image éœ€è¦è¿›è¡Œå¸ƒå±€è½¬æ¢çš„ Vulkan å›¾åƒå¯¹è±¡å¥æŸ„
+ * @param oldLayout å½“å‰å›¾åƒçš„å¸ƒå±€
+ * @param newLayout ç›®æ ‡å›¾åƒçš„å¸ƒå±€
+ * @return å¦‚æœæˆåŠŸæ’å…¥ç®¡çº¿å±éšœå¹¶å®Œæˆå¸ƒå±€è½¬æ¢åˆ™è¿”å› trueï¼Œå¦åˆ™è¿”å› false
  */
 	bool AdVKImage::TransitionLayout(VkCommandBuffer cmdBuffer, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout) {
-		// ¼ì²éÍ¼Ïñ¾ä±úÊÇ·ñÓĞĞ§
+		// æ£€æŸ¥å›¾åƒå¥æŸ„æ˜¯å¦æœ‰æ•ˆ
 		if (image == VK_NULL_HANDLE) {
 			return false;
 		}
-		// Èç¹ûĞÂ¾É²¼¾ÖÏàÍ¬£¬ÔòÎŞĞè×ª»»£¬Ö±½Ó·µ»Ø³É¹¦
+		// å¦‚æœæ–°æ—§å¸ƒå±€ç›¸åŒï¼Œåˆ™æ— éœ€è½¬æ¢ï¼Œç›´æ¥è¿”å›æˆåŠŸ
 		if (oldLayout == newLayout) {
 			return true;
 		}
 
-		// ³õÊ¼»¯Í¼ÏñÄÚ´æÆÁÕÏ½á¹¹Ìå
+		// åˆå§‹åŒ–å›¾åƒå†…å­˜å±éšœç»“æ„ä½“
 		VkImageMemoryBarrier barrier;
 		barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 		barrier.pNext = nullptr;
@@ -141,11 +141,11 @@ namespace WuDu {
 		barrier.subresourceRange.baseArrayLayer = 0;
 		barrier.subresourceRange.layerCount = 1;
 
-		// ÉèÖÃÄ¬ÈÏµÄ¹ÜÏß½×¶Î±êÖ¾
+		// è®¾ç½®é»˜è®¤çš„ç®¡çº¿é˜¶æ®µæ ‡å¿—
 		VkPipelineStageFlags srcStage = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 		VkPipelineStageFlags dstStage = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 
-		// ¸ù¾İ¾É²¼¾ÖÉèÖÃÔ´·ÃÎÊÑÚÂë
+		// æ ¹æ®æ—§å¸ƒå±€è®¾ç½®æºè®¿é—®æ©ç 
 		switch (oldLayout) {
 		case VK_IMAGE_LAYOUT_UNDEFINED:
 			barrier.srcAccessMask = 0;
@@ -179,7 +179,7 @@ namespace WuDu {
 			return false;
 		}
 
-		// ¸ù¾İĞÂ²¼¾ÖÉèÖÃÄ¿±ê·ÃÎÊÑÚÂë£¬²¢¿ÉÄÜ¸üĞÂÔ´·ÃÎÊÑÚÂë
+		// æ ¹æ®æ–°å¸ƒå±€è®¾ç½®ç›®æ ‡è®¿é—®æ©ç ï¼Œå¹¶å¯èƒ½æ›´æ–°æºè®¿é—®æ©ç 
 		switch (newLayout) {
 		case VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL:
 			barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -211,7 +211,7 @@ namespace WuDu {
 			return false;
 		}
 
-		// ²åÈë¹ÜÏßÆÁÕÏÃüÁîÒÔÖ´ĞĞÍ¼Ïñ²¼¾Ö×ª»»
+		// æ’å…¥ç®¡çº¿å±éšœå‘½ä»¤ä»¥æ‰§è¡Œå›¾åƒå¸ƒå±€è½¬æ¢
 		vkCmdPipelineBarrier(
 			cmdBuffer,
 			srcStage, dstStage,

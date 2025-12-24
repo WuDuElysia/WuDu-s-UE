@@ -4,12 +4,12 @@
 namespace WuDu {
 
 	/**
-	 * @brief ¹¹Ôìº¯Êı£¬ÓÃÓÚ´´½¨ Vulkan ÃüÁî³Ø¶ÔÏó
+	 * @brief æ„é€ å‡½æ•°ï¼Œç”¨äºåˆ›å»º Vulkan å‘½ä»¤æ± å¯¹è±¡
 	 *
-	 * ³õÊ¼»¯ Vulkan ÃüÁî³Ø£¬²¢Í¨¹ı vkCreateCommandPool ´´½¨¶ÔÓ¦µÄ Vulkan ÃüÁî³Ø¾ä±ú¡£
+	 * åˆå§‹åŒ– Vulkan å‘½ä»¤æ± ï¼Œå¹¶é€šè¿‡ vkCreateCommandPool åˆ›å»ºå¯¹åº”çš„ Vulkan å‘½ä»¤æ± å¥æŸ„ã€‚
 	 *
-	 * @param device Ö¸Ïò Vulkan Éè±¸¶ÔÏóµÄÖ¸Õë£¬ÓÃÓÚ»ñÈ¡ Vulkan Âß¼­Éè±¸¾ä±ú
-	 * @param queueFamilyIndex Ö¸¶¨ÃüÁî³ØËù¹ØÁªµÄ¶ÓÁĞ×åË÷Òı
+	 * @param device æŒ‡å‘ Vulkan è®¾å¤‡å¯¹è±¡çš„æŒ‡é’ˆï¼Œç”¨äºè·å– Vulkan é€»è¾‘è®¾å¤‡å¥æŸ„
+	 * @param queueFamilyIndex æŒ‡å®šå‘½ä»¤æ± æ‰€å…³è”çš„é˜Ÿåˆ—æ—ç´¢å¼•
 	 */
 	AdVKCommandPool::AdVKCommandPool(AdVKDevice* device, uint32_t queueFamilyIndex) : mDevice(device) {
 		VkCommandPoolCreateInfo commandPoolInfo = {
@@ -18,28 +18,28 @@ namespace WuDu {
 			.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT,
 			.queueFamilyIndex = queueFamilyIndex
 		};
-		// µ÷ÓÃ Vulkan API ´´½¨ÃüÁî³Ø
+		// è°ƒç”¨ Vulkan API åˆ›å»ºå‘½ä»¤æ± 
 		CALL_VK(vkCreateCommandPool(mDevice->GetHandle(), &commandPoolInfo, nullptr, &mHandle));
 		LOG_T("Create command pool : {0}", (void*)mHandle);
 	}
 
 	/**
-	 * @brief Îö¹¹º¯Êı£¬ÓÃÓÚÏú»Ù Vulkan ÃüÁî³Ø¶ÔÏó
+	 * @brief ææ„å‡½æ•°ï¼Œç”¨äºé”€æ¯ Vulkan å‘½ä»¤æ± å¯¹è±¡
 	 *
-	 * ÔÚ¶ÔÏóÏú»ÙÊ±µ÷ÓÃ vkDestroyCommandPool Ïú»ÙÒÑ´´½¨µÄÃüÁî³Ø×ÊÔ´¡£
+	 * åœ¨å¯¹è±¡é”€æ¯æ—¶è°ƒç”¨ vkDestroyCommandPool é”€æ¯å·²åˆ›å»ºçš„å‘½ä»¤æ± èµ„æºã€‚
 	 */
 	AdVKCommandPool::~AdVKCommandPool() {
-		// Ïú»Ù Vulkan ÃüÁî³Ø×ÊÔ´
+		// é”€æ¯ Vulkan å‘½ä»¤æ± èµ„æº
 		VK_D(CommandPool, mDevice->GetHandle(), mHandle);
 	}
 
 	/**
-	 * @brief ´ÓÃüÁî³ØÖĞ·ÖÅä¶à¸öÃüÁî»º³åÇø
+	 * @brief ä»å‘½ä»¤æ± ä¸­åˆ†é…å¤šä¸ªå‘½ä»¤ç¼“å†²åŒº
 	 *
-	 * Ê¹ÓÃ vkAllocateCommandBuffers ·ÖÅäÖ¸¶¨ÊıÁ¿µÄÖ÷¼¶ÃüÁî»º³åÇø£¬²¢·µ»ØÆä¾ä±úÁĞ±í
+	 * ä½¿ç”¨ vkAllocateCommandBuffers åˆ†é…æŒ‡å®šæ•°é‡çš„ä¸»çº§å‘½ä»¤ç¼“å†²åŒºï¼Œå¹¶è¿”å›å…¶å¥æŸ„åˆ—è¡¨
 	 *
-	 * @param count ĞèÒª·ÖÅäµÄÃüÁî»º³åÇøµÄÊıÁ¿
-	 * @return std::vector<VkCommandBuffer> °üº¬ËùÓĞ·ÖÅäµÄÃüÁî»º³åÇø¾ä±úµÄÏòÁ¿
+	 * @param count éœ€è¦åˆ†é…çš„å‘½ä»¤ç¼“å†²åŒºçš„æ•°é‡
+	 * @return std::vector<VkCommandBuffer> åŒ…å«æ‰€æœ‰åˆ†é…çš„å‘½ä»¤ç¼“å†²åŒºå¥æŸ„çš„å‘é‡
 	 */
 	std::vector<VkCommandBuffer> AdVKCommandPool::AllocateCommandBuffer(uint32_t count) const {
 		std::vector<VkCommandBuffer> cmdBuffers(count);
@@ -50,17 +50,17 @@ namespace WuDu {
 			.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
 			.commandBufferCount = count
 		};
-		// µ÷ÓÃ Vulkan API ·ÖÅäÃüÁî»º³åÇø
+		// è°ƒç”¨ Vulkan API åˆ†é…å‘½ä»¤ç¼“å†²åŒº
 		CALL_VK(vkAllocateCommandBuffers(mDevice->GetHandle(), &allocateInfo, cmdBuffers.data()));
 		return cmdBuffers;
 	}
 
 	/**
-	 * @brief ´ÓÃüÁî³ØÖĞ·ÖÅäÒ»¸öÃüÁî»º³åÇø
+	 * @brief ä»å‘½ä»¤æ± ä¸­åˆ†é…ä¸€ä¸ªå‘½ä»¤ç¼“å†²åŒº
 	 *
-	 * ·â×°ÁË AllocateCommandBuffer ·½·¨£¬½ö·ÖÅäÒ»¸öÃüÁî»º³åÇø²¢·µ»ØµÚÒ»¸öÔªËØ
+	 * å°è£…äº† AllocateCommandBuffer æ–¹æ³•ï¼Œä»…åˆ†é…ä¸€ä¸ªå‘½ä»¤ç¼“å†²åŒºå¹¶è¿”å›ç¬¬ä¸€ä¸ªå…ƒç´ 
 	 *
-	 * @return VkCommandBuffer ·µ»Ø·ÖÅäµÄµ¥¸öÃüÁî»º³åÇø¾ä±ú
+	 * @return VkCommandBuffer è¿”å›åˆ†é…çš„å•ä¸ªå‘½ä»¤ç¼“å†²åŒºå¥æŸ„
 	 */
 	VkCommandBuffer AdVKCommandPool::AllocateOneCommandBuffer() const {
 		std::vector<VkCommandBuffer> cmdBuffers = AllocateCommandBuffer(1);
@@ -68,14 +68,14 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief ¿ªÊ¼¼ÇÂ¼ÃüÁî»º³åÇø
+	 * @brief å¼€å§‹è®°å½•å‘½ä»¤ç¼“å†²åŒº
 	 *
-	 * ÏÈÖØÖÃÃüÁî»º³åÇø×´Ì¬£¬È»ºó¿ªÊ¼¼ÇÂ¼ÃüÁîµ½¸Ã»º³åÇøÖĞ
+	 * å…ˆé‡ç½®å‘½ä»¤ç¼“å†²åŒºçŠ¶æ€ï¼Œç„¶åå¼€å§‹è®°å½•å‘½ä»¤åˆ°è¯¥ç¼“å†²åŒºä¸­
 	 *
-	 * @param cmdBuffer Òª¿ªÊ¼¼ÇÂ¼µÄÃüÁî»º³åÇø¾ä±ú
+	 * @param cmdBuffer è¦å¼€å§‹è®°å½•çš„å‘½ä»¤ç¼“å†²åŒºå¥æŸ„
 	 */
 	void AdVKCommandPool::BeginCommandBuffer(VkCommandBuffer cmdBuffer) {
-		// ÖØÖÃÃüÁî»º³åÇøÒÔ×¼±¸ÖØĞÂ¼ÇÂ¼
+		// é‡ç½®å‘½ä»¤ç¼“å†²åŒºä»¥å‡†å¤‡é‡æ–°è®°å½•
 		CALL_VK(vkResetCommandBuffer(cmdBuffer, 0));
 		VkCommandBufferBeginInfo beginInfo = {
 			.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO,
@@ -83,19 +83,19 @@ namespace WuDu {
 			.flags = 0,
 			.pInheritanceInfo = nullptr
 		};
-		// ¿ªÊ¼¼ÇÂ¼ÃüÁî»º³åÇø
+		// å¼€å§‹è®°å½•å‘½ä»¤ç¼“å†²åŒº
 		CALL_VK(vkBeginCommandBuffer(cmdBuffer, &beginInfo));
 	}
 
 	/**
-	 * @brief ½áÊøÃüÁî»º³åÇøµÄ¼ÇÂ¼
+	 * @brief ç»“æŸå‘½ä»¤ç¼“å†²åŒºçš„è®°å½•
 	 *
-	 * Íê³ÉÃüÁî¼ÇÂ¼ºóµ÷ÓÃ´Ëº¯Êı½áÊø¶ÔÃüÁî»º³åÇøµÄ²Ù×÷
+	 * å®Œæˆå‘½ä»¤è®°å½•åè°ƒç”¨æ­¤å‡½æ•°ç»“æŸå¯¹å‘½ä»¤ç¼“å†²åŒºçš„æ“ä½œ
 	 *
-	 * @param cmdBuffer Òª½áÊø¼ÇÂ¼µÄÃüÁî»º³åÇø¾ä±ú
+	 * @param cmdBuffer è¦ç»“æŸè®°å½•çš„å‘½ä»¤ç¼“å†²åŒºå¥æŸ„
 	 */
 	void AdVKCommandPool::EndCommandBuffer(VkCommandBuffer cmdBuffer) {
-		// ½áÊøÃüÁî»º³åÇøµÄ¼ÇÂ¼
+		// ç»“æŸå‘½ä»¤ç¼“å†²åŒºçš„è®°å½•
 		CALL_VK(vkEndCommandBuffer(cmdBuffer));
 	}
 }
