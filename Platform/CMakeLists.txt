@@ -58,10 +58,10 @@ set(ASSIMP_LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/External/assimp/lib")
 
 # 根据编译类型选择库名称和子目录
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(ASSIMP_LIB_NAME "assimp-vc143-mtd")
+    set(ASSIMP_LIB_NAME "assimp-vc145-mtd")
     set(ASSIMP_LIB_SUBDIR "Debug")
 else()
-    set(ASSIMP_LIB_NAME "assimp-vc143-mt")
+    set(ASSIMP_LIB_NAME "assimp-vc145-mt")
     set(ASSIMP_LIB_SUBDIR "Release")
 endif()
 

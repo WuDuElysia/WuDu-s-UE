@@ -12,11 +12,11 @@
 #include "ECS/Component/AdTransformComponent.h"
 
 namespace WuDu {
-	//初始化光照材质系统
+	//��ʼ�����ղ���ϵͳ
 	void AdPBRMaterialSystem::OnInit(AdVKRenderPass* renderPass) {
 		AdVKDevice* device = GetDevice();
 
-		// 创建帧UBO描述符集布局：用于传递投影矩阵、视图矩阵等每帧不变的数据
+		// ����֡UBO�����������֣����ڴ���ͶӰ������ͼ�����ÿ֡���������
 		{
 			const std::vector<VkDescriptorSetLayoutBinding> bindings = {
 				{
@@ -40,7 +40,7 @@ namespace WuDu {
 			mMaterialParamDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
 		}
 
-		// 创建材质资源描述符集布局：用于传递纹理采样器和图像视图
+		// ����������Դ�����������֣����ڴ��������������ͼ����ͼ
 		{
 			const std::vector<VkDescriptorSetLayoutBinding> bindings = {
 				{
@@ -59,14 +59,14 @@ namespace WuDu {
 			mMaterialResourceDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
 		}
 
-		//定义推送常量: 用于传递模型变换矩阵
+		//�������ͳ���: ���ڴ���ģ�ͱ任����
 		VkPushConstantRange modelPC = {
 			.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
 			.offset = 0,
 			.size = sizeof(ModelPC)
 		};
 
-		//构建着色器布局并创建管线布局
+		//������ɫ�����ֲ��������߲���
 		ShaderLayout shaderLayout = {
 			.descriptorSetLayouts = { mFrameUboDescSetLayout->GetHandle(), mMaterialParamDescSetLayout->GetHandle(), mMaterialResourceDescSetLayout->GetHandle() },
 			.pushConstants = { modelPC }
@@ -78,7 +78,7 @@ namespace WuDu {
 			shaderLayout
 		);
 
-		//配置顶点输入格式
+		//���ö��������ʽ
 		std::vector<VkVertexInputBindingDescription> vertexBindings = {
 			{
 				.binding = 0,
@@ -120,7 +120,7 @@ namespace WuDu {
 			}
 		};
 
-		//创建图形管线并设置相关参数
+		//����ͼ�ι��߲�������ز���
 		mPipeline = std::make_shared<AdVKPipeline>(device, renderPass, mPipelineLayout.get());
 		mPipeline->SetVertexInputState(vertexBindings, vertexAttrs);
 		mPipeline->EnableDepthTest();
@@ -129,7 +129,7 @@ namespace WuDu {
 		mPipeline->SetSubPassIndex(0);
 		mPipeline->Create();
 
-		//创建描述符池并分配帧UBO描述符集
+		//�����������ز�����֡UBO��������
 		std::vector<VkDescriptorPoolSize> poolSizes = {
 			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -140,15 +140,15 @@ namespace WuDu {
 		mFrameUboDescSet = mDescriptorPool->AllocateDescriptorSet(mFrameUboDescSetLayout.get(), 1)[0];
 		mFrameUboBuffer = std::make_shared<AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(FrameUbo), nullptr, true);
 
-		//初始化材质描述符池
+		//��ʼ��������������
 		ReCreateMaterialDescPool(NUM_MATERIAL_BATCH);
 
-		//创建默认纹理
+		//����Ĭ������
 		//std::unique_ptr<RGBAColor> whitePixel = std::make_unique<RGBAColor>(255, 255, 255, 255);
 		RGBAColor pixel { 255, 255, 255, 255 };
 		mDefaultTexture = std::make_shared<AdTexture>(1, 1, & pixel);
 
-		//创建默认采样器
+		//����Ĭ�ϲ�����
 
 		mDefaultSampler = std::make_shared<AdSampler>();
 	}
@@ -161,13 +161,13 @@ namespace WuDu {
 		entt::registry& reg = scene->GetEcsRegistry();
 
 
-		//获取具有看换组件和无光照辞职组件的实视图
+		//��ȡ���п���������޹��մ�ְ�����ʵ��ͼ
 		auto view = reg.view<AdTransformComponent, AdPBRMaterialComponent>
 		if(std::distance(view.begin(), view.end()) == 0){
 			return;
 		}
 
-		//绑定图形管线并设置视口和裁剪区域
+		//��ͼ�ι��߲������ӿںͲü�����
 		mPipeline->Bind(cmdBuffer);
 		AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
 		VkViewport viewport = {
@@ -186,10 +186,10 @@ namespace WuDu {
 		};
 		vkCmdSetScissor(cmdBuffer,0,1,&scissor);
 
-		//更新帧UBO描述符集
+		//����֡UBO��������
 		UpdateFrameUboDescSet(renderTarget);
 
-		//检查是否需要重新创建材质描述符池
+		//����Ƿ���Ҫ���´���������������
 		bool bShouldForceUpdateMaterial = false;
 		uin32_t materialCount = AdMaterialFactory::GetInstance()->GetMaterialSize<AdPBRMaterial>();
 		if(materialCount > mLastDescriptorSetCount){
@@ -197,7 +197,7 @@ namespace WuDu {
 			bShouldForceUpdateMaterial = true;
 		}
 
-		//遍历所有实体并渲染
+		//��������ʵ�岢��Ⱦ
 		std::vector<bool> updateFlags(materialCount);
 		view.each([this, &updateFlags, &bShouldForceUpdateMaterial, &cmdBuffer](AdTransformComponent& transComp,AdPBRMaterialComponent& materialComp){
 			for(const auto& entry : materialComp.GetMeshMaterials()){

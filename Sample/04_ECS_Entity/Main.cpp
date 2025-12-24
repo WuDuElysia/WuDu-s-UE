@@ -117,7 +117,7 @@ protected:
 		mCubeMesh = std::make_shared<WuDu::AdMesh>(vertices, indices);
 
 		//º”‘ÿƒ£–Õ
-		std::shared_ptr<WuDu::AdModelResource> model = std::make_shared<WuDu::AdModelResource>(AD_RES_MODEL_DIR"MiG-29.obj");
+		std::shared_ptr<WuDu::AdModelResource> model = std::make_shared<WuDu::AdModelResource>(AD_RES_MODEL_DIR"Phainon.fbx");
 		std::vector<WuDu::ModelVertex> Vertices;
 		std::vector<uint32_t> Indices;
 		if (model->Load()) {
