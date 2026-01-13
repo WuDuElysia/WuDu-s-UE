@@ -4,18 +4,18 @@
 #include "AdMaterialComponent.h"
 
 namespace WuDu {
-        enum BaseMaterialColor {
-                COLOR_TYPE_NORMAL = 0,
-                COLOR_TYPE_TEXCOORD = 1
-        };
+	enum BaseMaterialColor {
+		COLOR_TYPE_NORMAL = 0,
+		COLOR_TYPE_TEXCOORD = 1
+	};
 
-        struct AdBaseMaterial : public AdMaterial {
-                BaseMaterialColor colorType;
-        };
+	struct AdBaseMaterial : public AdMaterial {
+		BaseMaterialColor colorType;
+	};
 
-        struct AdBaseMaterialComponent : public AdMaterialComponent<AdBaseMaterial> {
+	struct AdBaseMaterialComponent : public AdMaterialComponent<AdBaseMaterial> {
 
-        };
+	};
 }
 
 #endif

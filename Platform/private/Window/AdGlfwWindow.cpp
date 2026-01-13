@@ -4,49 +4,49 @@
 #include"glfw/glfw3native.h"
 #include"Event/AdEventAdaper.h"
 
-// ÃüÃû¿Õ¼äWuDu¿ªÊ¼
+// å‘½åç©ºé—´WuDuå¼€å§‹
 namespace WuDu {
 	/**
-	 * AdGlfwWindowÀàµÄ¹¹Ôìº¯Êı
-	 * @param width ´°¿ÚµÄ¿í¶È
-	 * @param height ´°¿ÚµÄ¸ß¶È
-	 * @param title ´°¿ÚµÄ±êÌâ
+	 * AdGlfwWindowç±»çš„æ„é€ å‡½æ•°
+	 * @param width çª—å£çš„å®½åº¦
+	 * @param height çª—å£çš„é«˜åº¦
+	 * @param title çª—å£çš„æ ‡é¢˜
 	 */
 	AdGlfwWindow::AdGlfwWindow(uint32_t width, uint32_t height, const char* title) {
-		// ³õÊ¼»¯GLFW¿â£¬Èç¹ûÊ§°ÜÔò¼ÇÂ¼ÈÕÖ¾²¢·µ»Ø
+		// åˆå§‹åŒ–GLFWåº“ï¼Œå¦‚æœå¤±è´¥åˆ™è®°å½•æ—¥å¿—å¹¶è¿”å›
 		if (!glfwInit()) {
-			LOG_T("faild to init glfw!!!");
+			LOG_T("failed to init glfw!!!");
 			return;
 		}
 
-		// ÉèÖÃGLFW´°¿ÚÌáÊ¾£¬½ûÓÃAPI
+		// è®¾ç½®GLFWä¸æ˜¾ç¤ºå®¢æˆ·ç«¯API
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 		glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
 
-		// ´´½¨GLFW´°¿Ú£¬Èç¹ûÊ§°ÜÔò¼ÇÂ¼ÈÕÖ¾²¢·µ»Ø
+		// åˆ›å»ºGLFWçª—å£ï¼Œå¦‚æœå¤±è´¥åˆ™è®°å½•æ—¥å¿—å¹¶è¿”å›
 		mGLFWWindow = glfwCreateWindow(width, height, title, nullptr, nullptr);
 		if (!mGLFWWindow) {
-			LOG_T("faild to create glfw window!!!");
+			LOG_T("failed to create glfw window!!!");
 			return;
 		}
 	
 
-		// »ñÈ¡Ö÷ÏÔÊ¾Æ÷
+		// è·å–ä¸»æ˜¾ç¤ºå™¨
 		GLFWmonitor* primaryMonitor = glfwGetPrimaryMonitor();
-		// Èç¹ûÖ÷ÏÔÊ¾Æ÷´æÔÚ
+		// å¦‚æœæœ‰ä¸»æ˜¾ç¤ºå™¨
 		if (primaryMonitor) {
-			// ¶¨Òå±äÁ¿ÒÔ´æ´¢ÏÔÊ¾Æ÷µÄ¹¤×÷ÇøÓòÎ»ÖÃºÍ´óĞ¡
+			// ç”¨äºå­˜å‚¨ä¸»æ˜¾ç¤ºå™¨çš„å·¥ä½œåŒºåŸŸä½ç½®å’Œå¤§å°
 			int xPos, yPos, workWidth, workHeight;
-			// »ñÈ¡Ö÷ÏÔÊ¾Æ÷µÄ¹¤×÷ÇøÓòÎ»ÖÃºÍ´óĞ¡
+			// è·å–ä¸»æ˜¾ç¤ºå™¨çš„å·¥ä½œåŒºåŸŸä½ç½®å’Œå¤§å°
 			glfwGetMonitorWorkarea(primaryMonitor, &xPos, &yPos, &workWidth, &workHeight);
-			// ½«´°¿ÚÎ»ÖÃÉèÖÃÎª¹¤×÷ÇøÓòÖĞÑë
+			// å°†çª—å£ä½ç½®è®¾ç½®ä¸ºå±å¹•ä¸­å¤®
 			glfwSetWindowPos(mGLFWWindow, workWidth / 2 - width / 2, workHeight / 2 - height / 2);
 		}
 
-		// Ê¹µ±Ç°´°¿ÚµÄÉÏÏÂÎÄ³ÉÎªµ±Ç°Ïß³ÌµÄÖ÷ÉÏÏÂÎÄ
+		// ä½¿ç”¨å½“å‰çª—å£çš„ä¸Šä¸‹æ–‡ä½œä¸ºå½“å‰çº¿ç¨‹çš„ä¸Šä¸‹æ–‡
 		glfwMakeContextCurrent(mGLFWWindow);
 
-		// ÏÔÊ¾´°¿Ú
+		// æ˜¾ç¤ºçª—å£
 		glfwShowWindow(mGLFWWindow);
 
 		EventAdapter::Initialize(mGLFWWindow);
@@ -58,8 +58,8 @@ namespace WuDu {
 		return mGLFWWindow;
 	}
 	/**
-	 * AdGlfwWindowÀàµÄÎö¹¹º¯Êı
-	 * Ïú»ÙGLFW´°¿Ú²¢ÖÕÖ¹GLFW¿â
+	 * AdGlfwWindowç±»çš„ææ„å‡½æ•°
+	 * é”€æ¯GLFWçª—å£å¹¶ç»ˆæ­¢GLFWåº“
 	 */
 	AdGlfwWindow::~AdGlfwWindow() {
 		glfwDestroyWindow(mGLFWWindow);
@@ -68,22 +68,22 @@ namespace WuDu {
 	}
 
 	/**
-	 * ¼ì²é´°¿ÚÊÇ·ñÓ¦¸Ã¹Ø±Õ
-	 * @return Èç¹û´°¿ÚÓ¦¸Ã¹Ø±ÕÔò·µ»Øtrue£¬·ñÔò·µ»Øfalse
+	 * æ£€æŸ¥çª—å£æ˜¯å¦åº”è¯¥å…³é—­
+	 * @return å¦‚æœçª—å£åº”è¯¥å…³é—­åˆ™è¿”å›trueï¼Œå¦åˆ™è¿”å›false
 	 */
 	bool AdGlfwWindow::ShouldClose() {
 		return glfwWindowShouldClose(mGLFWWindow);
 	}
 
 	/**
-	 * ´¦Àí´°¿ÚÊÂ¼ş
+	 * å¤„ç†çª—å£äº‹ä»¶
 	 */
 	void AdGlfwWindow::PollEvents() {
 		glfwPollEvents();
 	}
 
 	/**
-	 * ½»»»´°¿Ú»º³åÇø
+	 * äº¤æ¢çª—å£ç¼“å†²åŒº
 	 */
 	void AdGlfwWindow::SwapBuffer() {
 		glfwSwapBuffers(mGLFWWindow);

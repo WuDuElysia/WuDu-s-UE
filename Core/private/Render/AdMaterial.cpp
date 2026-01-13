@@ -1,16 +1,16 @@
 #include "Render/AdMaterial.h"
 
 namespace WuDu {
-	/// È«¾Ö¾²Ì¬²ÄÖÊ¹¤³§ÊµÀı
+	/// å…¨å±€é™æ€æè´¨å·¥å‚å®ä¾‹
 	AdMaterialFactory AdMaterialFactory::s_MaterialFactory{};
 
 	/**
-	 * @brief ¼ì²é²ÄÖÊÊÇ·ñ°üº¬Ö¸¶¨IDµÄÎÆÀí
-	 * @param id ÎÆÀíID
-	 * @return Èç¹û´æÔÚ·µ»Øtrue£¬·ñÔò·µ»Øfalse
+	 * @brief ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * @param id ï¿½ï¿½ï¿½ï¿½ID
+	 * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½ï¿½ï¿½trueï¿½ï¿½ï¿½ï¿½ï¿½ò·µ»ï¿½false
 	 */
 	bool AdMaterial::HasTexture(uint32_t id) const {
-		// ²éÕÒÎÆÀíIDÊÇ·ñ´æÔÚ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½IDï¿½Ç·ï¿½ï¿½ï¿½ï¿½
 		if (mTextures.find(id) != mTextures.end()) {
 			return true;
 		}
@@ -18,12 +18,12 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief »ñÈ¡Ö¸¶¨IDÎÆÀíµÄÊÓÍ¼Ö¸Õë
-	 * @param id ÎÆÀíID
-	 * @return ÎÆÀíÊÓÍ¼Ö¸Õë£¬Èç¹û²»´æÔÚ·µ»Ønullptr
+	 * @brief ï¿½ï¿½È¡Ö¸ï¿½ï¿½IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼Ö¸ï¿½ï¿½
+	 * @param id ï¿½ï¿½ï¿½ï¿½ID
+	 * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼Ö¸ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½ï¿½ï¿½nullptr
 	 */
 	const TextureView* AdMaterial::GetTextureView(uint32_t id) const {
-		// ¼ì²éÎÆÀíÊÇ·ñ´æÔÚ²¢·µ»Ø¶ÔÓ¦ÊÓÍ¼
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ú²ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½Ó¦ï¿½ï¿½Í¼
 		if (HasTexture(id)) {
 			return &mTextures.at(id);
 		}
@@ -31,13 +31,13 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief ÉèÖÃÖ¸¶¨IDµÄÎÆÀíÊÓÍ¼
-	 * @param id ÎÆÀíID
-	 * @param texture ÎÆÀí¶ÔÏóÖ¸Õë
-	 * @param sampler ²ÉÑùÆ÷¶ÔÏóÖ¸Õë
+	 * @brief ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
+	 * @param id ï¿½ï¿½ï¿½ï¿½ID
+	 * @param texture ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+	 * @param sampler ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
 	 */
 	void AdMaterial::SetTextureView(uint32_t id, AdTexture* texture, AdSampler* sampler) {
-		// Èç¹ûÎÆÀíÒÑ´æÔÚÔò¸üĞÂ£¬·ñÔò´´½¨ĞÂÎÆÀíÊÓÍ¼
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½ï¿½ï¿½ï¿½ò´´½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼
 		if (HasTexture(id)) {
 			mTextures[id].texture = texture;
 			mTextures[id].sampler = sampler;
@@ -49,12 +49,12 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief ¸üĞÂÖ¸¶¨IDÎÆÀíÊÓÍ¼µÄÆôÓÃ×´Ì¬
-	 * @param id ÎÆÀíID
-	 * @param enable ÆôÓÃ×´Ì¬
+	 * @brief ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
+	 * @param id ï¿½ï¿½ï¿½ï¿½ID
+	 * @param enable ï¿½ï¿½ï¿½ï¿½×´Ì¬
 	 */
 	void AdMaterial::UpdateTextureViewEnable(uint32_t id, bool enable) {
-		// ¸üĞÂÎÆÀíÆôÓÃ×´Ì¬²¢±ê¼Ç²ÎÊıĞèÒªË¢ĞÂ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½ÒªË¢ï¿½ï¿½
 		if (HasTexture(id)) {
 			mTextures[id].bEnable = enable;
 			bShouldFlushParams = true;
@@ -62,12 +62,12 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief ¸üĞÂÖ¸¶¨IDÎÆÀíÊÓÍ¼µÄUVÆ½ÒÆ²ÎÊı
-	 * @param id ÎÆÀíID
-	 * @param uvTranslation UVÆ½ÒÆÏòÁ¿
+	 * @brief ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½UVÆ½ï¿½Æ²ï¿½ï¿½ï¿½
+	 * @param id ï¿½ï¿½ï¿½ï¿½ID
+	 * @param uvTranslation UVÆ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	void AdMaterial::UpdateTextureViewUVTranslation(uint32_t id, const glm::vec2& uvTranslation) {
-		// ¸üĞÂÎÆÀíUVÆ½ÒÆ²ÎÊı²¢±ê¼Ç²ÎÊıĞèÒªË¢ĞÂ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UVÆ½ï¿½Æ²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½ÒªË¢ï¿½ï¿½
 		if (HasTexture(id)) {
 			mTextures[id].uvTranslation = uvTranslation;
 			bShouldFlushParams = true;
@@ -75,12 +75,12 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief ¸üĞÂÖ¸¶¨IDÎÆÀíÊÓÍ¼µÄUVĞı×ª²ÎÊı
-	 * @param id ÎÆÀíID
-	 * @param uvRotation UVĞı×ª½Ç¶È
+	 * @brief ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½UVï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½
+	 * @param id ï¿½ï¿½ï¿½ï¿½ID
+	 * @param uvRotation UVï¿½ï¿½×ªï¿½Ç¶ï¿½
 	 */
 	void AdMaterial::UpdateTextureViewUVRotation(uint32_t id, float uvRotation) {
-		// ¸üĞÂÎÆÀíUVĞı×ª²ÎÊı²¢±ê¼Ç²ÎÊıĞèÒªË¢ĞÂ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UVï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½ÒªË¢ï¿½ï¿½
 		if (HasTexture(id)) {
 			mTextures[id].uvRotation = uvRotation;
 			bShouldFlushParams = true;
@@ -88,12 +88,12 @@ namespace WuDu {
 	}
 
 	/**
-	 * @brief ¸üĞÂÖ¸¶¨IDÎÆÀíÊÓÍ¼µÄUVËõ·Å²ÎÊı
-	 * @param id ÎÆÀíID
-	 * @param uvScale UVËõ·ÅÏòÁ¿
+	 * @brief ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼ï¿½ï¿½UVï¿½ï¿½ï¿½Å²ï¿½ï¿½ï¿½
+	 * @param id ï¿½ï¿½ï¿½ï¿½ID
+	 * @param uvScale UVï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	void AdMaterial::UpdateTextureViewUVScale(uint32_t id, const glm::vec2& uvScale) {
-		// ¸üĞÂÎÆÀíUVËõ·Å²ÎÊı²¢±ê¼Ç²ÎÊıĞèÒªË¢ĞÂ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UVï¿½ï¿½ï¿½Å²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç²ï¿½ï¿½ï¿½ï¿½ï¿½ÒªË¢ï¿½ï¿½
 		if (HasTexture(id)) {
 			mTextures[id].uvScale = uvScale;
 			bShouldFlushParams = true;

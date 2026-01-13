@@ -7,33 +7,33 @@ namespace WuDu {
 	void AdFirstPersonCameraComponent::Unproject(float ndcX, float ndcY,
 		glm::vec3& outOrigin,
 		glm::vec3& outDirection) const {
-		// 1. ´´½¨²Ã¼ô¿Õ¼ä×ø±ê (x, y, -1.0, 1.0) ºÍ (x, y, 1.0, 1.0)
+		// 1. åˆ›å»ºè£å‰ªç©ºé—´åæ ‡ (x, y, -1.0, 1.0) å’Œ (x, y, 1.0, 1.0)
 		glm::vec4 clipCoord1 = glm::vec4(ndcX, ndcY, -1.0f, 1.0f);
 		glm::vec4 clipCoord2 = glm::vec4(ndcX, ndcY, 1.0f, 1.0f);
 
-		// 2. »ñÈ¡ÉãÏñ»úµÄÊÓÍ¼ºÍÍ¶Ó°¾ØÕó
+		// 2. è·å–å½“å‰çš„è§†å›¾å’ŒæŠ•å½±çŸ©é˜µ
 		glm::mat4 viewMatrix = mViewMat;
 		glm::mat4 projMatrix = mProjMat;
 
-		// 3. ¼ÆËãÊÓÍ¼-Í¶Ó°¾ØÕóµÄÄæ¾ØÕó
+		// 3. è®¡ç®—è§†å›¾-æŠ•å½±çŸ©é˜µçš„é€†çŸ©é˜µ
 		glm::mat4 invViewProj = glm::inverse(projMatrix * viewMatrix);
 
-		// 4. ×ª»»µ½Ïà»ú¿Õ¼ä
+		// 4. è½¬æ¢åˆ°è§†å›¾ç©ºé—´
 		glm::vec4 viewCoord1 = invViewProj * clipCoord1;
 		glm::vec4 viewCoord2 = invViewProj * clipCoord2;
 		viewCoord1 /= viewCoord1.w;
 		viewCoord2 /= viewCoord2.w;
 
-		// 5. ÉèÖÃÊä³ö
+		// 5. è®¡ç®—å°„çº¿
 		outOrigin = glm::vec3(viewCoord1);
 		outDirection = glm::normalize(glm::vec3(viewCoord2) - glm::vec3(viewCoord1));
 	}
 	const glm::mat4& AdFirstPersonCameraComponent::GetProjMat() {
 		if (mProjMatDirty) {
-			// È·±£Ê¹ÓÃÕıÈ·µÄ Vulkan Í¶Ó°¾ØÕó
+			// ç¡®ä¿ä½¿ç”¨æ­£ç¡®çš„ Vulkan æŠ•å½±çŸ©é˜µ
 			mProjMat = glm::perspectiveRH_ZO(
 				glm::radians(mFov),
-				mAspect,           // È·±£Õâ¸öÖµÕıÈ·ÉèÖÃ
+				mAspect,           // ç¡®ä¿æ­¤å¤„å€¼æ˜¯æ­£ç¡®çš„
 				mNearPlane,
 				mFarPlane
 			);
@@ -67,19 +67,19 @@ namespace WuDu {
 		if (AdEntity::HasComponent<AdTransformComponent>(owner)) {
 			auto& transComp = owner->GetComponent<AdTransformComponent>();
 
-			// ¼ÆËãÏà»úµÄÇ°·½ÏòÏòÁ¿
+			// è®¡ç®—å½“å‰ç›¸æœºçš„å‰æ–¹æ–¹å‘
 			glm::vec3 front;
 			front.x = cos(glm::radians(mYaw)) * cos(glm::radians(mPitch));
 			front.y = sin(glm::radians(mPitch));
 			front.z = sin(glm::radians(mYaw)) * cos(glm::radians(mPitch));
 			front = glm::normalize(front);
 
-			// ¼ÆËãÓÒ·½ÏòºÍÉÏ·½ÏòÏòÁ¿
+			// è®¡ç®—ç›¸æœºçš„å³ä¾§å’Œä¸Šæ–¹æ–¹å‘
 			glm::vec3 worldUp(0.0f, 1.0f, 0.0f);
 			glm::vec3 right = glm::normalize(glm::cross(front, worldUp));
 			glm::vec3 up = glm::normalize(glm::cross(right, front));
 
-			// ¼ÆËãÊÓÍ¼¾ØÕó
+			// è®¡ç®—è§†å›¾çŸ©é˜µ
 			mViewMat = glm::lookAt(transComp.position, transComp.position + front, up);
 			mViewMatDirty = false;
 		}
@@ -89,7 +89,7 @@ namespace WuDu {
 		mYaw += deltaX * mSensitivity;
 		mPitch -= deltaY * mSensitivity;
 
-		// ÏŞÖÆ¸©Ñö½Ç
+		// é™åˆ¶ä¿¯ä»°è§’
 		if (mPitch > 89.0f) mPitch = 89.0f;
 		if (mPitch < -89.0f) mPitch = -89.0f;
 
@@ -109,7 +109,7 @@ namespace WuDu {
 
 		auto& transComp = owner->GetComponent<AdTransformComponent>();
 
-		// ¼ÆËãÏà»úµÄÇ°¡¢ÓÒ·½ÏòÏòÁ¿
+		// è®¡ç®—å½“å‰ç›¸æœºçš„å‰æ–¹æ–¹å‘
 		glm::vec3 front;
 		front.x = cos(glm::radians(mYaw)) * cos(glm::radians(mPitch));
 		front.y = sin(glm::radians(mPitch));
@@ -121,7 +121,7 @@ namespace WuDu {
 
 		glm::vec3 up = glm::normalize(glm::cross(right, front));
 
-		// ¸ù¾İ°´¼ü×´Ì¬ÒÆ¶¯Ïà»ú
+		// æ ¹æ®æŒ‰é”®çŠ¶æ€ç§»åŠ¨ç›¸æœº
 		float velocity = mMoveSpeed * deltaTime;
 
 		if (mMoveForward) {

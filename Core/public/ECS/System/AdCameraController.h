@@ -3,24 +3,24 @@
 #include "Event/AdEvent.h"
 
 namespace WuDu {
-        class AdCameraController {
-        public:
-                virtual ~AdCameraController() = default;
+	class AdCameraController {
+	public:
+		virtual ~AdCameraController() = default;
 
-                // Ïà»ú¿ØÖÆ½Ó¿Ú
-                virtual void OnMouseMove(float deltaX, float deltaY) = 0;
-                virtual void OnMouseScroll(float yOffset) = 0;
-                virtual void OnMouseClick(int button) = 0;
-                virtual void OnMouseRelease(int button) = 0;
-                virtual void OnKeyPress(int key) = 0;
-                virtual void OnKeyRelease(int key) = 0;
-                virtual void Update(float deltaTime) = 0;
+		// ç›¸æœºæ§åˆ¶æ¥å£
+		virtual void OnMouseMove(float deltaX, float deltaY) = 0;
+		virtual void OnMouseScroll(float yOffset) = 0;
+		virtual void OnMouseClick(int button) = 0;
+		virtual void OnMouseRelease(int button) = 0;
+		virtual void OnKeyPress(int key) = 0;
+		virtual void OnKeyRelease(int key) = 0;
+		virtual void Update(float deltaTime) = 0;
 
-                virtual const glm::mat4& GetProjMat() = 0;
-                virtual const glm::mat4& GetViewMat() = 0;
+		virtual const glm::mat4& GetProjMat() = 0;
+		virtual const glm::mat4& GetViewMat() = 0;
 
-                // Ïà»ú²ÎÊıÉèÖÃ
-                virtual void SetAspect(float aspect) = 0;
-                virtual void SetMoveSpeed(float speed) { /* Ä¬ÈÏ¿ÕÊµÏÖ */ }
-        };
+		// ç›¸æœºå‚æ•°è®¾ç½®
+		virtual void SetAspect(float aspect) = 0;
+		virtual void SetMoveSpeed(float speed) { /* é»˜è®¤ç©ºå®ç° */ }
+	};
 }

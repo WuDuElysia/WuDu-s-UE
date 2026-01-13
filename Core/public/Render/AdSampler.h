@@ -5,7 +5,7 @@
 namespace WuDu {
 	class AdSampler {
 	public:
-		// Ìí¼ÓÉèÖÃ½á¹¹Ìå
+		// é‡‡æ ·å™¨è®¾ç½®ç»“æž„ä½“
 		struct Settings {
 			VkFilter minFilter = VK_FILTER_LINEAR;
 			VkFilter magFilter = VK_FILTER_LINEAR;
@@ -20,9 +20,9 @@ namespace WuDu {
 			Settings() = default;
 		};
 
-		// ¹¹Ôìº¯Êý
+		// æž„é€ å‡½æ•°
 		AdSampler(const Settings& settings);
-		AdSampler(); // Ä¬ÈÏ¹¹Ôìº¯Êý
+		AdSampler(); // é»˜è®¤æž„é€ å‡½æ•°
 		~AdSampler();
 
 		VkSampler GetHandle() const { return mHandle; }

@@ -5,32 +5,32 @@
 #include "entt/entity/registry.hpp"
 
 namespace WuDu {
-        class AdNode;
-        class AdEntity;
+	class AdNode;
+	class AdEntity;
 
-        class AdScene {
-        public:
-                AdScene();
-                ~AdScene();
+	class AdScene {
+	public:
+		AdScene();
+		~AdScene();
 
-                AdEntity* CreateEntity(const std::string& name = "");
-                AdEntity* CreateEntityWithUUID(const AdUUID& id, const std::string& name = "");
-                void DestroyEntity(const AdEntity* entity);
-                void DestroyAllEntity();
+		AdEntity* CreateEntity(const std::string& name = "");
+		AdEntity* CreateEntityWithUUID(const AdUUID& id, const std::string& name = "");
+		void DestroyEntity(const AdEntity* entity);
+		void DestroyAllEntity();
 
-                entt::registry& GetEcsRegistry() { return mEcsRegistry; }
-                AdNode* GetRootNode() const { return mRootNode.get(); }
-                AdEntity* GetEntity(entt::entity enttEntity);
-                
-        private:
-                std::string mName;
-                entt::registry mEcsRegistry;
+		entt::registry& GetEcsRegistry() { return mEcsRegistry; }
+		AdNode* GetRootNode() const { return mRootNode.get(); }
+		AdEntity* GetEntity(entt::entity enttEntity);
 
-                std::unordered_map<entt::entity, std::shared_ptr<AdEntity>> mEntities;
-                std::shared_ptr<AdNode> mRootNode;
+	private:
+		std::string mName;
+		entt::registry mEcsRegistry;
 
-                friend class AdEntity;
-        };
+		std::unordered_map<entt::entity, std::shared_ptr<AdEntity>> mEntities;
+		std::shared_ptr<AdNode> mRootNode;
+
+		friend class AdEntity;
+	};
 }
 
 #endif

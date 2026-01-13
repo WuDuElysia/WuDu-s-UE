@@ -2,10 +2,10 @@
 #define ADSYSTEM_H
 
 namespace WuDu {
-        class AdSystem {
-        public:
-                virtual void OnUpdate(float deltaTime) {}
-        };
+	class AdSystem {
+	public:
+		virtual void OnUpdate(float deltaTime) {}
+	};
 }
 
 #endif

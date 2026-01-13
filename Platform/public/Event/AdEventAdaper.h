@@ -6,86 +6,86 @@
 #include "AdLog.h"
 
 namespace WuDu {
-        class EventAdapter {
-        public:
-                static void Initialize(GLFWwindow* window) {
-                        // ÉèÖÃGLFW»Øµ÷º¯Êı£¬½«thisÖ¸Õë´æ´¢µ½´°¿ÚÓÃ»§Ö¸ÕëÖĞ
-                        glfwSetWindowUserPointer(window, nullptr);
+	class EventAdapter {
+	public:
+		static void Initialize(GLFWwindow* window) {
+			// è®¾ç½®GLFWå›è°ƒå‡½æ•°ï¼Œå¹¶å°†thisæŒ‡é’ˆå­˜å‚¨åˆ°çª—å£ç”¨æˆ·æŒ‡é’ˆä¸­
+			glfwSetWindowUserPointer(window, nullptr);
 
-                        // ÉèÖÃ¸÷ÖÖ»Øµ÷
-                        glfwSetMouseButtonCallback(window, MouseButtonCallback);
-                        glfwSetCursorPosCallback(window, CursorPosCallback);
-                        glfwSetKeyCallback(window, KeyCallback);
-                        glfwSetWindowSizeCallback(window, WindowSizeCallback);
-                        glfwSetScrollCallback(window, MouseScrollCallback);
-                        // ... ÆäËû»Øµ÷
-                }
+			// è®¾ç½®å„ç§å›è°ƒ
+			glfwSetMouseButtonCallback(window, MouseButtonCallback);
+			glfwSetCursorPosCallback(window, CursorPosCallback);
+			glfwSetKeyCallback(window, KeyCallback);
+			glfwSetWindowSizeCallback(window, WindowSizeCallback);
+			glfwSetScrollCallback(window, MouseScrollCallback);
+			// ... å…¶ä»–å›è°ƒ
+		}
 
-        private:
-                // GLFW»Øµ÷º¯Êı - ¾²Ì¬·½·¨
-                static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
-                        double xpos, ypos;
-                        glfwGetCursorPos(window, &xpos, &ypos);
+	private:
+		// GLFWå›è°ƒå‡½æ•° - é™æ€æ–¹æ³•
+		static void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+			double xpos, ypos;
+			glfwGetCursorPos(window, &xpos, &ypos);
 
-                        // »ñÈ¡ÊäÈë¹ÜÀíÆ÷ÊµÀı²¢·Ö·¢ÊÂ¼ş
-                        auto& inputManager = InputManager::GetInstance();
+			// è·å–è¾“å…¥ç®¡ç†å™¨å®ä¾‹å¹¶åˆ†å‘äº‹ä»¶
+			auto& inputManager = InputManager::GetInstance();
 
-                        if (action == GLFW_PRESS) {
-                                inputManager.QueueEvent<MouseClickEvent>(
-                                        static_cast<float>(xpos),
-                                        static_cast<float>(ypos),
-                                        button,
-                                        mods
-                                );
-                        }
-                        else if (action == GLFW_RELEASE) {
-                                inputManager.QueueEvent<MouseReleaseEvent>(
-                                        static_cast<float>(xpos),
-                                        static_cast<float>(ypos),
-                                        button,
-                                        mods
-                                );
-                        }
-                }
+			if (action == GLFW_PRESS) {
+				inputManager.QueueEvent<MouseClickEvent>(
+					static_cast<float>(xpos),
+					static_cast<float>(ypos),
+					button,
+					mods
+				);
+			}
+			else if (action == GLFW_RELEASE) {
+				inputManager.QueueEvent<MouseReleaseEvent>(
+					static_cast<float>(xpos),
+					static_cast<float>(ypos),
+					button,
+					mods
+				);
+			}
+		}
 
-                static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
-                        static double lastX = xpos;
-                        static double lastY = ypos;
+		static void CursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
+			static double lastX = xpos;
+			static double lastY = ypos;
 
-                        float deltaX = static_cast<float>(xpos - lastX);
-                        float deltaY = static_cast<float>(ypos - lastY);
+			float deltaX = static_cast<float>(xpos - lastX);
+			float deltaY = static_cast<float>(ypos - lastY);
 
-                        lastX = xpos;
-                        lastY = ypos;
+			lastX = xpos;
+			lastY = ypos;
 
-                        auto& inputManager = InputManager::GetInstance();
-                        inputManager.QueueEvent<MouseMoveEvent>(
-                                static_cast<float>(xpos),
-                                static_cast<float>(ypos),
-                                deltaX,
-                                deltaY
-                        );
-                }
+			auto& inputManager = InputManager::GetInstance();
+			inputManager.QueueEvent<MouseMoveEvent>(
+				static_cast<float>(xpos),
+				static_cast<float>(ypos),
+				deltaX,
+				deltaY
+			);
+		}
 
-                static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-                        auto& inputManager = InputManager::GetInstance();
+		static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+			auto& inputManager = InputManager::GetInstance();
 
-                        if (action == GLFW_PRESS) {
-                                inputManager.QueueEvent<KeyPressEvent>(key, mods);
-                        }
-                        else if (action == GLFW_RELEASE) {
-                                inputManager.QueueEvent<KeyReleaseEvent>(key, mods);
-                        }
-                }
+			if (action == GLFW_PRESS) {
+				inputManager.QueueEvent<KeyPressEvent>(key, mods);
+			}
+			else if (action == GLFW_RELEASE) {
+				inputManager.QueueEvent<KeyReleaseEvent>(key, mods);
+			}
+		}
 
-                static void WindowSizeCallback(GLFWwindow* window, int width, int height) {
-                        auto& inputManager = InputManager::GetInstance();
-                        inputManager.QueueEvent<WindowResizeEvent>(width, height);
-                }
+		static void WindowSizeCallback(GLFWwindow* window, int width, int height) {
+			auto& inputManager = InputManager::GetInstance();
+			inputManager.QueueEvent<WindowResizeEvent>(width, height);
+		}
 
-                static void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
-                        auto& inputManager = InputManager::GetInstance();
-                        inputManager.QueueEvent<MouseScrollEvent>(static_cast<float>(xoffset), static_cast<float>(yoffset));
-                }
-        };
+		static void MouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
+			auto& inputManager = InputManager::GetInstance();
+			inputManager.QueueEvent<MouseScrollEvent>(static_cast<float>(xoffset), static_cast<float>(yoffset));
+		}
+	};
 }

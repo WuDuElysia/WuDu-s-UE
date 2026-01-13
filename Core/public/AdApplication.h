@@ -6,55 +6,55 @@
 
 
 namespace WuDu {
-        struct AppSettings {
-                uint32_t width = 1920;
-                uint32_t height = 1080;
-                const char* title = "WuDu Engine";
-        };
+	struct AppSettings {
+		uint32_t width = 1920;
+		uint32_t height = 1080;
+		const char* title = "WuDu Engine";
+	};
 
-        class AdApplication {
-        public:
-                static AdAppContext* GetAppContext() { return &sAppContext; }
+	class AdApplication {
+	public:
+		static AdAppContext* GetAppContext() { return &sAppContext; }
 
-                void Start(int argc, char* argv[]);
-                void Stop();
-                void MainLoop();
+		void Start(int argc, char* argv[]);
+		void Stop();
+		void MainLoop();
 
-                bool IsPause() const { return bPause; }
-                void Pause() { bPause = true; }
-                void Resume() { if (bPause) bPause = false; }
+		bool IsPause() const { return bPause; }
+		void Pause() { bPause = true; }
+		void Resume() { if (bPause) bPause = false; }
 
-                float GetStartTimeSecond() const { return std::chrono::duration<float>(std::chrono::steady_clock::now() - mStartTimePoint).count(); }
-                uint64_t GetFrameIndex() const { return mFrameIndex; }
-                AdWindow* GetWindow() const { return mWindow.get(); }
+		float GetStartTimeSecond() const { return std::chrono::duration<float>(std::chrono::steady_clock::now() - mStartTimePoint).count(); }
+		uint64_t GetFrameIndex() const { return mFrameIndex; }
+		AdWindow* GetWindow() const { return mWindow.get(); }
 
-        protected:
-                virtual void OnConfiguration(AppSettings* appSettings) {}
-                virtual void OnInit() {}
-                virtual void OnUpdate(float deltaTime) {}
-                virtual void OnRender() {}
-                virtual void OnDestroy() {}
+	protected:
+		virtual void OnConfiguration(AppSettings* appSettings) {}
+		virtual void OnInit() {}
+		virtual void OnUpdate(float deltaTime) {}
+		virtual void OnRender() {}
+		virtual void OnDestroy() {}
 
-                virtual void OnSceneInit(AdScene* scene) {}
-                virtual void OnSceneDestroy(AdScene* scene) {}
+		virtual void OnSceneInit(AdScene* scene) {}
+		virtual void OnSceneDestroy(AdScene* scene) {}
 
-                std::chrono::steady_clock::time_point mStartTimePoint;
-                std::chrono::steady_clock::time_point mLastTimePoint;
-                std::shared_ptr<AdRenderContext> mRenderContext;
-                std::unique_ptr<AdWindow> mWindow;
-                std::unique_ptr<AdScene> mScene;
-        private:
-                void ParseArgs(int argc, char* argv[]);
-                bool LoadScene(const std::string& filePath = "");
-                void UnLoadScene();
+		std::chrono::steady_clock::time_point mStartTimePoint;
+		std::chrono::steady_clock::time_point mLastTimePoint;
+		std::shared_ptr<AdRenderContext> mRenderContext;
+		std::unique_ptr<AdWindow> mWindow;
+		std::unique_ptr<AdScene> mScene;
+	private:
+		void ParseArgs(int argc, char* argv[]);
+		bool LoadScene(const std::string& filePath = "");
+		void UnLoadScene();
 
-                AppSettings mAppSettings;
+		AppSettings mAppSettings;
 
-                uint64_t mFrameIndex = 0;
-                bool bPause = false;
+		uint64_t mFrameIndex = 0;
+		bool bPause = false;
 
-                static AdAppContext sAppContext;
-        };
+		static AdAppContext sAppContext;
+	};
 }
 
 #endif

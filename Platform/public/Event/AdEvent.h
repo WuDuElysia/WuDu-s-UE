@@ -5,216 +5,216 @@
 #include <glm/glm.hpp>
 
 namespace WuDu {
-        enum class EventType {
-                MouseClick,
-                MouseMove,
-                MouseRelease,
-                MouseScroll,
-                KeyPress,
-                KeyRelease,
-                KeyRepeat,
-                WindowResize,
-                FramebufferResize,
-                CharInput,
-                Unknown
-        };
+	enum class EventType {
+		MouseClick,
+		MouseMove,
+		MouseRelease,
+		MouseScroll,
+		KeyPress,
+		KeyRelease,
+		KeyRepeat,
+		WindowResize,
+		FramebufferResize,
+		CharInput,
+		Unknown
+	};
 
-        class Event {
-        public:
-                Event(EventType type)
-                        : m_Type(type)
-                        , m_Timestamp(std::chrono::high_resolution_clock::now())
-                        , m_Handled(false) {
-                }
+	class Event {
+	public:
+		Event(EventType type)
+			: m_Type(type)
+			, m_Timestamp(std::chrono::high_resolution_clock::now())
+			, m_Handled(false) {
+		}
 
-                virtual ~Event() = default;
+		virtual ~Event() = default;
 
-                EventType GetType() const { return m_Type; }
-                const std::chrono::high_resolution_clock::time_point& GetTimestamp() const { return m_Timestamp; }
+		EventType GetType() const { return m_Type; }
+		const std::chrono::high_resolution_clock::time_point& GetTimestamp() const { return m_Timestamp; }
 
-                bool IsHandled() const { return m_Handled; }
-                void SetHandled(bool handled) { m_Handled = handled; }
+		bool IsHandled() const { return m_Handled; }
+		void SetHandled(bool handled) { m_Handled = handled; }
 
-        protected:
-                EventType m_Type;
-                std::chrono::high_resolution_clock::time_point m_Timestamp;
-                bool m_Handled;
-        };
+	protected:
+		EventType m_Type;
+		std::chrono::high_resolution_clock::time_point m_Timestamp;
+		bool m_Handled;
+	};
 
-        // Êó±êÊÂ¼ş»ùÀà
-        class MouseEvent : public Event {
-        public:
-                MouseEvent(EventType type, float x, float y)
-                        : Event(type), m_X(x), m_Y(y) {
-                }
+	// é¼ æ ‡äº‹ä»¶åŸºç±»
+	class MouseEvent : public Event {
+	public:
+		MouseEvent(EventType type, float x, float y)
+			: Event(type), m_X(x), m_Y(y) {
+		}
 
-                float GetX() const { return m_X; }
-                float GetY() const { return m_Y; }
-                glm::vec2 GetPosition() const { return glm::vec2(m_X, m_Y); }
+		float GetX() const { return m_X; }
+		float GetY() const { return m_Y; }
+		glm::vec2 GetPosition() const { return glm::vec2(m_X, m_Y); }
 
-        protected:
-                float m_X, m_Y;
-        };
+	protected:
+		float m_X, m_Y;
+	};
 
-        // Êó±êµã»÷ÊÂ¼ş
-        class MouseClickEvent : public MouseEvent {
-        public:
-                MouseClickEvent(float x, float y, int button, int mods)
-                        : MouseEvent(EventType::MouseClick, x, y)
-                        , m_Button(button)
-                        , m_Mods(mods) {
-                }
+	// é¼ æ ‡ç‚¹å‡»äº‹ä»¶
+	class MouseClickEvent : public MouseEvent {
+	public:
+		MouseClickEvent(float x, float y, int button, int mods)
+			: MouseEvent(EventType::MouseClick, x, y)
+			, m_Button(button)
+			, m_Mods(mods) {
+		}
 
-                int GetButton() const { return m_Button; }
-                int GetMods() const { return m_Mods; }
+		int GetButton() const { return m_Button; }
+		int GetMods() const { return m_Mods; }
 
-                static EventType StaticType() { return EventType::MouseClick; }
+		static EventType StaticType() { return EventType::MouseClick; }
 
-        private:
-                int m_Button, m_Mods;
-        };
+	private:
+		int m_Button, m_Mods;
+	};
 
-        // Êó±êÒÆ¶¯ÊÂ¼ş
-        class MouseMoveEvent : public MouseEvent {
-        public:
-                MouseMoveEvent(float x, float y, float deltaX, float deltaY)
-                        : MouseEvent(EventType::MouseMove, x, y)
-                        , m_DeltaX(deltaX)
-                        , m_DeltaY(deltaY) {
-                }
+	// é¼ æ ‡ç§»åŠ¨äº‹ä»¶
+	class MouseMoveEvent : public MouseEvent {
+	public:
+		MouseMoveEvent(float x, float y, float deltaX, float deltaY)
+			: MouseEvent(EventType::MouseMove, x, y)
+			, m_DeltaX(deltaX)
+			, m_DeltaY(deltaY) {
+		}
 
-                float GetDeltaX() const { return m_DeltaX; }
-                float GetDeltaY() const { return m_DeltaY; }
+		float GetDeltaX() const { return m_DeltaX; }
+		float GetDeltaY() const { return m_DeltaY; }
 
-                static EventType StaticType() { return EventType::MouseMove; }
+		static EventType StaticType() { return EventType::MouseMove; }
 
-        private:
-                float m_DeltaX, m_DeltaY;
-        };
+	private:
+		float m_DeltaX, m_DeltaY;
+	};
 
-        // Êó±êÊÍ·ÅÊÂ¼ş
-        class MouseReleaseEvent : public MouseEvent {
-        public:
-                MouseReleaseEvent(float x, float y, int button, int mods)
-                        : MouseEvent(EventType::MouseRelease, x, y)
-                        , m_Button(button)
-                        , m_Mods(mods) {
-                }
+	// é¼ æ ‡é‡Šæ”¾äº‹ä»¶
+	class MouseReleaseEvent : public MouseEvent {
+	public:
+		MouseReleaseEvent(float x, float y, int button, int mods)
+			: MouseEvent(EventType::MouseRelease, x, y)
+			, m_Button(button)
+			, m_Mods(mods) {
+		}
 
-                int GetButton() const { return m_Button; }
-                int GetMods() const { return m_Mods; }
+		int GetButton() const { return m_Button; }
+		int GetMods() const { return m_Mods; }
 
-                static EventType StaticType() { return EventType::MouseRelease; }
+		static EventType StaticType() { return EventType::MouseRelease; }
 
-        private:
-                int m_Button, m_Mods;
-        };
+	private:
+		int m_Button, m_Mods;
+	};
 
-        // Êó±ê¹ö¶¯ÊÂ¼ş
-        class MouseScrollEvent : public Event {
-        public:
-                MouseScrollEvent(float xOffset, float yOffset)
-                        : Event(EventType::MouseScroll)
-                        , m_XOffset(xOffset)
-                        , m_YOffset(yOffset) {
-                }
+	// é¼ æ ‡æ»šè½®äº‹ä»¶
+	class MouseScrollEvent : public Event {
+	public:
+		MouseScrollEvent(float xOffset, float yOffset)
+			: Event(EventType::MouseScroll)
+			, m_XOffset(xOffset)
+			, m_YOffset(yOffset) {
+		}
 
-                float GetXOffset() const { return m_XOffset; }
-                float GetYOffset() const { return m_YOffset; }
+		float GetXOffset() const { return m_XOffset; }
+		float GetYOffset() const { return m_YOffset; }
 
-                static EventType StaticType() { return EventType::MouseScroll; }
+		static EventType StaticType() { return EventType::MouseScroll; }
 
-        private:
-                float m_XOffset, m_YOffset;
-        };
+	private:
+		float m_XOffset, m_YOffset;
+	};
 
-        // ¼üÅÌÊÂ¼ş»ùÀà
-        class KeyEvent : public Event {
-        public:
-                KeyEvent(EventType type, int key, int mods)
-                        : Event(type)
-                        , m_Key(key)
-                        , m_Mods(mods) {
-                }
+	// é”®ç›˜äº‹ä»¶åŸºç±»
+	class KeyEvent : public Event {
+	public:
+		KeyEvent(EventType type, int key, int mods)
+			: Event(type)
+			, m_Key(key)
+			, m_Mods(mods) {
+		}
 
-                int GetKey() const { return m_Key; }
-                int GetMods() const { return m_Mods; }
+		int GetKey() const { return m_Key; }
+		int GetMods() const { return m_Mods; }
 
-        protected:
-                int m_Key, m_Mods;
-        };
+	protected:
+		int m_Key, m_Mods;
+	};
 
-        // °´¼ü°´ÏÂÊÂ¼ş
-        class KeyPressEvent : public KeyEvent {
-        public:
-                KeyPressEvent(int key, int mods) : KeyEvent(EventType::KeyPress, key, mods) {}
-                static EventType StaticType() { return EventType::KeyPress; }
-        };
+	// é”®ç›˜æŒ‰ä¸‹äº‹ä»¶
+	class KeyPressEvent : public KeyEvent {
+	public:
+		KeyPressEvent(int key, int mods) : KeyEvent(EventType::KeyPress, key, mods) {}
+		static EventType StaticType() { return EventType::KeyPress; }
+	};
 
-        // °´¼üÊÍ·ÅÊÂ¼ş
-        class KeyReleaseEvent : public KeyEvent {
-        public:
-                KeyReleaseEvent(int key, int mods) : KeyEvent(EventType::KeyRelease, key, mods) {}
-                static EventType StaticType() { return EventType::KeyRelease; }
-        };
+	// é”®ç›˜é‡Šæ”¾äº‹ä»¶
+	class KeyReleaseEvent : public KeyEvent {
+	public:
+		KeyReleaseEvent(int key, int mods) : KeyEvent(EventType::KeyRelease, key, mods) {}
+		static EventType StaticType() { return EventType::KeyRelease; }
+	};
 
-        // °´¼üÖØ¸´ÊÂ¼ş
-        class KeyRepeatEvent : public KeyEvent {
-        public:
-                KeyRepeatEvent(int key, int mods) : KeyEvent(EventType::KeyRepeat, key, mods) {}
-                static EventType StaticType() { return EventType::KeyRepeat; }
-        };
+	// é”®ç›˜é‡å¤äº‹ä»¶
+	class KeyRepeatEvent : public KeyEvent {
+	public:
+		KeyRepeatEvent(int key, int mods) : KeyEvent(EventType::KeyRepeat, key, mods) {}
+		static EventType StaticType() { return EventType::KeyRepeat; }
+	};
 
-        // ´°¿Ú´óĞ¡¸Ä±äÊÂ¼ş
-        class WindowResizeEvent : public Event {
-        public:
-                WindowResizeEvent(int width, int height)
-                        : Event(EventType::WindowResize)
-                        , m_Width(width)
-                        , m_Height(height) {
-                }
+	// çª—å£å¤§å°æ”¹å˜äº‹ä»¶
+	class WindowResizeEvent : public Event {
+	public:
+		WindowResizeEvent(int width, int height)
+			: Event(EventType::WindowResize)
+			, m_Width(width)
+			, m_Height(height) {
+		}
 
-                int GetWidth() const { return m_Width; }
-                int GetHeight() const { return m_Height; }
+		int GetWidth() const { return m_Width; }
+		int GetHeight() const { return m_Height; }
 
-                static EventType StaticType() { return EventType::WindowResize; }
+		static EventType StaticType() { return EventType::WindowResize; }
 
-        private:
-                int m_Width, m_Height;
-        };
+	private:
+		int m_Width, m_Height;
+	};
 
-        // Ö¡»º³åÇø´óĞ¡¸Ä±äÊÂ¼ş
-        class FramebufferResizeEvent : public Event {
-        public:
-                FramebufferResizeEvent(int width, int height)
-                        : Event(EventType::FramebufferResize)
-                        , m_Width(width)
-                        , m_Height(height) {
-                }
+	// å¸§ç¼“å†²å¤§å°æ”¹å˜äº‹ä»¶
+	class FramebufferResizeEvent : public Event {
+	public:
+		FramebufferResizeEvent(int width, int height)
+			: Event(EventType::FramebufferResize)
+			, m_Width(width)
+			, m_Height(height) {
+		}
 
-                int GetWidth() const { return m_Width; }
-                int GetHeight() const { return m_Height; }
+		int GetWidth() const { return m_Width; }
+		int GetHeight() const { return m_Height; }
 
-                static EventType StaticType() { return EventType::FramebufferResize; }
+		static EventType StaticType() { return EventType::FramebufferResize; }
 
-        private:
-                int m_Width, m_Height;
-        };
+	private:
+		int m_Width, m_Height;
+	};
 
-        // ×Ö·ûÊäÈëÊÂ¼ş
-        class CharInputEvent : public Event {
-        public:
-                CharInputEvent(unsigned int codepoint)
-                        : Event(EventType::CharInput)
-                        , m_Codepoint(codepoint) {
-                }
+	// å­—ç¬¦è¾“å…¥äº‹ä»¶
+	class CharInputEvent : public Event {
+	public:
+		CharInputEvent(unsigned int codepoint)
+			: Event(EventType::CharInput)
+			, m_Codepoint(codepoint) {
+		}
 
-                unsigned int GetCodepoint() const { return m_Codepoint; }
-                char GetChar() const { return static_cast<char>(m_Codepoint); }
+		unsigned int GetCodepoint() const { return m_Codepoint; }
+		char GetChar() const { return static_cast<char>(m_Codepoint); }
 
-                static EventType StaticType() { return EventType::CharInput; }
+		static EventType StaticType() { return EventType::CharInput; }
 
-        private:
-                unsigned int m_Codepoint;
-        };
+	private:
+		unsigned int m_Codepoint;
+	};
 }

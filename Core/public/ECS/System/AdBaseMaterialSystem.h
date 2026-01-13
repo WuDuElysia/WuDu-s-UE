@@ -7,23 +7,23 @@
 #include "AdGraphicContext.h"
 
 namespace WuDu {
-        class AdVKPipelineLayout;
-        class AdVKPipeline;
+	class AdVKPipelineLayout;
+	class AdVKPipeline;
 
-        struct PushConstants {
-                glm::mat4 matrix{ 1.f };
-                uint32_t colorType;
-        };
+	struct PushConstants {
+		glm::mat4 matrix{ 1.f };
+		uint32_t colorType;
+	};
 
-        class AdBaseMaterialSystem : public AdMaterialSystem {
-        public:
-                void OnInit(AdVKRenderPass* renderPass) override;
-                void OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) override;
-                void OnDestroy() override;
-        private:
-                std::shared_ptr<AdVKPipelineLayout> mPipelineLayout;
-                std::shared_ptr<AdVKPipeline> mPipeline;
-        };
+	class AdBaseMaterialSystem : public AdMaterialSystem {
+	public:
+		void OnInit(AdVKRenderPass* renderPass) override;
+		void OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) override;
+		void OnDestroy() override;
+	private:
+		std::shared_ptr<AdVKPipelineLayout> mPipelineLayout;
+		std::shared_ptr<AdVKPipeline> mPipeline;
+	};
 }
 
 #endif

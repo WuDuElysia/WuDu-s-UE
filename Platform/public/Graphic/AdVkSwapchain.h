@@ -8,12 +8,12 @@ namespace WuDu {
 	class AdVKDevice;
 
 	/**
-	* ½á¹¹ÌåSurfaceInfoÓÃÓÚ´æ´¢±íÃæµÄÏà¹ØĞÅÏ¢£¬°üÀ¨±íÃæµÄÄÜÁ¦¡¢¸ñÊ½ºÍ³ÊÏÖÄ£Ê½
+	* ç»“æ„ä½“SurfaceInfoç”¨äºå­˜å‚¨äº¤æ¢é“¾ç›¸å…³ä¿¡æ¯ï¼ŒåŒ…æ‹¬èƒ½åŠ›ã€æ ¼å¼å’Œå‘ˆç°æ¨¡å¼
 	*/
 	struct SurfaceInfo {
-		VkSurfaceCapabilitiesKHR capabilities; /**< ´æ´¢±íÃæµÄÄÜÁ¦£¬Èç³ß´çºÍÍ¼ÏñÊıÁ¿ÏŞÖÆ */
-		VkSurfaceFormatKHR surfaceFormat;     /**< ¶¨Òå±íÃæµÄ¸ñÊ½£¬°üÀ¨ÑÕÉ«¿Õ¼äºÍÏñËØ¸ñÊ½ */
-		VkPresentModeKHR presentMode;         /**< Ö¸¶¨±íÃæµÄ³ÊÏÖÄ£Ê½£¬ÈçÓÊ¼şÏä¡¢FIFOµÈ */
+		VkSurfaceCapabilitiesKHR capabilities; /**< å­˜å‚¨äº¤æ¢é“¾çš„èƒ½åŠ›ï¼ŒåŒ…æ‹¬å°ºå¯¸å’Œå›¾åƒæ•°é‡ */
+		VkSurfaceFormatKHR surfaceFormat;     /**< äº¤æ¢é“¾çš„æ ¼å¼ï¼ŒåŒ…æ‹¬é¢œè‰²ç©ºé—´å’Œåƒç´ æ ¼å¼ */
+		VkPresentModeKHR presentMode;         /**< æŒ‡å®šäº¤æ¢é“¾çš„å‘ˆç°æ¨¡å¼ï¼Œå¦‚å³æ—¶æ›´æ–°ã€FIFOç­‰ */
 	};
 
 	class AdVKSwapchain {
@@ -43,7 +43,7 @@ namespace WuDu {
 
 		int32_t mCurrentImageIndex = -1;
 
-		// ¶¨ÒåÒ»¸öSurfaceInfoÀàĞÍµÄ±äÁ¿mSurfaceInfo£¬ÓÃÓÚ´æ´¢±íÃæÏà¹ØĞÅÏ¢
+		// åˆ›å»ºä¸€ä¸ªSurfaceInfoç»“æ„ä½“çš„å®ä¾‹mSurfaceInfoï¼Œç”¨äºå­˜å‚¨äº¤æ¢é“¾çš„ä¿¡æ¯
 		SurfaceInfo mSurfaceInfo;
 	};
 }

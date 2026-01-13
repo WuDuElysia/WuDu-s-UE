@@ -6,29 +6,29 @@
 
 namespace WuDu {
 	/**
- * @brief AdRenderer¹¹Ôìº¯Êı
- * @details ³õÊ¼»¯¹ã¸æäÖÈ¾Æ÷£¬´´½¨ÓÃÓÚVulkanÍ¬²½µÄĞÅºÅÁ¿ºÍÕ¤À¸
- * @param ÎŞ
- * @return ÎŞ·µ»ØÖµ
+ * @brief AdRendereræ„é€ å‡½æ•°
+ * @details åˆå§‹åŒ–æ¸²æŸ“å™¨ï¼Œåˆ›å»ºVulkanåŒæ­¥å¯¹è±¡(ä¿¡å·é‡å’Œå›´æ )
+ * @param æ— 
+ * @return æ— è¿”å›å€¼
  */
 	AdRenderer::AdRenderer() {
-		// »ñÈ¡äÖÈ¾ÉÏÏÂÎÄºÍÉè±¸¾ä±ú
+		// è·å–æ¸²æŸ“ä¸Šä¸‹æ–‡å’Œé€»è¾‘è®¾å¤‡
 		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		WuDu::AdVKDevice* device = renderCxt->GetDevice();
 
-		// µ÷ÕûÍ¬²½¶ÔÏóÈİÆ÷´óĞ¡ÒÔÆ¥Åä»º³åÇøÊıÁ¿
+		// åˆ›å»ºåŒæ­¥å¯¹è±¡æ•°ç»„ï¼Œå¤§å°ä¸å¸§ç¼“å†²æ•°é‡åŒ¹é…
 		mImageAvailableSemaphores.resize(RENDERER_NUM_BUFFER);
 		mSubmitedSemaphores.resize(RENDERER_NUM_BUFFER);
 		mFrameFences.resize(RENDERER_NUM_BUFFER);
 
-		// ÅäÖÃĞÅºÅÁ¿´´½¨ĞÅÏ¢
+		// ä¿¡å·é‡åˆ›å»ºä¿¡æ¯
 		VkSemaphoreCreateInfo semaphoreInfo = {
 			.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0
 		};
 
-		// ÅäÖÃÕ¤À¸´´½¨ĞÅÏ¢£¬³õÊ¼×´Ì¬ÎªÒÑ´¥·¢
+		// å›´æ åˆ›å»ºä¿¡æ¯ï¼Œåˆå§‹çŠ¶æ€ä¸ºå·²è§¦å‘
 		VkFenceCreateInfo fenceInfo = {
 			.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO,
 			.pNext = nullptr,
@@ -36,16 +36,16 @@ namespace WuDu {
 
 		};
 
-		// ÎªÃ¿¸ö»º³åÇø´´½¨Í¬²½¶ÔÏó£¨Í¼Ïñ¿ÉÓÃĞÅºÅÁ¿¡¢Ìá½»Íê³ÉĞÅºÅÁ¿ºÍÖ¡Õ¤À¸£©
+		// ä¸ºæ¯ä¸ªå¸§ç¼“å†²åˆ›å»ºåŒæ­¥å¯¹è±¡ï¼šå›¾åƒå¯ç”¨ä¿¡å·é‡ã€æäº¤ä¿¡å·é‡å’Œå¸§å›´æ 
 		for (int i = 0; i < RENDERER_NUM_BUFFER; i++) {
 			CALL_VK(vkCreateSemaphore(device->GetHandle(), &semaphoreInfo, nullptr, &mImageAvailableSemaphores[i]));
 			CALL_VK(vkCreateSemaphore(device->GetHandle(), &semaphoreInfo, nullptr, &mSubmitedSemaphores[i]));
 			CALL_VK(vkCreateFence(device->GetHandle(), &fenceInfo, nullptr, &mFrameFences[i]));
 		}
 
-		// ¶©ÔÄ´°¿Ú´óĞ¡±ä»¯ÊÂ¼ş
+		// ç›‘å¬çª—å£å¤§å°å˜åŒ–äº‹ä»¶
 		WuDu::InputManager::GetInstance().Subscribe<WuDu::WindowResizeEvent>([this](WuDu::WindowResizeEvent& event) {
-			// ´°¿Ú´óĞ¡±ä»¯Ê±£¬±ê¼Ç½»»»Á´ĞèÒªÖØ½¨
+			// å½“çª—å£å¤§å°å˜åŒ–æ—¶ï¼Œæ ‡è®°éœ€è¦é‡å»ºäº¤æ¢é“¾
 			mNeedSwapchainRecreate = true;
 			LOG_T("Window resized to {0}x{1}", event.GetWidth(), event.GetHeight());
 		});
@@ -66,18 +66,18 @@ namespace WuDu {
 	}
 
 	/**
- * @brief ×¼±¸¿ªÊ¼Ò»Ö¡äÖÈ¾£¬Ö÷Òª¹¤×÷°üÀ¨µÈ´ıÉÏÒ»Ö¡Íê³É¡¢»ñÈ¡½»»»Á´Í¼ÏñË÷Òı£¬
- *        ²¢ÔÚ±ØÒªÊ±ÖØ½¨½»»»Á´¡£
+ * @brief å‡†å¤‡å¼€å§‹ä¸€å¸§çš„æ¸²æŸ“ï¼ŒåŒ…æ‹¬ç­‰å¾…ä¸Šä¸€å¸§å®Œæˆã€è·å–ä¸‹ä¸€ä¸ªäº¤æ¢é“¾å›¾åƒç´¢å¼•
+ *        å¹¶åœ¨éœ€è¦æ—¶é‡å»ºäº¤æ¢é“¾
  *
- * ¸Ãº¯Êı»áµÈ´ıµ±Ç°Ö¡µÄ Fence ĞÅºÅ£¬È·±£Ç°Ò»Ö¡ÒÑÍê³ÉäÖÈ¾£¬È»ºó³¢ÊÔ´Ó½»»»Á´ÖĞ
- * »ñÈ¡ÏÂÒ»Ö¡ÒªäÖÈ¾µÄÍ¼ÏñË÷Òı¡£Èç¹û½»»»Á´Ê§Ğ§£¨Èç´°¿Ú´óĞ¡¸Ä±ä£©£¬Ôò»á³¢ÊÔÖØ½¨
- * ½»»»Á´£¬²¢¸ù¾İÊÇ·ñ³ß´ç·¢Éú±ä»¯¾ö¶¨ÊÇ·ñĞèÒª¸üĞÂäÖÈ¾Ä¿±ê¡£
+ * è¯¥æ–¹æ³•ç­‰å¾…å½“å‰å¸§çš„Fenceä¿¡å·ï¼Œç¡®ä¿ä¸Šä¸€å¸§å·²ç»å®Œæˆæ¸²æŸ“ã€‚ç„¶åä»äº¤æ¢é“¾
+ * è·å–ä¸‹ä¸€å¸§è¦æ¸²æŸ“çš„å›¾åƒç´¢å¼•ã€‚å¦‚æœäº¤æ¢é“¾å¤±æ•ˆ(å¦‚ï¼šçª—å£å¤§å°å˜åŒ–)ï¼Œåˆ™ä¼šè§¦å‘é‡å»º
+ * è¿‡ç¨‹ï¼Œå¹¶æ£€æŸ¥æ¸²æŸ“ç›®æ ‡å°ºå¯¸æ˜¯å¦å˜åŒ–ï¼Œç¡®å®šæ˜¯å¦éœ€è¦æ›´æ–°æ¸²æŸ“ç›®æ ‡ã€‚
  *
- * @param[out] outImageIndex ·µ»Ø»ñÈ¡µ½µÄ½»»»Á´Í¼ÏñË÷Òı£¬ÓÃÓÚºóĞøäÖÈ¾Á÷³Ì¡£
- *                           Èô´«Èë nullptr£¬Ôò²»Êä³ö¸ÃÖµ¡£
+ * @param[out] outImageIndex è¿”å›è·å–åˆ°çš„äº¤æ¢é“¾å›¾åƒç´¢å¼•ï¼Œä¾›åç»­æ¸²æŸ“ä½¿ç”¨ã€‚
+ *                           å¦‚æœä¸ºnullptrï¼Œåˆ™å¿½ç•¥è¿”å›å€¼ã€‚
  *
- * @return bool Èç¹û½»»»Á´±»ÖØ½¨ÇÒ³ß´ç·¢Éú±ä»¯£¬·µ»Ø true£¬±íÊ¾ÉÏ²ã¿ÉÄÜĞèÒª
- *              ¸üĞÂÏà¹ØµÄäÖÈ¾Ä¿±ê»òÊÓ¿ÚÉèÖÃ£»·ñÔò·µ»Ø false¡£
+ * @return bool å¦‚æœäº¤æ¢é“¾é‡å»ºæˆ–å°ºå¯¸å‘ç”Ÿå˜åŒ–ï¼Œè¿”å›trueï¼Œè¡¨ç¤ºéœ€è¦æ›´æ–°
+ *              å¤–éƒ¨çš„æ¸²æŸ“ç›®æ ‡æ¥å£ï¼Œå¦åˆ™è¿”å›falseã€‚
  */
 	bool AdRenderer::Begin(int32_t* outImageIndex) {
 		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
@@ -86,68 +86,68 @@ namespace WuDu {
 
 		bool bShouldUpdateTarget = false;
 
-		// µÈ´ıµ±Ç°Ö¡µÄ Fence£¬È·±£Ç°Ò»Ö¡ÒÑÍê³É
+		// ç­‰å¾…å½“å‰å¸§çš„Fenceï¼Œç¡®ä¿ä¸Šä¸€å¸§å®Œæˆ
 		CALL_VK(vkWaitForFences(device->GetHandle(), 1, &mFrameFences[mCurrentBuffer], VK_TRUE, UINT64_MAX));
-		// ÖØÖÃ Fence£¬Îªµ±Ç°Ö¡×ö×¼±¸
+		// é‡ç½®Fenceï¼Œä¸ºå½“å‰å¸§åšå‡†å¤‡
 		CALL_VK(vkResetFences(device->GetHandle(), 1, &mFrameFences[mCurrentBuffer]));
 
-		// Èç¹ûĞèÒªÖØ½¨½»»»Á´£¨´°¿Ú´óĞ¡±ä»¯´¥·¢£©£¬Á¢¼´ÖØ½¨£¬²»ÒÀÀµAcquireImageµÄ·µ»ØÖµ
+		// å¦‚æœéœ€è¦é‡å»ºäº¤æ¢é“¾(çª—å£å¤§å°å˜åŒ–)ï¼Œå…ˆé‡å»ºäº¤æ¢é“¾å†ç»§ç»­AcquireImageçš„è°ƒç”¨
 		if (mNeedSwapchainRecreate) {
-			// µÈ´ıÉè±¸¿ÕÏĞÒÔÈ·±£°²È«ÖØ½¨
+			// ç­‰å¾…è®¾å¤‡ç©ºé—²ï¼Œç¡®ä¿å®Œå…¨é‡å»º
 			CALL_VK(vkDeviceWaitIdle(device->GetHandle()));
 			VkExtent2D originExtent = { swapchain->GetWidth(), swapchain->GetHeight() };
 			
-			// Ç¿ÖÆ¸üĞÂ±íÃæÄÜÁ¦£¬È·±£»ñÈ¡×îĞÂµÄ´°¿Ú´óĞ¡
+			// å¼ºåˆ¶é‡å»ºäº¤æ¢é“¾ï¼Œç¡®ä¿è·å–æœ€æ–°çš„çª—å£å¤§å°
 			LOG_T("Window size changed detected, recreating swapchain...");
 			
-			// ÏÈÊÖ¶¯¸üĞÂ±íÃæÄÜÁ¦£¬È·±£»ñÈ¡×îĞÂµÄ´°¿Ú´óĞ¡ĞÅÏ¢
-			swapchain->ReCreate(); // Õâ»áÄÚ²¿µ÷ÓÃSetupSurfaceCapabilities()
+			// é‡å»ºäº¤æ¢é“¾ï¼Œä¼šåœ¨å†…éƒ¨è°ƒç”¨SetupSurfaceCapabilities()
+			swapchain->ReCreate();
 			
 			VkExtent2D newExtent = { swapchain->GetWidth(), swapchain->GetHeight() };
 			
-			// ¼ì²é³ß´çÊÇ·ñÕæµÄ·¢Éú±ä»¯
+			// æ£€æŸ¥å°ºå¯¸æ˜¯å¦æœ‰å®é™…å˜åŒ–
 			if (originExtent.width != newExtent.width || originExtent.height != newExtent.height) {
 				LOG_T("Swapchain size changed from {0}x{1} to {2}x{3}", 
 					originExtent.width, originExtent.height, 
 					newExtent.width, newExtent.height);
 			}
 
-			// µ±½»»»Á´±»ÖØ½¨Ê±£¬×ÜÊÇ·µ»Øtrue£¬È·±£äÖÈ¾Ä¿±ê±»¸üĞÂ
+			// å½“äº¤æ¢é“¾é‡å»ºæ—¶ï¼Œè®¾ç½®ä¸ºtrueï¼Œç¡®ä¿æ¸²æŸ“ç›®æ ‡è¢«æ›´æ–°
 			bShouldUpdateTarget = true;
 			LOG_T("Swapchain recreated due to resize, updating render targets");
 			
-			// ÖØÖÃÖØ½¨±êÖ¾
+			// æ¸…é™¤é‡å»ºæ ‡å¿—
 			mNeedSwapchainRecreate = false;
 		}
 
-		// ´´½¨Ò»¸ö uint32_t ±äÁ¿À´½ÓÊÕÍ¼ÏñË÷Òı
+		// åˆ›å»ºä¸€ä¸ªuint32_tå˜é‡å­˜å‚¨å›¾åƒç´¢å¼•
 		uint32_t imageIndex;
 		VkResult ret = swapchain->AcquireImage(imageIndex, mImageAvailableSemaphores[mCurrentBuffer]);
 
-		// Èç¹û½»»»Á´Ê§Ğ§£¨Èç´°¿Ú´óĞ¡¸Ä±ä£©£¬Ôò³¢ÊÔÖØ½¨
+		// å¦‚æœè·å–å¤±è´¥(å¦‚ï¼šçª—å£å¤§å°å˜åŒ–)ï¼Œåˆ™é‡å»ºäº¤æ¢é“¾
 		if (ret == VK_ERROR_OUT_OF_DATE_KHR) {
-			// µÈ´ıÉè±¸¿ÕÏĞÒÔÈ·±£°²È«ÖØ½¨
+			// ç­‰å¾…è®¾å¤‡ç©ºé—²ï¼Œç¡®ä¿å®Œå…¨é‡å»º
 			CALL_VK(vkDeviceWaitIdle(device->GetHandle()));
 			VkExtent2D originExtent = { swapchain->GetWidth(), swapchain->GetHeight() };
 			
-			// ÖØ½¨½»»»Á´
+			// é‡å»ºäº¤æ¢é“¾
 			bool bSuc = swapchain->ReCreate();
 
 			VkExtent2D newExtent = { swapchain->GetWidth(), swapchain->GetHeight() };
-			// µ±½»»»Á´±»ÖØ½¨Ê±£¬×ÜÊÇ·µ»Øtrue£¬È·±£äÖÈ¾Ä¿±ê±»¸üĞÂ
+			// å½“äº¤æ¢é“¾é‡å»ºæ—¶ï¼Œè®¾ç½®ä¸ºtrueï¼Œç¡®ä¿æ¸²æŸ“ç›®æ ‡è¢«æ›´æ–°
 			if (bSuc) {
 				bShouldUpdateTarget = true;
 				LOG_T("Swapchain recreated due to out of date, updating render targets");
 			}
 
-			// ÖØĞÂ»ñÈ¡Í¼ÏñË÷Òı
+			// å†æ¬¡è·å–å›¾åƒç´¢å¼•
 			ret = swapchain->AcquireImage(imageIndex, mImageAvailableSemaphores[mCurrentBuffer]);
 			if (ret != VK_SUCCESS && ret != VK_SUBOPTIMAL_KHR) {
 				LOG_E("Recreate swapchain error: {0}", vk_result_string(ret));
 			}
 		}
 
-		// ½«½á¹û¸³Öµ¸øÊä³ö²ÎÊı
+		// å°†ç»“æœè¿”å›ç»™è°ƒç”¨è€…
 		if (outImageIndex) {
 			*outImageIndex = static_cast<int32_t>(imageIndex);
 		}
@@ -156,15 +156,15 @@ namespace WuDu {
 	}
 
 	/**
- * @brief ½áÊøäÖÈ¾¹ı³Ì£¬Ìá½»ÃüÁî»º³åÇø²¢³ÊÏÖÍ¼Ïñ
+ * @brief ç»“æŸæ¸²æŸ“è¿‡ç¨‹ï¼Œæäº¤å‘½ä»¤ç¼“å†²åŒºå¹¶å‘ˆç°å›¾åƒ
  *
- * ¸Ãº¯Êı¸ºÔğÌá½»Í¼ĞÎÃüÁî»º³åÇøµ½¶ÓÁĞ£¬Ö´ĞĞÍ¼Ïñ³ÊÏÖ²Ù×÷£¬
- * ²¢´¦Àí½»»»Á´ÖØ½¨µÈÌØÊâÇé¿ö¡£
+ * è¯¥æ–¹æ³•å°†å›¾åƒæ¸²æŸ“å‘½ä»¤ç¼“å†²åŒºæäº¤åˆ°é˜Ÿåˆ—ï¼Œæ‰§è¡Œå›¾åƒå‘ˆç°æ“ä½œ
+ * å¹¶å¤„ç†å¯èƒ½çš„äº¤æ¢é“¾é‡å»ºæƒ…å†µ
  *
- * @param imageIndex µ±Ç°Òª³ÊÏÖµÄ½»»»Á´Í¼ÏñË÷Òı
- * @param cmdBuffers ÒªÌá½»µÄÃüÁî»º³åÇøÊı×é
+ * @param imageIndex å½“å‰è¦å‘ˆç°çš„äº¤æ¢é“¾å›¾åƒç´¢å¼•
+ * @param cmdBuffers è¦æäº¤çš„å‘½ä»¤ç¼“å†²åŒºåˆ—è¡¨
  *
- * @return bool ÊÇ·ñĞèÒª¸üĞÂäÖÈ¾Ä¿±ê³ß´ç£¬µ±½»»»Á´ÖØ½¨ÇÒ³ß´ç·¢Éú±ä»¯Ê±·µ»Øtrue
+ * @return bool æ˜¯å¦éœ€è¦æ›´æ–°æ¸²æŸ“ç›®æ ‡å°ºå¯¸ï¼Œå½“äº¤æ¢é“¾é‡å»ºæˆ–å°ºå¯¸å‘ç”Ÿå˜åŒ–æ—¶è¿”å›true
  */
 	bool AdRenderer::End(int32_t imageIndex, const std::vector<VkCommandBuffer>& cmdBuffers) {
 		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
@@ -172,27 +172,27 @@ namespace WuDu {
 		WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 		bool bShouldUpdateTarget = false;
 
-		// Ìá½»ÃüÁî»º³åÇøµ½Í¼ĞÎ¶ÓÁĞ£¬²¢µÈ´ıĞÅºÅÁ¿
+		// æäº¤å‘½ä»¤ç¼“å†²åŒºåˆ°å›¾å½¢é˜Ÿåˆ—ï¼Œå¹¶ç­‰å¾…ä¿¡å·é‡
 		device->GetFirstGraphicQueue()->Submit(cmdBuffers, { mImageAvailableSemaphores[mCurrentBuffer] }, { mSubmitedSemaphores[mCurrentBuffer] }, mFrameFences[mCurrentBuffer]);
 
-		// Ö´ĞĞÍ¼Ïñ³ÊÏÖ²Ù×÷
+		// æ‰§è¡Œå›¾åƒå‘ˆç°æ“ä½œ
 		VkResult ret = swapchain->Present(imageIndex, { mSubmitedSemaphores[mCurrentBuffer] });
 
-		// ´¦Àí³ÊÏÖ½á¹ûÎª´ÎÓÅµÄÇé¿ö£¬ĞèÒªÖØ½¨½»»»Á´
+		// å¦‚æœå‘ˆç°ç»“æœä¸ºæ¬¡ä¼˜çš„ï¼Œåˆ™éœ€è¦é‡å»ºäº¤æ¢é“¾
 		if (ret == VK_SUBOPTIMAL_KHR) {
 			CALL_VK(vkDeviceWaitIdle(device->GetHandle()));
 			VkExtent2D originExtent = { swapchain->GetWidth(), swapchain->GetHeight() };
 			bool bSuc = swapchain->ReCreate();
 
 			VkExtent2D newExtent = { swapchain->GetWidth(), swapchain->GetHeight() };
-			// µ±½»»»Á´±»ÖØ½¨Ê±£¬×ÜÊÇ·µ»Øtrue£¬È·±£äÖÈ¾Ä¿±ê±»¸üĞÂ
+			// å½“äº¤æ¢é“¾é‡å»ºæ—¶ï¼Œè®¾ç½®ä¸ºtrueï¼Œç¡®ä¿æ¸²æŸ“ç›®æ ‡è¢«æ›´æ–°
 			if (bSuc) {
 				bShouldUpdateTarget = true;
 				LOG_T("Swapchain recreated due to suboptimal, updating render targets");
 			}
 		}
 
-		// µÈ´ıÉè±¸¿ÕÏĞ²¢¸üĞÂµ±Ç°»º³åÇøË÷Òı
+		// ç­‰å¾…è®¾å¤‡å®Œæˆå½“å‰æ‰€æœ‰æ“ä½œ
 		CALL_VK(vkDeviceWaitIdle(device->GetHandle()));
 		mCurrentBuffer = (mCurrentBuffer + 1) % RENDERER_NUM_BUFFER;
 		return bShouldUpdateTarget;

@@ -3,22 +3,22 @@
 
 namespace WuDu {
 	/**
-	 * @brief »ñÈ¡Í¶Ó°¾ØÕó
-	 * @details ¸ù¾İÏà»úµÄÊÓ³¡½Ç¡¢¿í¸ß±È¡¢½üÆ½ÃæºÍÔ¶Æ½Ãæ²ÎÊı¼ÆËãÍ¸ÊÓÍ¶Ó°¾ØÕó£¬ÊÊÅäVulkan×ø±êÏµ
-	 * @return ·µ»Ø¼ÆËãµÃµ½µÄÍ¶Ó°¾ØÕóµÄ³£Á¿ÒıÓÃ
+	 * @brief è·å–æŠ•å½±çŸ©é˜µ
+	 * @details æ ¹æ®è§†åœºè§’ã€å®½é«˜æ¯”ã€è¿‘å¹³é¢å’Œè¿œå¹³é¢è®¡ç®—é€è§†æŠ•å½±çŸ©é˜µï¼Œç”¨äºVulkanå›¾å½¢ç³»ç»Ÿ
+	 * @return è¿”å›è®¡ç®—å¾—åˆ°çš„é€è§†æŠ•å½±çŸ©é˜µçš„å¸¸é‡å¼•ç”¨
 	 */
 	const glm::mat4& AdLookAtCameraComponent::GetProjMat() {
-		// Ê¹ÓÃÊÊºÏVulkanµÄÍ¶Ó°º¯Êı
+		// ä½¿ç”¨é€‚åˆVulkançš„æŠ•å½±çŸ©é˜µ
 		mProjMat = glm::perspectiveRH_ZO(glm::radians(mFov), mAspect, mNearPlane, mFarPlane);
-		// GLMµÄRH_ZO°æ±¾ÒÑ¾­ÊÊÅäÁËVulkanµÄ×ø±êÏµ(YÖáÏòÏÂ£¬Éî¶È[0,1])
+		// GLMçš„RH_ZOç‰ˆæœ¬å·²ç»é€‚é…Vulkanåæ ‡ç³»ç»Ÿ(Yè½´å‘ä¸‹ï¼Œæ·±åº¦[0,1])
 		return mProjMat;
 	}
 
 	/**
-	 * @brief »ñÈ¡ÊÓÍ¼¾ØÕó
-	 * @details ¸ù¾İÏà»úµÄÄ¿±êÎ»ÖÃ¡¢½Ç¶ÈºÍ°ë¾¶¼ÆËãÏà»úÎ»ÖÃ£¬²¢Éú³ÉÊÓÍ¼¾ØÕó¡£
-	 *          Ïà»úÎ»ÖÃÍ¨¹ıÇò×ø±ê×ª»»ÎªµÑ¿¨¶û×ø±ê¼ÆËãµÃ³ö£¬È·±£Ïà»úÊ¼ÖÕ¿´ÏòÄ¿±êµã¡£
-	 * @return ·µ»Ø¼ÆËãµÃµ½µÄÊÓÍ¼¾ØÕóµÄ³£Á¿ÒıÓÃ
+	 * @brief è·å–è§†å›¾çŸ©é˜µ
+	 * @details æ ¹æ®ç›®æ ‡ä½ç½®ã€è§†è§’å’ŒåŠå¾„è®¡ç®—ç›¸æœºä½ç½®ï¼Œç”Ÿæˆè§†å›¾çŸ©é˜µ
+	 *          ç›¸æœºä½ç½®é€šè¿‡æåæ ‡è½¬æ¢ä¸ºç›´è§’åæ ‡ï¼Œå›´ç»•æŒ‡å®šçš„ç›®æ ‡ç‚¹
+	 * @return è¿”å›è®¡ç®—å¾—åˆ°çš„è§†å›¾çŸ©é˜µçš„å¸¸é‡å¼•ç”¨
 	 */
 	const glm::mat4& AdLookAtCameraComponent::GetViewMat() {
 		AdEntity* owner = GetOwner();
@@ -27,32 +27,32 @@ namespace WuDu {
 			float yaw = transComp.rotation.x;
 			float pitch = transComp.rotation.y;
 
-			// ¸ù¾İÆ«º½½ÇºÍ¸©Ñö½Ç¼ÆËãÏà»ú·½ÏòÏòÁ¿
+			// è®¡ç®—åç§»é‡å’Œæ–¹å‘å‘é‡ï¼Œç¡®å®šç›¸æœºä½ç½®
 			glm::vec3 direction;
 			direction.x = cos(glm::radians(pitch)) * sin(glm::radians(yaw));
 			direction.y = sin(glm::radians(pitch));
 			direction.z = cos(glm::radians(pitch)) * cos(glm::radians(yaw));
 
-			// ¸ù¾İÄ¿±êÎ»ÖÃ¡¢·½ÏòÏòÁ¿ºÍ°ë¾¶¼ÆËãÏà»úÎ»ÖÃ
+			// æ ¹æ®ç›®æ ‡ä½ç½®ã€æ–¹å‘å‘é‡å’ŒåŠå¾„è®¡ç®—ç›¸æœºä½ç½®
 			transComp.position = mTarget + direction * mRadius;
 
-			// ¼ÆËãÊÓÍ¼¾ØÕó£º´ÓÏà»úÎ»ÖÃ¿´ÏòÄ¿±êÎ»ÖÃ
+			// è®¡ç®—è§†å›¾çŸ©é˜µï¼šä»ç›¸æœºä½ç½®çœ‹å‘ç›®æ ‡ä½ç½®
 			mViewMat = glm::lookAt(transComp.position, mTarget, mWorldUp);
 		}
 		return mViewMat;
 	}
 
 	/**
-	 * @brief ÉèÖÃÊÓÍ¼¾ØÕó
-	 * @param viewMat ÒªÉèÖÃµÄÊÓÍ¼¾ØÕó
-	 * @todo ¸Ãº¯ÊıÉĞÎ´ÊµÏÖ
+	 * @brief è®¾ç½®è§†å›¾çŸ©é˜µ
+	 * @param viewMat è¦è®¾ç½®çš„è§†å›¾çŸ©é˜µ
+	 * @todo è¯¥æ–¹æ³•æœªå®ç°
 	 */
 	void AdLookAtCameraComponent::SetViewMat(const glm::mat4& viewMat) {
 
 	}
-	// Ìí¼Ó½Ç¶È¿ØÖÆ·½·¨
+	// è®¾ç½®è§†è§’æ—‹è½¬æ–¹æ³•
 	void AdLookAtCameraComponent::SetYaw(float yaw) {
-		// ¸üĞÂÓµÓĞÕßµÄ±ä»»×é¼ş
+		// è®¾ç½®åˆ°å®ä½“çš„æ—‹è½¬ç»„ä»¶
 		AdEntity* owner = GetOwner();
 		if (owner && owner->HasComponent<AdTransformComponent>()) {
 			auto& transComp = owner->GetComponent<AdTransformComponent>();
@@ -61,7 +61,7 @@ namespace WuDu {
 	}
 
 	void AdLookAtCameraComponent::SetPitch(float pitch) {
-		pitch = glm::clamp(pitch, -89.0f, 89.0f); // ÏŞÖÆ½Ç¶È
+		pitch = glm::clamp(pitch, -89.0f, 89.0f); // é™åˆ¶ä¿¯ä»°è§’
 		AdEntity* owner = GetOwner();
 		if (owner && owner->HasComponent<AdTransformComponent>()) {
 			auto& transComp = owner->GetComponent<AdTransformComponent>();
@@ -85,7 +85,7 @@ namespace WuDu {
 		}
 	}
 
-	// »ñÈ¡µ±Ç°½Ç¶È
+	// è·å–å½“å‰è§†è§’
 	float AdLookAtCameraComponent::GetYaw() const {
 		AdEntity* owner = GetOwner();
 		if (owner && owner->HasComponent<AdTransformComponent>()) {
@@ -104,30 +104,30 @@ namespace WuDu {
 		return 0.0f;
 	}
 
-	// AdLookAtCameraComponent.cpp ÖĞÊµÏÖ½Ó¿Ú·½·¨
+	// AdLookAtCameraComponent.cpp å®ç°æ¥å£æ–¹æ³•
 	void AdLookAtCameraComponent::OnMouseMove(float deltaX, float deltaY) {
-		// Ê¹ÓÃÏÖÓĞµÄ½Ç¶È¿ØÖÆÂß¼­
+		// ä½¿ç”¨å°è£…çš„è§†è§’æ—‹è½¬æ–¹æ³•
 		float yaw = GetYaw();
 		float pitch = GetPitch();
 
 		yaw += deltaX * mSensitivity;
 		pitch += deltaY * mSensitivity;
 
-		// ÏŞÖÆ¸©Ñö½Ç
+		// é™åˆ¶ä¿¯ä»°è§’
 		pitch = glm::clamp(pitch, -89.0f, 89.0f);
 
-		// ¸üĞÂ½Ç¶È
+		// è®¾ç½®æ–°è§†è§’
 		SetYaw(yaw);
 		SetPitch(pitch);
 	}
 
 	void AdLookAtCameraComponent::OnMouseScroll(float yOffset) {
-		// ÊµÏÖËõ·Å¹¦ÄÜ
+		// å®ç°ç¼©æ”¾åŠŸèƒ½
 		mRadius -= yOffset * 0.1f;
 		mRadius = glm::max(0.1f, mRadius);
 	}
 
-	
+
 
 
 }

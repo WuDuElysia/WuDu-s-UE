@@ -4,33 +4,33 @@
 #include "AdVKCommon.h"
 
 namespace WuDu {
-        class AdVKDevice;
-        class AdVKBuffer;
+	class AdVKDevice;
+	class AdVKBuffer;
 
-        class AdVKImage {
-        public:
-                AdVKImage(AdVKDevice* device, VkExtent3D extent, VkFormat format, VkImageUsageFlags usage, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
-                AdVKImage(AdVKDevice* device, VkImage image, VkExtent3D extent, VkFormat format, VkImageUsageFlags usage, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
-                ~AdVKImage();
+	class AdVKImage {
+	public:
+		AdVKImage(AdVKDevice* device, VkExtent3D extent, VkFormat format, VkImageUsageFlags usage, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
+		AdVKImage(AdVKDevice* device, VkImage image, VkExtent3D extent, VkFormat format, VkImageUsageFlags usage, VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT);
+		~AdVKImage();
 
-                static bool TransitionLayout(VkCommandBuffer cmdBuffer, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
+		static bool TransitionLayout(VkCommandBuffer cmdBuffer, VkImage image, VkImageLayout oldLayout, VkImageLayout newLayout);
 
-                void CopyFromBuffer(VkCommandBuffer cmdBuffer, AdVKBuffer* buffer);
+		void CopyFromBuffer(VkCommandBuffer cmdBuffer, AdVKBuffer* buffer);
 
-                VkFormat GetFormat() const { return mFormat; }
-                VkImage GetHandle() const { return mHandle; }
-        private:
-                VkImage mHandle = VK_NULL_HANDLE;
-                VkDeviceMemory mMemory = VK_NULL_HANDLE;
+		VkFormat GetFormat() const { return mFormat; }
+		VkImage GetHandle() const { return mHandle; }
+	private:
+		VkImage mHandle = VK_NULL_HANDLE;
+		VkDeviceMemory mMemory = VK_NULL_HANDLE;
 
-                bool bCreateImage = true;
+		bool bCreateImage = true;
 
-                AdVKDevice* mDevice;
+		AdVKDevice* mDevice;
 
-                VkFormat mFormat;
-                VkExtent3D mExtent;
-                VkImageUsageFlags mUsage;
-        };
+		VkFormat mFormat;
+		VkExtent3D mExtent;
+		VkImageUsageFlags mUsage;
+	};
 }
 
 #endif

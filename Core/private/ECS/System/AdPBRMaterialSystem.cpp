@@ -12,11 +12,11 @@
 #include "ECS/Component/AdTransformComponent.h"
 
 namespace WuDu {
-	//��ʼ�����ղ���ϵͳ
+	//初始化PBR材质渲染系统
 	void AdPBRMaterialSystem::OnInit(AdVKRenderPass* renderPass) {
 		AdVKDevice* device = GetDevice();
 
-		// ����֡UBO�����������֣����ڴ���ͶӰ������ͼ�����ÿ֡���������
+		// 创建帧UBO描述符布局，用于存储投影矩阵和纹理等每一帧更新的数据
 		{
 			const std::vector<VkDescriptorSetLayoutBinding> bindings = {
 				{
@@ -40,7 +40,7 @@ namespace WuDu {
 			mMaterialParamDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
 		}
 
-		// ����������Դ�����������֣����ڴ��������������ͼ����ͼ
+		// 创建材质资源描述符布局，用于存储材质参数和纹理等
 		{
 			const std::vector<VkDescriptorSetLayoutBinding> bindings = {
 				{
@@ -54,19 +54,19 @@ namespace WuDu {
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 					.descriptorCount = 1,
 					.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT
-	}
+			}
 			};
 			mMaterialResourceDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
 		}
 
-		//�������ͳ���: ���ڴ���ģ�ͱ任����
+		//创建推送常量范围: 用于存储模型矩阵数据
 		VkPushConstantRange modelPC = {
 			.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
 			.offset = 0,
 			.size = sizeof(ModelPC)
 		};
 
-		//������ɫ�����ֲ��������߲���
+		//创建着色器资源布局和推送常量
 		ShaderLayout shaderLayout = {
 			.descriptorSetLayouts = { mFrameUboDescSetLayout->GetHandle(), mMaterialParamDescSetLayout->GetHandle(), mMaterialResourceDescSetLayout->GetHandle() },
 			.pushConstants = { modelPC }
@@ -78,7 +78,7 @@ namespace WuDu {
 			shaderLayout
 		);
 
-		//���ö��������ʽ
+		//设置顶点输入格式
 		std::vector<VkVertexInputBindingDescription> vertexBindings = {
 			{
 				.binding = 0,
@@ -120,7 +120,7 @@ namespace WuDu {
 			}
 		};
 
-		//����ͼ�ι��߲�������ز���
+		//创建图形渲染管线和相关设置
 		mPipeline = std::make_shared<AdVKPipeline>(device, renderPass, mPipelineLayout.get());
 		mPipeline->SetVertexInputState(vertexBindings, vertexAttrs);
 		mPipeline->EnableDepthTest();
@@ -129,7 +129,7 @@ namespace WuDu {
 		mPipeline->SetSubPassIndex(0);
 		mPipeline->Create();
 
-		//�����������ز�����֡UBO��������
+		//创建渲染管线的每帧UBO相关资源
 		std::vector<VkDescriptorPoolSize> poolSizes = {
 			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -140,34 +140,34 @@ namespace WuDu {
 		mFrameUboDescSet = mDescriptorPool->AllocateDescriptorSet(mFrameUboDescSetLayout.get(), 1)[0];
 		mFrameUboBuffer = std::make_shared<AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(FrameUbo), nullptr, true);
 
-		//��ʼ��������������
+		//初始化材质描述符池
 		ReCreateMaterialDescPool(NUM_MATERIAL_BATCH);
 
-		//����Ĭ������
+		//创建默认纹理
 		//std::unique_ptr<RGBAColor> whitePixel = std::make_unique<RGBAColor>(255, 255, 255, 255);
 		RGBAColor pixel { 255, 255, 255, 255 };
 		mDefaultTexture = std::make_shared<AdTexture>(1, 1, & pixel);
 
-		//����Ĭ�ϲ�����
+		//创建默认采样器
 
 		mDefaultSampler = std::make_shared<AdSampler>();
 	}
 
 	void AdPBRMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) {
-		Adscene* scene = GetScene();
+		AdScene* scene = GetScene();
 		if(!scene){
 			return;
 		}
 		entt::registry& reg = scene->GetEcsRegistry();
 
 
-		//��ȡ���п���������޹��մ�ְ�����ʵ��ͼ
-		auto view = reg.view<AdTransformComponent, AdPBRMaterialComponent>
+		//获取所有有变换和PBR材质组件的实体
+		auto view = reg.view<AdTransformComponent, AdPBRMaterialComponent>();
 		if(std::distance(view.begin(), view.end()) == 0){
 			return;
 		}
 
-		//��ͼ�ι��߲������ӿںͲü�����
+		//将图形渲染管线绑定到命令缓冲区
 		mPipeline->Bind(cmdBuffer);
 		AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
 		VkViewport viewport = {
@@ -186,23 +186,23 @@ namespace WuDu {
 		};
 		vkCmdSetScissor(cmdBuffer,0,1,&scissor);
 
-		//����֡UBO��������
+		//更新每帧UBO描述符集
 		UpdateFrameUboDescSet(renderTarget);
 
-		//����Ƿ���Ҫ���´���������������
+		//检查是否需要重建材质描述符池
 		bool bShouldForceUpdateMaterial = false;
-		uin32_t materialCount = AdMaterialFactory::GetInstance()->GetMaterialSize<AdPBRMaterial>();
+		uint32_t materialCount = AdMaterialFactory::GetInstance()->GetMaterialSize<AdPBRMaterial>();
 		if(materialCount > mLastDescriptorSetCount){
 			ReCreateMaterialDescPool(materialCount);
 			bShouldForceUpdateMaterial = true;
 		}
 
-		//��������ʵ�岢��Ⱦ
+		//按材质实体批次渲染
 		std::vector<bool> updateFlags(materialCount);
 		view.each([this, &updateFlags, &bShouldForceUpdateMaterial, &cmdBuffer](AdTransformComponent& transComp,AdPBRMaterialComponent& materialComp){
 			for(const auto& entry : materialComp.GetMeshMaterials()){
 				AdPBRMaterial* material = entry.first;
 			}
-		})
+		});
 	}
 }

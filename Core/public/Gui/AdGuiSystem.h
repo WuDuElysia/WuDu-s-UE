@@ -1,4 +1,4 @@
-// AdGuiSystem.h - GUIÏµÍ³Ö÷Ğ­µ÷Æ÷
+// AdGuiSystem.h - GUIç³»ç»Ÿçš„æ¥å£å¤´
 #pragma once
 #define NOMINMAX
 #include "AdEngine.h"
@@ -15,25 +15,25 @@ namespace WuDu {
 		AdGuiSystem() : mGuiVisible(true) {}
 		virtual ~AdGuiSystem() = default;
 
-		// ³õÊ¼»¯GUIÏµÍ³
+		// åˆå§‹åŒ–GUIç³»ç»Ÿ
 		void OnInit();
-		// äÖÈ¾GUI
+		// æ¸²æŸ“GUI
 		void OnRender();
-		// ÇåÀí×ÊÔ´
+		// é”€æ¯èµ„æº
 		void OnDestroy();
-		// äÖÈ¾Ç°×¼±¸
+		// æ¸²æŸ“å‰å‡†å¤‡
 		void OnBeforeRender();
 
-		// ×ª·¢¸øAdGuiManagerµÄ·½·¨
+		// å§”æ‰˜ç»™AdGuiManagerçš„æ–¹æ³•
 		void BeginGui();
 		void EndGui();
 		void AddGuiFunction(const std::function<void()>& func);
-		// ×ª·¢¸øAdGuiRendererµÄ·½·¨
+		// å§”æ‰˜ç»™AdGuiRendererçš„æ–¹æ³•
 		void RebuildResources();
-		// ×ª·¢¸øAdGuiEventHandlerµÄ·½·¨
+		// å§”æ‰˜ç»™AdGuiEventHandlerçš„æ–¹æ³•
 		bool ProcessInput();
 
-		// ÉèÖÃ³¡¾°±à¼­Æ÷×ÊÔ´
+		// è®¾ç½®åœºæ™¯ç¼–è¾‘å™¨èµ„æº
 		void SetResources(
 			AdScene* scene,
 			AdEntity* activeCamera,
@@ -41,23 +41,23 @@ namespace WuDu {
 			AdUnlitMaterial* defaultMaterial
 		);
 		
-		// Ìí¼Ó³¡¾°±à¼­Æ÷UI
+		// æ·»åŠ åœºæ™¯ç¼–è¾‘å™¨UI
 		void AddSceneEditor();
 
-		// »ñÈ¡×ÓÏµÍ³×é¼ş
+		// è·å–ç³»ç»Ÿç»„ä»¶
 		AdGuiRenderer* GetRenderer() { return &mRenderer; }
 		AdGuiEventHandler* GetEventHandler() { return &mEventHandler; }
 		AdGuiManager* GetManager() { return &mManager; }
 		AdSceneEditor* GetSceneEditor() { return &mSceneEditor; }
 
 	private:
-		// ×ÓÏµÍ³×é¼ş
-		AdGuiRenderer mRenderer;        // äÖÈ¾Æ÷
-		AdGuiEventHandler mEventHandler; // ÊÂ¼ş´¦ÀíÆ÷
-		AdGuiManager mManager;          // GUI¹ÜÀíÆ÷
-		AdSceneEditor mSceneEditor;     // ³¡¾°±à¼­Æ÷
+		// ç³»ç»Ÿç»„ä»¶
+		AdGuiRenderer mRenderer;        // æ¸²æŸ“å™¨
+		AdGuiEventHandler mEventHandler; // äº‹ä»¶å¤„ç†å™¨
+		AdGuiManager mManager;          // GUIç®¡ç†å™¨
+		AdSceneEditor mSceneEditor;     // åœºæ™¯ç¼–è¾‘å™¨
 
-		// ÏµÍ³×´Ì¬
-		bool mGuiVisible;               // GUIÊÇ·ñ¿É¼û
+		// ç³»ç»ŸçŠ¶æ€
+		bool mGuiVisible;               // GUIæ˜¯å¦å¯è§
 	};
 }

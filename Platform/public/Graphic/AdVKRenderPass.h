@@ -20,23 +20,23 @@ namespace WuDu {
 	};
 
 	/**
-	* @brief äÖÈ¾×ÓÍ¨µÀ½á¹¹Ìå
+	* @brief æ¸²æŸ“å­é€šé“ç»“æž„ä½“
 	*
-	* RenderSubPass½á¹¹ÌåÓÃÓÚÃèÊöäÖÈ¾Á÷³ÌÖÐµÄÒ»¸ö×ÓÍ¨µÀ£¬
-	* °üº¬ÁË¸Ã×ÓÍ¨µÀËùÐèµÄÊäÈë¸½¼þ¡¢ÑÕÉ«¸½¼þºÍÉî¶ÈÄ£°å¸½¼þ£¬
-	* ÒÔ¼°äÖÈ¾Ñù±¾¼ÆÊý¡£
+	* RenderSubPassç»“æž„ä½“è¡¨ç¤ºæ¸²æŸ“é€šé“ä¸­çš„ä¸€ä¸ªå­é€šé“
+	* åŒ…å«äº†è¯¥å­é€šé“çš„è¾“å…¥é™„ä»¶ã€é¢œè‰²é™„ä»¶ã€æ·±åº¦/æ¨¡æ¿é™„ä»¶
+	* ä»¥åŠæ¸²æŸ“å­é€šé“çš„æ ·æœ¬æ•°
 	*/
 	struct RenderSubPass {
-		// ÊäÈë¸½¼þË÷ÒýÊý×é£¬ÓÃÓÚÖ¸¶¨×ÓÍ¨µÀËùÐèµÄÊäÈëÎÆÀí
+		// è¾“å…¥é™„ä»¶ç´¢å¼•åˆ—è¡¨ï¼ŒæŒ‡å®šå­é€šé“çš„è¾“å…¥é™„ä»¶ç´¢å¼•
 		std::vector<uint32_t> inputAttachments;
 
-		// ÑÕÉ«¸½¼þË÷ÒýÊý×é£¬ÓÃÓÚÖ¸¶¨×ÓÍ¨µÀäÖÈ¾Êä³öµÄÑÕÉ«»º³åÇø
+		// é¢œè‰²é™„ä»¶ç´¢å¼•åˆ—è¡¨ï¼ŒæŒ‡å®šå­é€šé“æ¸²æŸ“çš„é¢œè‰²é™„ä»¶
 		std::vector<uint32_t> colorAttachments;
 
-		// Éî¶ÈÄ£°å¸½¼þË÷ÒýÊý×é£¬ÓÃÓÚÖ¸¶¨×ÓÍ¨µÀäÖÈ¾Êä³öµÄÉî¶ÈÄ£°å»º³åÇø
+		// æ·±åº¦æ¨¡æ¿é™„ä»¶ç´¢å¼•åˆ—è¡¨ï¼ŒæŒ‡å®šå­é€šé“æ¸²æŸ“çš„æ·±åº¦æ¨¡æ¿é™„ä»¶
 		std::vector<uint32_t> depthStencilAttachments;
 
-		// äÖÈ¾Ñù±¾¼ÆÊý£¬Ä¬ÈÏÎªµ¥Ñù±¾
+		// æ¸²æŸ“å­é€šé“çš„æ ·æœ¬æ•°ï¼Œé»˜è®¤ä¸º1ä¸ªæ ·æœ¬
 		VkSampleCountFlagBits sampleCount = VK_SAMPLE_COUNT_1_BIT;
 	};
 
@@ -57,10 +57,6 @@ namespace WuDu {
 		VkRenderPass mHandle = VK_NULL_HANDLE;
 		AdVKDevice* mDevice;
 
-		 
-		
-		
-		
 		std::vector<Attachment> mAttachments;
 		std::vector<RenderSubPass> mSubPasses;
 	};

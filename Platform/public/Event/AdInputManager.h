@@ -4,59 +4,59 @@
 #include"AdEvent.h"
 
 namespace WuDu {
-        class InputManager {
-        public:
-                static InputManager& GetInstance() {
-                        static InputManager instance;
-                        return instance;
-                }
+	class InputManager {
+	public:
+		static InputManager& GetInstance() {
+			static InputManager instance;
+			return instance;
+		}
 
-                // Ä£°å·½·¨£º¶ÓÁĞÊÂ¼ş£¨ÓÉÊÂ¼şÊÊÅäÆ÷µ÷ÓÃ£©
-                template<typename T, typename... Args>
-                void QueueEvent(Args&&... args) {
-                        auto event = std::make_unique<T>(std::forward<Args>(args)...);
-                        m_EventQueue.push(std::move(event));
-                }
+		// æ¨¡æ¿å‡½æ•°ï¼Œå°†äº‹ä»¶æ·»åŠ åˆ°äº‹ä»¶é˜Ÿåˆ—ä¸­
+		template<typename T, typename... Args>
+		void QueueEvent(Args&&... args) {
+			auto event = std::make_unique<T>(std::forward<Args>(args)...);
+			m_EventQueue.push(std::move(event));
+		}
 
-                // ´¦ÀíÊÂ¼ş¶ÓÁĞ£¨ÔÚÖ÷Ñ­»·ÖĞµ÷ÓÃ£©
-                void ProcessEvents() {
-                        while (!m_EventQueue.empty()) {
-                                auto& event = m_EventQueue.front();
+		// å¤„ç†äº‹ä»¶é˜Ÿåˆ—ï¼Œéå†é˜Ÿåˆ—ä¸­çš„äº‹ä»¶
+		void ProcessEvents() {
+			while (!m_EventQueue.empty()) {
+				auto& event = m_EventQueue.front();
 
-                                // ·Ö·¢¸øËùÓĞ¶©ÔÄÕß
-                                auto it = m_Subscribers.find(event->GetType());
-                                if (it != m_Subscribers.end()) {
-                                        for (auto& callback : (it->second)) {
-                                                if (!event->IsHandled()) {
-                                                        callback(*event);
-                                                }
-                                        }
-                                }
+				// æ ¹æ®ç±»å‹æŸ¥æ‰¾è®¢é˜…è€…
+				auto it = m_Subscribers.find(event->GetType());
+				if (it != m_Subscribers.end()) {
+					for (auto& callback : (it->second)) {
+						if (!event->IsHandled()) {
+							callback(*event);
+						}
+					}
+				}
 
-                                m_EventQueue.pop();
-                        }
-                }
+				m_EventQueue.pop();
+			}
+		}
 
-                // ¶©ÔÄÊÂ¼ş
-                template<typename T>
-                void Subscribe(std::function<void(T&)> callback) {
-                        auto wrapper = [callback](WuDu::Event& e) {
-                                callback(static_cast<T&>(e));
-                                };
+		// è®¢é˜…äº‹ä»¶
+		template<typename T>
+		void Subscribe(std::function<void(T&)> callback) {
+			auto wrapper = [callback](WuDu::Event& e) {
+				callback(static_cast<T&>(e));
+				};
 
-                        m_Subscribers[T::StaticType()].push_back(wrapper);
-                }
+			m_Subscribers[T::StaticType()].push_back(wrapper);
+		}
 
-                // Çå³ıËùÓĞ¶©ÔÄ
-                void ClearSubscribers() {
-                        m_Subscribers.clear();
-                }
+		// æ¸…é™¤è®¢é˜…è€…
+		void ClearSubscribers() {
+			m_Subscribers.clear();
+		}
 
-        private:
-                InputManager() = default;
-                ~InputManager() = default;
+	private:
+		InputManager() = default;
+		~InputManager() = default;
 
-                std::queue<std::unique_ptr<WuDu::Event>> m_EventQueue;
-                std::unordered_map<WuDu::EventType, std::vector<std::function<void(WuDu::Event&)>>> m_Subscribers;
-        };
+		std::queue<std::unique_ptr<WuDu::Event>> m_EventQueue;
+		std::unordered_map<WuDu::EventType, std::vector<std::function<void(WuDu::Event&)>>> m_Subscribers;
+	};
 }

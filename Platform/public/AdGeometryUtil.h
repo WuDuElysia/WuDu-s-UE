@@ -8,9 +8,9 @@ namespace WuDu {
                 glm::vec3 Position;
                 glm::vec2 TexCoord;
                 glm::vec3 Normal;
-                //ÇÐÏß
+                //åˆ‡çº¿
                 glm::vec3 Tangent;
-                //¸±ÇÐÏß
+                //å‰¯æ³•çº¿
                 glm::vec3 Bitangent;
         };
 

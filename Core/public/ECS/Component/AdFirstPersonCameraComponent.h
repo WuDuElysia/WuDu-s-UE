@@ -9,25 +9,25 @@
 namespace WuDu {
 	class AdFirstPersonCameraComponent : public AdComponent, public AdCameraController {
 	private:
-		// Ïà»ú²ÎÊı
+		// ç›¸æœºå‚æ•°
 		float mFov = 65.f;
 		float mAspect = 1.f;
 		float mNearPlane = 0.3f;
 		float mFarPlane = 1000.f;
 
-		// Ïà»ú¾ØÕó
+		// çŸ©é˜µç¼“å­˜
 		mutable glm::mat4 mProjMat{ 1.f };
 		mutable glm::mat4 mViewMat{ 1.f };
 		mutable bool mProjMatDirty = true;
 		mutable bool mViewMatDirty = true;
 
-		// Ïà»ú¿ØÖÆ²ÎÊı
-		float mYaw = -90.0f;    // Æ«º½½Ç
-		float mPitch = 0.0f;    // ¸©Ñö½Ç
+		// ç›¸æœºå§¿æ€å‚æ•°
+		float mYaw = -90.0f;    // åèˆªè§’
+		float mPitch = 0.0f;    // ä¿¯ä»°è§’
 		float mSensitivity = 0.2f;
 		float mMoveSpeed = 3.0f;
 
-		// ÒÆ¶¯×´Ì¬
+		// ç§»åŠ¨çŠ¶æ€
 		bool mMoveForward = false;
 		bool mMoveBackward = false;
 		bool mMoveLeft = false;
@@ -40,20 +40,20 @@ namespace WuDu {
 	public:
 		AdFirstPersonCameraComponent() = default;
 
-		// Í¶Ó°¾ØÕóÏà¹Ø
+		// æŠ•å½±çŸ©é˜µè®¾ç½®
 		void SetFov(float fov) { mFov = fov; mProjMatDirty = true; }
 		void SetAspect(float aspect)override { mAspect = aspect; mProjMatDirty = true; }
 		void SetNearPlane(float nearPlane) { mNearPlane = nearPlane; mProjMatDirty = true; }
 		void SetFarPlane(float farPlane) { mFarPlane = farPlane; mProjMatDirty = true; }
 		const glm::mat4& GetProjMat()override;
 
-		// Ìí¼Ó·´Í¶Ó°·½·¨
+		// ä»å±å¹•åæ ‡åæŠ•å½±
 		void Unproject(float ndcX, float ndcY, glm::vec3& outOrigin, glm::vec3& outDirection) const;
 
-		// ÊÓÍ¼¾ØÕóÏà¹Ø
+		// è§†å›¾çŸ©é˜µè·å–
 		const glm::mat4& GetViewMat()override;
 
-		// Ïà»ú¿ØÖÆ
+		// è¾“å…¥å¤„ç†
 		void OnMouseClick(int button)override {};
 		void OnMouseRelease(int button)override {};
 		void OnKeyPress(int key)override {};
@@ -61,19 +61,19 @@ namespace WuDu {
 		void OnMouseMove(float deltaX, float deltaY) override;
 		void OnMouseScroll(float yOffset)override;
 
-		// ÒÆ¶¯¿ØÖÆ
+		// ç§»åŠ¨æ§åˆ¶
 		void SetMoveForward(bool pressed) { mMoveForward = pressed; }
 		void SetMoveBackward(bool pressed) { mMoveBackward = pressed; }
 		void SetMoveLeft(bool pressed) { mMoveLeft = pressed; }
 		void SetMoveRight(bool pressed) { mMoveRight = pressed; }
-		void SetMoveUp(bool pressed) { mMoveUp = pressed; }	//E
-		void SetMoveDown(bool pressed) { mMoveDown = pressed; }	//Q
+		void SetMoveUp(bool pressed) { mMoveUp = pressed; }    //E
+		void SetMoveDown(bool pressed) { mMoveDown = pressed; }    //Q
 
 
-		// ¸üĞÂ
+		// æ›´æ–°
 		void Update(float deltaTime)override;
 
-		// »ñÈ¡Ïà»ú²ÎÊı
+		// è·å–ç›¸æœºå‚æ•°
 		float GetYaw() const { return mYaw; }
 		float GetPitch() const { return mPitch; }
 		void SetSensitivity(float sensitivity) { mSensitivity = sensitivity; }

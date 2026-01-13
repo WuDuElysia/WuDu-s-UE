@@ -22,22 +22,22 @@
 
 
 /**
- * @brief SandBoxApp Àà¼Ì³Ğ×Ô WuDu::AdApplication£¬ÓÃÓÚÑİÊ¾»ùÓÚ ECS µÄÊµÌåäÖÈ¾Ê¾Àı¡£
+ * @brief SandBoxApp ç±»ç»§æ‰¿è‡ª WuDu::AdApplicationï¼Œç”¨äºæ¼”ç¤ºåŸºäº ECS çš„å®ä½“æ¸²æŸ“ç¤ºä¾‹ã€‚
  *
- * ´ËÀàÊµÏÖÁËÓ¦ÓÃ³ÌĞòÉúÃüÖÜÆÚµÄ¸÷¸ö½×¶Î£¬°üÀ¨ÅäÖÃ¡¢³õÊ¼»¯¡¢³¡¾°¹¹½¨¡¢äÖÈ¾ºÍÏú»Ù¡£
- * Ö÷Òª¹¦ÄÜ°üÀ¨£º
- * - ÉèÖÃ´°¿Ú´óĞ¡ºÍ±êÌâ
- * - ³õÊ¼»¯äÖÈ¾×ÊÔ´£¨äÖÈ¾Í¨µÀ¡¢Ä¿±ê¡¢ÃüÁî»º³åÇøµÈ£©
- * - ¹¹½¨°üº¬¶à¸öÁ¢·½ÌåÊµÌåµÄ³¡¾°
- * - ÊµÏÖÃ¿Ö¡äÖÈ¾Âß¼­
- * - ÇåÀí×ÊÔ´
+ * æ­¤ç±»å®ç°äº†åº”ç”¨ç¨‹åºç”Ÿå‘½å‘¨æœŸçš„å„ä¸ªé˜¶æ®µï¼ŒåŒ…æ‹¬é…ç½®ã€åˆå§‹åŒ–ã€åœºæ™¯æ„å»ºã€æ¸²æŸ“å’Œé”€æ¯ã€‚
+ * ä¸»è¦åŠŸèƒ½åŒ…æ‹¬ï¼š
+ * - è®¾ç½®çª—å£å¤§å°å’Œæ ‡é¢˜
+ * - åˆå§‹åŒ–æ¸²æŸ“èµ„æºï¼ˆæ¸²æŸ“é€šé“ã€ç›®æ ‡ã€å‘½ä»¤ç¼“å†²åŒºç­‰ï¼‰
+ * - æ„å»ºåŒ…å«å¤šä¸ªç«‹æ–¹ä½“å®ä½“çš„åœºæ™¯
+ * - å®ç°æ¯å¸§æ¸²æŸ“é€»è¾‘
+ * - æ¸…ç†èµ„æº
  */
 class SandBoxApp : public WuDu::AdApplication {
 protected:
 	/**
-	 * @brief ÅäÖÃÓ¦ÓÃ³ÌĞòµÄ»ù±¾ÉèÖÃ¡£
+	 * @brief é…ç½®åº”ç”¨ç¨‹åºçš„åŸºæœ¬è®¾ç½®ã€‚
 	 *
-	 * @param appSettings Ö¸Ïò AppSettings ¶ÔÏóµÄÖ¸Õë£¬ÓÃÓÚÉèÖÃ´°¿Ú¿í¶È¡¢¸ß¶ÈºÍ±êÌâ¡£
+	 * @param appSettings æŒ‡å‘ AppSettings å¯¹è±¡çš„æŒ‡é’ˆï¼Œç”¨äºè®¾ç½®çª—å£å®½åº¦ã€é«˜åº¦å’Œæ ‡é¢˜ã€‚
 	 */
 	void OnConfiguration(WuDu::AppSettings* appSettings) override {
 		appSettings->width = 1360;
@@ -46,20 +46,20 @@ protected:
 	}
 
 	/**
-	 * @brief Ó¦ÓÃ³ÌĞò³õÊ¼»¯½×¶Î£¬´´½¨äÖÈ¾Ïà¹Ø×ÊÔ´¡£
+	 * @brief åº”ç”¨ç¨‹åºåˆå§‹åŒ–é˜¶æ®µï¼Œåˆ›å»ºæ¸²æŸ“ç›¸å…³èµ„æºã€‚
 	 *
-	 * °üÀ¨£º
-	 * - ´´½¨äÖÈ¾Í¨µÀ£¨ÑÕÉ«¸½¼şºÍÉî¶È¸½¼ş£©
-	 * - ´´½¨äÖÈ¾Ä¿±ê²¢ÉèÖÃÇå³ıÖµ
-	 * - ´´½¨äÖÈ¾Æ÷ºÍÃüÁî»º³åÇø
-	 * - ¹¹½¨Á¢·½ÌåÍø¸ñÊı¾İ
+	 * åŒ…æ‹¬ï¼š
+	 * - åˆ›å»ºæ¸²æŸ“é€šé“ï¼ˆé¢œè‰²é™„ä»¶å’Œæ·±åº¦é™„ä»¶ï¼‰
+	 * - åˆ›å»ºæ¸²æŸ“ç›®æ ‡å¹¶è®¾ç½®æ¸…é™¤å€¼
+	 * - åˆ›å»ºæ¸²æŸ“å™¨å’Œå‘½ä»¤ç¼“å†²åŒº
+	 * - æ„å»ºç«‹æ–¹ä½“ç½‘æ ¼æ•°æ®
 	 */
 	void OnInit() override {
 		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		WuDu::AdVKDevice* device = renderCxt->GetDevice();
 		WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
-		// ¶¨ÒåäÖÈ¾¸½¼ş£ºÑÕÉ«¸½¼şºÍÉî¶È¸½¼ş
+		// å®šä¹‰æ¸²æŸ“é™„ä»¶ï¼šé¢œè‰²é™„ä»¶å’Œæ·±åº¦é™„ä»¶
 		std::vector<WuDu::Attachment> attachments = {
 		    {
 			.format = swapchain->GetSurfaceInfo().surfaceFormat.format,
@@ -83,7 +83,7 @@ protected:
 		    }
 		};
 
-		// ¶¨Òå×ÓÍ¨µÀ£ºÊ¹ÓÃÑÕÉ«¸½¼şºÍÉî¶È¸½¼ş
+		// å®šä¹‰å­é€šé“ï¼šä½¿ç”¨é¢œè‰²é™„ä»¶å’Œæ·±åº¦é™„ä»¶
 		std::vector<WuDu::RenderSubPass> subpasses = {
 		    {
 			.colorAttachments = { 0 },
@@ -93,9 +93,9 @@ protected:
 		};
 
 
-		// ´´½¨äÖÈ¾Í¨µÀ
+		// åˆ›å»ºæ¸²æŸ“é€šé“
 		mRenderPass = std::make_shared<WuDu::AdVKRenderPass>(device, attachments, subpasses);
-		// ´´½¨äÖÈ¾Ä¿±ê²¢ÉèÖÃÇå³ıÖµ
+		// åˆ›å»ºæ¸²æŸ“ç›®æ ‡å¹¶è®¾ç½®æ¸…é™¤å€¼
 		mRenderTarget = std::make_shared<WuDu::AdRenderTarget>(mRenderPass.get());
 		mRenderTarget->SetColorClearValue({ 0.1f, 0.2f, 0.3f, 1.f });
 		mRenderTarget->SetDepthStencilClearValue({ 1, 0 });
@@ -103,29 +103,29 @@ protected:
 		mRenderTarget->AddMaterialSystem<WuDu::AdBaseMaterialSystem>();
 
 
-		// ´´½¨äÖÈ¾Æ÷
+		// åˆ›å»ºæ¸²æŸ“å™¨
 		mRenderer = std::make_shared<WuDu::AdRenderer>();
 
-		// ·ÖÅäÃüÁî»º³åÇø
+		// åˆ†é…å‘½ä»¤ç¼“å†²åŒº
 		mCmdBuffers = device->GetDefaultCmdPool()->AllocateCommandBuffer(swapchain->GetImages().size());
 
 
-		// ´´½¨Á¢·½ÌåÍø¸ñÊı¾İ
+		// åˆ›å»ºç«‹æ–¹ä½“ç½‘æ ¼æ•°æ®
 		std::vector<WuDu::AdVertex> vertices;
 		std::vector<uint32_t> indices;
 		WuDu::AdGeometryUtil::CreateCube(-0.3f, 0.3f, -0.3f, 0.3f, -0.3f, 0.3f, vertices, indices);
 		mCubeMesh = std::make_shared<WuDu::AdMesh>(vertices, indices);
 
-		//¼ÓÔØÄ£ĞÍ
+		//åŠ è½½æ¨¡å‹
 		std::shared_ptr<WuDu::AdModelResource> model = std::make_shared<WuDu::AdModelResource>(AD_RES_MODEL_DIR"Phainon.fbx");
 		std::vector<WuDu::ModelVertex> Vertices;
 		std::vector<uint32_t> Indices;
 		if (model->Load()) {
 			const std::vector<WuDu::ModelMesh>& meshes = model->GetMeshes();
 
-			//´¦ÀíÃ¿¸öÍø¸ñ
+			//å¤„ç†æ¯ä¸ªç½‘æ ¼
 			/*for (const auto& mesh : meshes) {
-				
+
 			}*/
 			Vertices = meshes[0].Vertices;
 			Indices = meshes[0].Indices;
@@ -137,7 +137,7 @@ protected:
 		//mModelMesh = std::make_shared<WuDu::AdMesh>(Vertices, Indices);
 		//mModelMeshes.emplace_back(std::make_shared<WuDu::AdMesh>(Vertices,Indices));
 
-		// ´´½¨²ÄÖÊ
+		// åˆ›å»ºæè´¨
 		mBaseMaterial = std::shared_ptr<WuDu::AdUnlitMaterial>(WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdUnlitMaterial>());
 		mTexture0 = std::make_shared<WuDu::AdTexture>(AD_RES_TEXTURE_DIR"R-C.jpeg");
 
@@ -152,7 +152,7 @@ protected:
 		mBaseMaterial->SetBaseColor0(glm::vec3(0.5f, 0.5f, 0.5f));
 
 
-		// 1. ³õÊ¼»¯GUIÏµÍ³
+		// 1. åˆå§‹åŒ–GUIç³»ç»Ÿ
 		mGuiSystem = std::make_shared<WuDu::AdGuiSystem>();
 		mGuiSystem->OnInit();
 
@@ -160,41 +160,41 @@ protected:
 
 
 
-		// 4. Ìí¼Ó×Ô¶¨ÒåGUIº¯Êı£¨¿ÉÑ¡£©
+		// 4. æ·»åŠ è‡ªå®šä¹‰GUIå‡½æ•°ï¼ˆå¯é€‰ï¼‰
 
 
 
 	}
 
 	/**
-	 * @brief ³õÊ¼»¯³¡¾°ÄÚÈİ£¬´´½¨ÉãÏñ»úºÍ¶à¸öÁ¢·½ÌåÊµÌå¡£
+	 * @brief åˆå§‹åŒ–åœºæ™¯å†…å®¹ï¼Œåˆ›å»ºæ‘„åƒæœºå’Œå¤šä¸ªç«‹æ–¹ä½“å®ä½“ã€‚
 	 *
-	 * @param scene Ö¸Ïòµ±Ç°³¡¾°¶ÔÏóµÄÖ¸Õë¡£
+	 * @param scene æŒ‡å‘å½“å‰åœºæ™¯å¯¹è±¡çš„æŒ‡é’ˆã€‚
 	 */
 	void OnSceneInit(WuDu::AdScene* scene) override {
 
-		// ´´½¨ÉãÏñ»úÊµÌå²¢ÉèÖÃÆä×é¼ş
+		// åˆ›å»ºæ‘„åƒæœºå®ä½“å¹¶è®¾ç½®å…¶ç»„ä»¶
 		WuDu::AdEntity* camera = mScene->CreateEntity("Editor Camera");
 		auto& cameraComp = camera->AddComponent<WuDu::AdFirstPersonCameraComponent>();
-		// ³õÊ¼»¯Ïà»ú¿ØÖÆÆ÷¹ÜÀíÆ÷
+		// åˆå§‹åŒ–ç›¸æœºæ§åˆ¶å™¨ç®¡ç†å™¨
 		m_CameraController = std::make_unique<WuDu::AdCameraControllerManager>(camera);
 		m_CameraController->SetAspect(1360.0f / 768.0f);
 
 		mRenderTarget->SetCamera(camera);
 
-		// 2. ÉèÖÃGUIÏµÍ³ËùĞè×ÊÔ´
+		// 2. è®¾ç½®GUIç³»ç»Ÿæ‰€éœ€èµ„æº
 		mGuiSystem->SetResources(
-			mScene.get(),                  // ³¡¾°
-			camera,                  // »î¶¯ÉãÏñ»ú
-			mCubeMesh.get(),         // Á¢·½ÌåÍø¸ñ
-			mBaseMaterial.get()      // Ä¬ÈÏ²ÄÖÊ
+			mScene.get(),                  // åœºæ™¯
+			camera,                  // æ´»åŠ¨æ‘„åƒæœº
+			mCubeMesh.get(),         // ç«‹æ–¹ä½“ç½‘æ ¼
+			mBaseMaterial.get()      // é»˜è®¤æè´¨
 		);
 
-		// 3. Ìí¼Ó³¡¾°±à¼­Æ÷¹¦ÄÜ
+		// 3. æ·»åŠ åœºæ™¯ç¼–è¾‘å™¨åŠŸèƒ½
 		mGuiSystem->AddSceneEditor();
 
 
-		// ´´½¨¶à¸öÊµÌå£¬²¢ÉèÖÃÆä²ÄÖÊºÍ±ä»»ÊôĞÔ
+		// åˆ›å»ºå¤šä¸ªå®ä½“ï¼Œå¹¶è®¾ç½®å…¶æè´¨å’Œå˜æ¢å±æ€§
 		{
 			mCubes.emplace_back(scene->CreateEntity("MiG-29"));
 			auto& materialComp = mCubes[0]->AddComponent<WuDu::AdUnlitMaterialComponent>();
@@ -208,22 +208,22 @@ protected:
 
 	void OnUpdate(float deltaTime) override {
 
-		//´¦Àí¶ÓÁĞÊÂ¼ş
+		//å¤„ç†é˜Ÿåˆ—äº‹ä»¶
 		WuDu::InputManager::GetInstance().ProcessEvents();
 
-		// ¸üĞÂÏà»ú¿ØÖÆÆ÷
+		// æ›´æ–°ç›¸æœºæ§åˆ¶å™¨
 		if (m_CameraController) {
 			m_CameraController->Update(deltaTime);
 		}
 
-		// Ğı×ªËÙ¶È£¨¶È/Ãë£©
-		float rotationSpeed = 90.0f; // Ã¿ÃëĞı×ª90¶È
+		// æ—‹è½¬é€Ÿåº¦ï¼ˆåº¦/ç§’ï¼‰
+		float rotationSpeed = 90.0f; // æ¯ç§’æ—‹è½¬90åº¦
 
-		// ¸üĞÂ Cube 0 - ÈÆYÖáĞı×ª
+		// æ›´æ–° Cube 0 - ç»•Yè½´æ—‹è½¬
 		if (mCubes[0] && mCubes[0]->HasComponent<WuDu::AdTransformComponent>()) {
 			auto& transComp = mCubes[0]->GetComponent<WuDu::AdTransformComponent>();
 			transComp.rotation.y += rotationSpeed * deltaTime;
-			// ±£³ÖÔÚ0-360¶È·¶Î§ÄÚ
+			// ä¿æŒåœ¨0-360åº¦èŒƒå›´å†…
 			if (transComp.rotation.y >= 360.0f) {
 				transComp.rotation.y -= 360.0f;
 			}
@@ -232,9 +232,9 @@ protected:
 	}
 
 	/**
-	 * @brief ³¡¾°Ïú»Ù»Øµ÷º¯Êı£¬µ±Ç°Îª¿ÕÊµÏÖ¡£
+	 * @brief åœºæ™¯é”€æ¯å›è°ƒå‡½æ•°ï¼Œå½“å‰ä¸ºç©ºå®ç°ã€‚
 	 *
-	 * @param scene Ö¸Ïò¼´½«Ïú»ÙµÄ³¡¾°¶ÔÏóµÄÖ¸Õë¡£
+	 * @param scene æŒ‡å‘å³å°†é”€æ¯çš„åœºæ™¯å¯¹è±¡çš„æŒ‡é’ˆã€‚
 	 */
 	void OnSceneDestroy(WuDu::AdScene* scene) override {
 
@@ -244,13 +244,13 @@ protected:
 	}
 
 	/**
-	 * @brief Ã¿Ö¡äÖÈ¾»Øµ÷º¯Êı£¬Ö´ĞĞäÖÈ¾Á÷³Ì¡£
+	 * @brief æ¯å¸§æ¸²æŸ“å›è°ƒå‡½æ•°ï¼Œæ‰§è¡Œæ¸²æŸ“æµç¨‹ã€‚
 	 *
-	 * °üÀ¨£º
-	 * - »ñÈ¡½»»»Á´Í¼ÏñË÷Òı
-	 * - ¿ªÊ¼¼ÇÂ¼ÃüÁî»º³åÇø
-	 * - Ö´ĞĞäÖÈ¾Ä¿±êµÄäÖÈ¾²Ù×÷
-	 * - Ìá½»ÃüÁî»º³åÇø²¢³ÊÏÖÍ¼Ïñ
+	 * åŒ…æ‹¬ï¼š
+	 * - è·å–äº¤æ¢é“¾å›¾åƒç´¢å¼•
+	 * - å¼€å§‹è®°å½•å‘½ä»¤ç¼“å†²åŒº
+	 * - æ‰§è¡Œæ¸²æŸ“ç›®æ ‡çš„æ¸²æŸ“æ“ä½œ
+	 * - æäº¤å‘½ä»¤ç¼“å†²åŒºå¹¶å‘ˆç°å›¾åƒ
 	 */
 	void OnRender() override {
 		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
@@ -265,7 +265,7 @@ protected:
 		VkCommandBuffer cmdBuffer = mCmdBuffers[imageIndex];
 		WuDu::AdVKCommandPool::BeginCommandBuffer(cmdBuffer);
 
-		// äÖÈ¾3D³¡¾°
+		// æ¸²æŸ“3Dåœºæ™¯
 		mRenderTarget->Begin(cmdBuffer);
 		mRenderTarget->RenderMaterialSystems(cmdBuffer);
 		mRenderTarget->End(cmdBuffer);
@@ -275,24 +275,24 @@ protected:
 		if (mRenderer->End(imageIndex, { cmdBuffer })) {
 			mRenderTarget->SetExtent({ swapchain->GetWidth(), swapchain->GetHeight() });
 		}
-		mGuiSystem->BeginGui();      // ¿ªÊ¼GUIÖ¡£¨ÄÚ²¿»áµ÷ÓÃUI¹¹½¨º¯Êı£©
-		// 3. ½áÊøGUIÖ¡
+		mGuiSystem->BeginGui();      // å¼€å§‹GUIå¸§ï¼ˆå†…éƒ¨ä¼šè°ƒç”¨UIæ„å»ºå‡½æ•°ï¼‰
+		// 3. ç»“æŸGUIå¸§
 		mGuiSystem->EndGui();
-		// 4. äÖÈ¾GUI
+		// 4. æ¸²æŸ“GUI
 		mGuiSystem->OnRender();
 
 	}
 
 
 	/**
-	 * @brief Ó¦ÓÃ³ÌĞòÏú»Ù½×¶Î£¬ÊÍ·ÅËùÓĞÒÑ´´½¨µÄ×ÊÔ´¡£
+	 * @brief åº”ç”¨ç¨‹åºé”€æ¯é˜¶æ®µï¼Œé‡Šæ”¾æ‰€æœ‰å·²åˆ›å»ºçš„èµ„æºã€‚
 	 */
 	void OnDestroy() override {
 		WuDu::AdRenderContext* renderCxt = WuDu::AdApplication::GetAppContext()->renderCxt;
 		WuDu::AdVKDevice* device = renderCxt->GetDevice();
 		vkDeviceWaitIdle(device->GetHandle());
 
-		// ¹Ø¼ü£ºÏÈÇåÀíGUIÏµÍ³
+		// å…³é”®ï¼šå…ˆæ¸…ç†GUIç³»ç»Ÿ
 
 		mGuiSystem->OnDestroy();
 		mGuiSystem.reset();
@@ -307,19 +307,19 @@ protected:
 	}
 
 private:
-	std::shared_ptr<WuDu::AdVKRenderPass> mRenderPass;       ///< äÖÈ¾Í¨µÀ¶ÔÏó
-	std::shared_ptr<WuDu::AdRenderTarget> mRenderTarget;     ///< äÖÈ¾Ä¿±ê¶ÔÏó
-	std::shared_ptr<WuDu::AdRenderer> mRenderer;             ///< äÖÈ¾Æ÷¶ÔÏó
+	std::shared_ptr<WuDu::AdVKRenderPass> mRenderPass;       ///< æ¸²æŸ“é€šé“å¯¹è±¡
+	std::shared_ptr<WuDu::AdRenderTarget> mRenderTarget;     ///< æ¸²æŸ“ç›®æ ‡å¯¹è±¡
+	std::shared_ptr<WuDu::AdRenderer> mRenderer;             ///< æ¸²æŸ“å™¨å¯¹è±¡
 
-	std::vector<VkCommandBuffer> mCmdBuffers;               ///< ÃüÁî»º³åÇøÊı×é
-	std::shared_ptr<WuDu::AdMesh> mCubeMesh;                 ///< Á¢·½ÌåÍø¸ñ¶ÔÏó
+	std::vector<VkCommandBuffer> mCmdBuffers;               ///< å‘½ä»¤ç¼“å†²åŒºæ•°ç»„
+	std::shared_ptr<WuDu::AdMesh> mCubeMesh;                 ///< ç«‹æ–¹ä½“ç½‘æ ¼å¯¹è±¡
 	std::shared_ptr<WuDu::AdMesh> mModelMesh;
-	std::vector<std::shared_ptr<WuDu::AdMesh>> mModelMeshes;		//Ä£ĞÍÍø¸ñÌå×é
+	std::vector<std::shared_ptr<WuDu::AdMesh>> mModelMeshes;		//æ¨¡å‹ç½‘æ ¼ä½“ç»„
 	std::vector<WuDu::AdEntity*> mCubes;
 
-	std::unique_ptr<WuDu::AdCameraControllerManager> m_CameraController;  ///< Ïà»ú¿ØÖÆÆ÷¹ÜÀíÆ÷
+	std::unique_ptr<WuDu::AdCameraControllerManager> m_CameraController;  ///< ç›¸æœºæ§åˆ¶å™¨ç®¡ç†å™¨
 
-	//²ÄÖÊ
+	//æè´¨
 	std::shared_ptr<WuDu::AdTexture> mTexture0;
 	std::shared_ptr<WuDu::AdTexture> mTexture1;
 	std::shared_ptr<WuDu::AdSampler> mSampler;
@@ -335,9 +335,9 @@ private:
 };
 
 /**
- * @brief Èë¿Úµãº¯Êı£¬ÓÃÓÚ´´½¨Ó¦ÓÃ³ÌĞòÊµÀı¡£
+ * @brief å…¥å£ç‚¹å‡½æ•°ï¼Œç”¨äºåˆ›å»ºåº”ç”¨ç¨‹åºå®ä¾‹ã€‚
  *
- * @return ·µ»ØÖ¸ÏòĞÂ´´½¨µÄ SandBoxApp ÊµÀıµÄÖ¸Õë¡£
+ * @return è¿”å›æŒ‡å‘æ–°åˆ›å»ºçš„ SandBoxApp å®ä¾‹çš„æŒ‡é’ˆã€‚
  */
 WuDu::AdApplication* CreateApplicationEntryPoint() {
 	return new SandBoxApp();

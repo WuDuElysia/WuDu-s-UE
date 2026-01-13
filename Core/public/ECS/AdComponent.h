@@ -4,13 +4,13 @@
 #include "AdEntity.h"
 
 namespace WuDu {
-        class AdComponent {
-        public:
-                void SetOwner(AdEntity* owner) { mOwner = owner; }
-                AdEntity* GetOwner() const { return mOwner; }
-        private:
-                AdEntity* mOwner = nullptr;
-        };
+	class AdComponent {
+	public:
+		void SetOwner(AdEntity* owner) { mOwner = owner; }
+		AdEntity* GetOwner() const { return mOwner; }
+	private:
+		AdEntity* mOwner = nullptr;
+	};
 }
 
 #endif

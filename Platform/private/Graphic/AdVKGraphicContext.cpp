@@ -1,4 +1,4 @@
-﻿#include"Graphic/AdVKGraphicContext.h"
+#include"Graphic/AdVKGraphicContext.h"
 #include "Window/AdGlfwWindow.h"
 #include "Window/AdGlfwWindow.h"
 
@@ -31,7 +31,7 @@ namespace WuDu {
 		}
 		return VK_TRUE;
 	}
-	AdVKGraphicContext::AdVKGraphicContext(AdWindow* window){
+	AdVKGraphicContext::AdVKGraphicContext(AdWindow* window) {
 		CreateInstance();
 		CreateSurface(window);
 		SelectPhyDevice();
@@ -97,7 +97,7 @@ namespace WuDu {
 		std::unordered_set<std::string> allRequestedExtensionSet;
 		// 存储所有请求的扩展信息
 		std::vector<DeviceFeature> allRequestedExtensions;
-                
+
 		// 遍历请求的扩展，去重后添加到allRequestedExtensions中
 		for (const auto& item : requesetExtensions) {
 			if (allRequestedExtensionSet.find(item.name) == allRequestedExtensionSet.end()) {
@@ -105,13 +105,13 @@ namespace WuDu {
 				allRequestedExtensions.push_back(item);
 			}
 		}
-		
+
 		allRequestedExtensions.push_back({ VK_EXT_DEBUG_REPORT_EXTENSION_NAME, true });
-		
-		
+
+
 		allRequestedExtensions.push_back({ VK_KHR_SURFACE_EXTENSION_NAME, true });
 		allRequestedExtensions.push_back({ VK_KHR_WIN32_SURFACE_EXTENSION_NAME, true });
-		
+
 		// 遍历GLFW请求的扩展，去重后添加到allRequestedExtensions中
 		for (int i = 0; i < glfwRequestedExtensionCount; i++) {
 			const char* extensionName = glfwRequestedExtensions[i];
@@ -128,7 +128,7 @@ namespace WuDu {
 			allRequestedExtensions.size(), allRequestedExtensions.data(), &enableExtensionCount, enableExtensions)) {
 			return;
 		}
-		
+
 		// 填充应用程序信息结构体
 		VkApplicationInfo applicationInfo = {
 				VK_STRUCTURE_TYPE_APPLICATION_INFO,

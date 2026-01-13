@@ -4,14 +4,14 @@
 #include "ECS/AdScene.h"
 
 namespace WuDu {
-        class AdApplication;
-        class AdRenderContext;
+	class AdApplication;
+	class AdRenderContext;
 
-        struct AdAppContext {
-                AdApplication* app;
-                AdScene* scene;
-                AdRenderContext* renderCxt;
-        };
+	struct AdAppContext {
+		AdApplication* app;
+		AdScene* scene;
+		AdRenderContext* renderCxt;
+	};
 }
 
 #endif

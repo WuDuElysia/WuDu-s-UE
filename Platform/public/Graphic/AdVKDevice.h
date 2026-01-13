@@ -10,20 +10,20 @@ namespace WuDu {
 	class AdVKCommandPool;
 
 	/**
-	* AdVkSettings½á¹¹ÌåÓÃÓÚ´æ´¢VulkanäÖÈ¾Ïà¹ØµÄÅäÖÃÉèÖÃ¡£
-	* ÕâÐ©ÉèÖÃ¶ÔÓÚ³õÊ¼»¯VulkanÉè±¸¡¢½»»»Á´ÒÔ¼°äÖÈ¾Á÷³ÌÖÐ·Ç³£ÖØÒª¡£
+	* AdVkSettingsç»“æž„ä½“ç”¨äºŽå­˜å‚¨Vulkanæ¸²æŸ“è®¾å¤‡çš„é…ç½®å‚æ•°ã€‚
+	* è¿™äº›å‚æ•°åœ¨åˆå§‹åŒ–Vulkanè®¾å¤‡å’Œæ¸²æŸ“é…ç½®æ—¶éžå¸¸é‡è¦ã€‚
 	*/
 	struct AdVkSettings {
-		// surfaceFormatÖ¸¶¨±íÃæµÄÏñËØ¸ñÊ½£¬ÕâÀïÊ¹ÓÃµÄÊÇB8G8R8A8_UNORM£¬ÒâÎ¶×ÅÃ¿¸öÏñËØÊ¹ÓÃ8Î»BGRºÍAlphaÖµ£¬ÒÔ·Ç¹æ·¶»¯ÐÎÊ½´æ´¢¡£
+		// surfaceFormatæŒ‡å®šäº¤æ¢é“¾çš„åƒç´ æ ¼å¼ï¼Œé»˜è®¤ä½¿ç”¨B8G8R8A8_UNORMï¼Œè¿™æ„å‘³ç€æ¯ä¸ªé€šé“ä½¿ç”¨8ä½BGRå’ŒAlphaå€¼ï¼Œä»¥éžæ ‡å‡†åŒ–æ ¼å¼å­˜å‚¨ã€‚
 		VkFormat surfaceFormat = VK_FORMAT_B8G8R8A8_UNORM;
 
-		// depthFormat¶¨ÒåÁËÉî¶È»º³åÇøµÄ¸ñÊ½£¬ÕâÀïÊ¹ÓÃµÄÊÇD32_SFLOAT£¬±íÊ¾32Î»¸¡µãÊýÉî¶ÈÖµ¡£
+		// depthFormatæŒ‡å®šæ·±åº¦ç¼“å†²åŒºçš„æ ¼å¼ï¼Œé»˜è®¤ä½¿ç”¨D32_SFLOATï¼Œè¡¨ç¤º32ä½æµ®ç‚¹æ•°æ·±åº¦å€¼ã€‚
 		VkFormat depthFormat = VK_FORMAT_D32_SFLOAT;
 
-		// presentMode¾ö¶¨ÁË½»»»Á´³ÊÏÖÍ¼ÏñµÄ·½Ê½£¬VK_PRESENT_MODE_IMMEDIATE_KHR±íÊ¾Í¼ÏñÒ»µ©×¼±¸ºÃ¾ÍÁ¢¼´³ÊÏÖ£¬¼õÉÙÑÓ³Ù¡£
+		// presentModeå®šä¹‰äº†äº¤æ¢é“¾æ˜¾ç¤ºå›¾åƒçš„æ–¹å¼ï¼ŒVK_PRESENT_MODE_IMMEDIATE_KHRè¡¨ç¤ºå›¾åƒä¸€æ—¦å‡†å¤‡å¥½å°±ç«‹å³æ˜¾ç¤ºï¼Œæ²¡æœ‰å»¶è¿Ÿã€‚
 		VkPresentModeKHR presentMode = VK_PRESENT_MODE_IMMEDIATE_KHR;
 
-		// swapchainImageCount±íÊ¾½»»»Á´ÖÐÍ¼ÏñµÄÊýÁ¿£¬ÕâÀïÉèÖÃÎª3£¬Í¨³£Óë triple buffering£¨Èý»º³å£©¶ÔÓ¦£¬ÒÔÓÅ»¯ÐÔÄÜºÍ¼õÉÙ¿¨¶Ù¡£
+		// swapchainImageCountè¡¨ç¤ºäº¤æ¢é“¾å›¾åƒçš„æ•°é‡ï¼Œé»˜è®¤å€¼ä¸º3ï¼Œé€šå¸¸ä½¿ç”¨triple bufferingæ¥å¹³è¡¡å“åº”æ€§å’Œæ€§èƒ½ã€‚
 		uint32_t swapchainImageCount = 3;
 	};
 	class AdVKDevice {

@@ -6,144 +6,144 @@
 #include "Adlog.h"
 
 namespace WuDu {
-        //×ÊÔ´¹ÜÀíÆ÷
-        class AdResourceManager {
-        public:
-                static AdResourceManager* GetInstance();
+	//èµ„æºç®¡ç†å™¨
+	class AdResourceManager {
+	public:
+		static AdResourceManager* GetInstance();
 
-                template<typename T, typename... Args>
-                std::shared_ptr<T> Load(const std::string& path, Args&&... args) {
-                        static_assert(std::is_base_of<AdResource, T>::value, "T must derive from AdResource");
+		template<typename T, typename... Args>
+		std::shared_ptr<T> Load(const std::string& path, Args&&... args) {
+			static_assert(std::is_base_of<AdResource, T>::value, "T must derive from AdResource");
 
-                        std::lock_guard<std::mutex> lock(mMutex);
+			std::lock_guard<std::mutex> lock(mMutex);
 
-                        // Ê×ÏÈ¼ì²éÂ·¾¶ÊÇ·ñÒÑ´æÔÚ
-                        auto pathIt = mPathToUUID.find(path);
-                        if (pathIt != mPathToUUID.end()) {
-                                const UUID& uuid = pathIt->second;
-                                auto uuidIt = mUUIDToResource.find(uuid);
-                                if (uuidIt != mUUIDToResource.end()) {
-                                        auto resource = std::dynamic_pointer_cast<T>(uuidIt->second.lock());
-                                if (resource) {
-                                        return resource;
-                                }
-                        }
-                        }
+			// é¦–å…ˆæ£€æŸ¥è·¯å¾„æ˜¯å¦å·²ç»å­˜åœ¨
+			auto pathIt = mPathToUUID.find(path);
+			if (pathIt != mPathToUUID.end()) {
+				const UUID& uuid = pathIt->second;
+				auto uuidIt = mUUIDToResource.find(uuid);
+				if (uuidIt != mUUIDToResource.end()) {
+					auto resource = std::dynamic_pointer_cast<T>(uuidIt->second.lock());
+					if (resource) {
+						return resource;
+					}
+				}
+			}
 
-                        // ´´½¨ĞÂ×ÊÔ´£¬×ÊÔ´ÄÚ²¿»áÉú³ÉUUID
-                        auto resource = std::make_shared<T>(path, std::forward<Args>(args)...);
-                        if (resource->Load()) {
-                                const UUID& uuid = resource->GetUUID();
+			// åˆ›å»ºæ–°èµ„æºï¼Œèµ„æºå†…éƒ¨ä¼šç”ŸæˆUUID
+			auto resource = std::make_shared<T>(path, std::forward<Args>(args)...);
+			if (resource->Load()) {
+				const UUID& uuid = resource->GetUUID();
 
-                                // ¸üĞÂË«Ó³Éä±í
-                                mUUIDToResource[uuid] = resource;
-                                mPathToUUID[path] = uuid;
-                        }
+				// æ›´æ–°åŒæ˜ å°„è¡¨
+				mUUIDToResource[uuid] = resource;
+				mPathToUUID[path] = uuid;
+			}
 
-                        return resource;
-                }
+			return resource;
+		}
 
-                // Í¨¹ıÂ·¾¶»ñÈ¡×ÊÔ´
-                template<typename T>
-                std::shared_ptr<T> Get(const std::string& path) {
-                        static_assert(std::is_base_of<AdResource, T>::value, "T must derive from AdResource");
+		// é€šè¿‡è·¯å¾„è·å–èµ„æº
+		template<typename T>
+		std::shared_ptr<T> Get(const std::string& path) {
+			static_assert(std::is_base_of<AdResource, T>::value, "T must derive from AdResource");
 
-                        std::lock_guard<std::mutex> lock(mMutex);
+			std::lock_guard<std::mutex> lock(mMutex);
 
-                        auto pathIt = mPathToUUID.find(path);
-                        if (pathIt != mPathToUUID.end()) {
-                                const UUID& uuid = pathIt->second;
-                                return Get<T>(uuid);
-                        }
+			auto pathIt = mPathToUUID.find(path);
+			if (pathIt != mPathToUUID.end()) {
+				const UUID& uuid = pathIt->second;
+				return Get<T>(uuid);
+			}
 
-                        return nullptr;
-                }
+			return nullptr;
+		}
 
-                // Í¨¹ıUUID»ñÈ¡×ÊÔ´
-                template<typename T>
-                std::shared_ptr<T> Get(const UUID& uuid) {
-                        static_assert(std::is_base_of<AdResource, T>::value, "T must derive from AdResource");
+		// é€šè¿‡UUIDè·å–èµ„æº
+		template<typename T>
+		std::shared_ptr<T> Get(const UUID& uuid) {
+			static_assert(std::is_base_of<AdResource, T>::value, "T must derive from AdResource");
 
-                        std::lock_guard<std::mutex> lock(mMutex);
+			std::lock_guard<std::mutex> lock(mMutex);
 
-                        auto it = mUUIDToResource.find(uuid);
-                        if (it != mUUIDToResource.end()) {
-                                return std::dynamic_pointer_cast<T>(it->second.lock());
-                        }
+			auto it = mUUIDToResource.find(uuid);
+			if (it != mUUIDToResource.end()) {
+				return std::dynamic_pointer_cast<T>(it->second.lock());
+			}
 
-                        return nullptr;
-                }
+			return nullptr;
+		}
 
-                // Í¨¹ıUUID»ñÈ¡×ÊÔ´Â·¾¶
-                std::optional<std::string> GetPathByUUID(const UUID& uuid) {
-                        std::lock_guard<std::mutex> lock(mMutex);
+		// é€šè¿‡UUIDè·å–èµ„æºè·¯å¾„
+		std::optional<std::string> GetPathByUUID(const UUID& uuid) {
+			std::lock_guard<std::mutex> lock(mMutex);
 
-                        for (const auto& [path, resourceUUID] : mPathToUUID) {
-                                if (resourceUUID == uuid) {
-                                        return path;
-                                }
-                        }
+			for (const auto& [path, resourceUUID] : mPathToUUID) {
+				if (resourceUUID == uuid) {
+					return path;
+				}
+			}
 
-                        return std::nullopt;
-                }
+			return std::nullopt;
+		}
 
-                // ¸üĞÂ×ÊÔ´Â·¾¶Ó³Éä
-                bool UpdateResourcePath(const UUID& uuid, const std::string& newPath) {
-                        std::lock_guard<std::mutex> lock(mMutex);
+		// æ›´æ–°èµ„æºè·¯å¾„æ˜ å°„
+		bool UpdateResourcePath(const UUID& uuid, const std::string& newPath) {
+			std::lock_guard<std::mutex> lock(mMutex);
 
-                        // ÒÆ³ı¾ÉÂ·¾¶Ó³Éä
-                        auto oldPathIt = mPathToUUID.begin();
-                        while (oldPathIt != mPathToUUID.end()) {
-                                if (oldPathIt->second == uuid) {
-                                        oldPathIt = mPathToUUID.erase(oldPathIt);
-                                        break;
-                                }
-                                else {
-                                        ++oldPathIt;
-                                }
-                        }
+			// ç§»é™¤æ—§è·¯å¾„æ˜ å°„
+			auto oldPathIt = mPathToUUID.begin();
+			while (oldPathIt != mPathToUUID.end()) {
+				if (oldPathIt->second == uuid) {
+					oldPathIt = mPathToUUID.erase(oldPathIt);
+					break;
+				}
+				else {
+					++oldPathIt;
+				}
+			}
 
-                        // Ìí¼ÓĞÂÂ·¾¶Ó³Éä
-                        mPathToUUID[newPath] = uuid;
+			// æ·»åŠ æ–°è·¯å¾„æ˜ å°„
+			mPathToUUID[newPath] = uuid;
 
-                        // ¸üĞÂ×ÊÔ´ÄÚ²¿Â·¾¶
-                        auto resourceIt = mUUIDToResource.find(uuid);
-                        if (resourceIt != mUUIDToResource.end()) {
-                                auto resource = resourceIt->second.lock();
-                                if (resource) {
-                                        // ×¢Òâ£ºÕâÀïĞèÒªAdResourceÀàÌá¹©SetPath·½·¨
-                                        // resource->SetPath(newPath);
-                                        return true;
-                                }
-                        }
+			// æ›´æ–°èµ„æºå†…éƒ¨è·¯å¾„
+			auto resourceIt = mUUIDToResource.find(uuid);
+			if (resourceIt != mUUIDToResource.end()) {
+				auto resource = resourceIt->second.lock();
+				if (resource) {
+					// æ³¨æ„ï¼šè¿™é‡Œéœ€è¦AdResourceç±»æä¾›SetPathæ–¹æ³•
+					// resource->SetPath(newPath);
+					return true;
+				}
+			}
 
-                        return false;
-                }
+			return false;
+		}
 
-                void UnloadUnused();
-                void UnloadAll();
+		void UnloadUnused();
+		void UnloadAll();
 
-                void SetResourceRootPath(const std::string& rootPath) {
-                        mRootPath = rootPath;
-                }
+		void SetResourceRootPath(const std::string& rootPath) {
+			mRootPath = rootPath;
+		}
 
-                std::string GetFullPath(const std::string& relativePath) const {
-                        return mRootPath + relativePath;
-                }
+		std::string GetFullPath(const std::string& relativePath) const {
+			return mRootPath + relativePath;
+		}
 
-        private:
-                AdResourceManager();
-                ~AdResourceManager();
+	private:
+		AdResourceManager();
+		~AdResourceManager();
 
-                std::string mRootPath;
+		std::string mRootPath;
 
-                // Ë«Ó³Éä±íÊµÏÖË«±êÊ¶ÏµÍ³
-                std::unordered_map<UUID, std::weak_ptr<AdResource>> mUUIDToResource;  // UUIDµ½×ÊÔ´µÄÓ³Éä
-                std::unordered_map<std::string, UUID> mPathToUUID;  // Â·¾¶µ½UUIDµÄÓ³Éä
+		// åŒæ˜ å°„è¡¨å®ç°åŒç´¢å¼•ç³»ç»Ÿ
+		std::unordered_map<UUID, std::weak_ptr<AdResource>> mUUIDToResource;  // UUIDåˆ°èµ„æºçš„æ˜ å°„
+		std::unordered_map<std::string, UUID> mPathToUUID;  // è·¯å¾„åˆ°UUIDçš„æ˜ å°„
 
-                std::mutex mMutex;
-        };
+		std::mutex mMutex;
+	};
 
-} 
+}
 
 #endif

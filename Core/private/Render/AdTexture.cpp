@@ -12,11 +12,11 @@
 
 namespace WuDu {
 	/**
-	* @brief ¹¹Ôìº¯Êı£¬´ÓÖ¸¶¨ÎÄ¼şÂ·¾¶¼ÓÔØÎÆÀíÍ¼Ïñ²¢´´½¨ÎÆÀí¶ÔÏó
-	* @param filePath Í¼ÏñÎÄ¼şµÄÂ·¾¶
+	* @brief æ„é€ å‡½æ•°ï¼Œæ ¹æ®æŒ‡å®šæ–‡ä»¶è·¯å¾„åŠ è½½å¹¶åˆ›å»ºçº¹ç†èµ„æº
+	* @param filePath çº¹ç†æ–‡ä»¶çš„è·¯å¾„
 	*/
 	AdTexture::AdTexture(const std::string& filePath) {
-		// ¼ÓÔØÍ¼ÏñÊı¾İ
+		// åŠ è½½å›¾åƒæ•°æ®
 		int numChannel;
 		uint8_t* data = stbi_load(filePath.c_str(), reinterpret_cast<int*>(&mWidth), reinterpret_cast<int*>(&mHeight), &numChannel, STBI_rgb_alpha);
 		if (!data) {
@@ -24,28 +24,28 @@ namespace WuDu {
 			return;
 		}
 
-		// ÉèÖÃÎÆÀí¸ñÊ½²¢¼ÆËãÍ¼ÏñÊı¾İ´óĞ¡
+		// è®¾ç½®å›¾åƒæ ¼å¼å¹¶è®¡ç®—å›¾åƒæ•°æ®å¤§å°
 		mFormat = VK_FORMAT_R8G8B8A8_UNORM;
 		size_t size = sizeof(uint8_t) * 4 * mWidth * mHeight;
 
-		// ´´½¨ÎÆÀíÍ¼Ïñ
+		// åˆ›å»ºçº¹ç†å›¾åƒ
 		CreateImage(size, data);
 
-		// ÊÍ·ÅÍ¼ÏñÊı¾İÄÚ´æ
+		// é‡Šæ”¾å›¾åƒåŸå§‹å†…å­˜
 		stbi_image_free(data);
 	}
 
 	/**
-	* @brief AdTextureÀàµÄ¹¹Ôìº¯Êı£¬ÓÃÓÚ´´½¨Ò»¸öÎÆÀí¶ÔÏó
-	* @param width ÎÆÀíµÄ¿í¶È£¨ÏñËØ£©
-	* @param height ÎÆÀíµÄ¸ß¶È£¨ÏñËØ£©
-	* @param pixels Ö¸ÏòRGBAÑÕÉ«Êı¾İµÄÖ¸Õë£¬ÓÃÓÚ³õÊ¼»¯ÎÆÀíÏñËØ
+	* @brief AdTextureçš„æ„é€ å‡½æ•°ï¼Œç”¨äºåˆ›å»ºä¸€ä¸ªçº¯è‰²çº¹ç†
+	* @param width çº¹ç†çš„å®½åº¦ï¼Œåƒç´ 
+	* @param height çº¹ç†çš„é«˜åº¦ï¼Œåƒç´ 
+	* @param pixels æŒ‡å‘RGBAé¢œè‰²æ•°æ®çš„æŒ‡é’ˆï¼Œç”¨äºåˆå§‹åŒ–çº¹ç†æ•°æ®
 	*/
 	AdTexture::AdTexture(uint32_t width, uint32_t height, RGBAColor* pixels) : mWidth(width), mHeight(height) {
 		mFormat = VK_FORMAT_R8G8B8A8_UNORM;
-		// ¼ÆËãÎÆÀíÊı¾İµÄ×Ü×Ö½Ú´óĞ¡
+		// è®¡ç®—çº¹ç†æ•°æ®çš„å­—èŠ‚å¤§å°
 		size_t size = sizeof(uint8_t) * 4 * mWidth * mHeight;
-		// ´´½¨Í¼Ïñ×ÊÔ´²¢³õÊ¼»¯ÎÆÀíÊı¾İ
+		// åˆ›å»ºçº¹ç†èµ„æºå¹¶åˆå§‹åŒ–çº¹ç†æ•°æ®
 		CreateImage(size, pixels);
 	}
 
@@ -55,37 +55,37 @@ namespace WuDu {
 	}
 
 	/**
-	* @brief ´´½¨ÎÆÀíÍ¼Ïñ²¢ÉÏ´«Êı¾İ
-	* @param size ÎÆÀíÊı¾İµÄ´óĞ¡(×Ö½Ú)
-	* @param data Ö¸ÏòÎÆÀíÊı¾İµÄÖ¸Õë
+	* @brief åˆ›å»ºçº¹ç†å›¾åƒå¹¶ä¸Šä¼ æ•°æ®
+	* @param size å›¾åƒæ•°æ®çš„å¤§å°(å­—èŠ‚)
+	* @param data æŒ‡å‘å›¾åƒæ•°æ®çš„æŒ‡é’ˆ
 	*
-	* ¸Ãº¯Êı¸ºÔğ´´½¨VulkanÍ¼Ïñ×ÊÔ´¡¢Í¼ÏñÊÓÍ¼£¬²¢½«´«ÈëµÄÎÆÀíÊı¾İÉÏ´«µ½GPUÄÚ´æÖĞ¡£
-	* °üÀ¨Í¼Ïñ²¼¾Ö×ª»»ºÍÊı¾İ¸´ÖÆµÈ²Ù×÷¡£
+	* è¯¥æ–¹æ³•è´Ÿè´£åˆ›å»ºVulkanå›¾åƒèµ„æºã€å›¾åƒè§†å›¾å’Œé‡‡æ ·å™¨ï¼Œå¹¶å°†å›¾åƒæ•°æ®ä¸Šä¼ åˆ°GPUå†…å­˜ä¸­
+	* ç®¡ç†å›¾åƒå¸ƒå±€è½¬æ¢å’Œæ•°æ®ä¼ è¾“åˆ°çº¹ç†å†…å­˜
 	*/
 	void AdTexture::CreateImage(size_t size, void* data) {
 		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		WuDu::AdVKDevice* device = renderCxt->GetDevice();
 
-		// ´´½¨VulkanÍ¼ÏñºÍÍ¼ÏñÊÓÍ¼×ÊÔ´
+		// åˆ›å»ºVulkanå›¾åƒå’Œå›¾åƒè§†å›¾èµ„æº
 		mImage = std::make_shared<AdVKImage>(device, VkExtent3D{ mWidth, mHeight, 1 }, mFormat, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT, VK_SAMPLE_COUNT_1_BIT);
 		mImageView = std::make_shared<AdVKImageView>(device, mImage->GetHandle(), mFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 
 
-		// ´´½¨ÁÙÊ±µÄÔİ´æ»º³åÇøÓÃÓÚÊı¾İ´«Êä
+		// åˆ›å»ºä¸´æ—¶æ•°æ®ç¼“å†²åŒºç”¨äºæ•°æ®ä¼ è¾“
 		std::shared_ptr<AdVKBuffer> stageBuffer = std::make_shared<AdVKBuffer>(device, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, size, data, true);
 
 
-		// Ö´ĞĞÍ¼Ïñ²¼¾Ö×ª»»ºÍÊı¾İ¸´ÖÆ²Ù×÷
+		// æ‰§è¡Œå›¾åƒå¸ƒå±€è½¬æ¢å’Œæ•°æ®ä¼ è¾“æ“ä½œ
 		VkCommandBuffer cmdBuffer = device->CreateAndBeginOneCmdBuffer();
-		// ½«Í¼Ïñ²¼¾Ö´ÓVK_IMAGE_LAYOUT_UNDEFINED×ª»»ÎªVK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL£¬ÎªÊı¾İ´«Êä×ö×¼±¸
+		// å°†å›¾åƒå¸ƒå±€ä»VK_IMAGE_LAYOUT_UNDEFINEDè½¬æ¢ä¸ºVK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMALï¼Œä¸ºæ•°æ®ä¼ è¾“åšå‡†å¤‡
 		AdVKImage::TransitionLayout(cmdBuffer, mImage->GetHandle(), VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-		// ½«Êı¾İ´ÓÁÙÊ±»º³åÇø¸´ÖÆµ½Í¼Ïñ
+		// å°†æ•°æ®ä»ä¸´æ—¶ç¼“å†²åŒºå¤åˆ¶åˆ°å›¾åƒ
 		mImage->CopyFromBuffer(cmdBuffer, stageBuffer.get());
-		// ½«Í¼Ïñ²¼¾Ö´ÓVK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL×ª»»ÎªVK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL£¬¹©×ÅÉ«Æ÷¶ÁÈ¡Ê¹ÓÃ
+		// å°†å›¾åƒå¸ƒå±€ä»VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMALè½¬æ¢ä¸ºVK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMALï¼Œä¾›ç€è‰²å™¨è¯»å–ä½¿ç”¨
 		AdVKImage::TransitionLayout(cmdBuffer, mImage->GetHandle(), VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 		device->SubmitOneCmdBuffer(cmdBuffer);
 
-		// ÊÍ·ÅÁÙÊ±»º³åÇø
+		// é‡Šæ”¾ä¸´æ—¶ç¼“å†²åŒº
 		stageBuffer.reset();
 	}
 }

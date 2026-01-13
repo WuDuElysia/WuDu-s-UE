@@ -2,19 +2,19 @@
 
 namespace WuDu {
 	/**
- * @brief AdRenderContext╧╧тЛ╨╞йЩ
- * @param window ╢╟©з╤тоСж╦уКё╛сцсз╢╢╫╗м╪пниообнд
+ * @brief AdRenderContextФ·└И─═Е┤╫Ф∙╟
+ * @param window Г╙≈Е▐ёФ▄┤И▓┬О╪▄Г■╗Д╨▌Е┬⌡Е╩╨Е⌡╬Е╫╒Д╦┼Д╦▀Ф√┤
  *
- * ╦ц╧╧тЛ╨╞йЩЁУй╪╩╞Джх╬иообндё╛╟Эю╗╢╢╫╗м╪пниообнд║╒иХ╠╦╤тоС╨м╫╩╩╩а╢
+ * Х╞╔Ф·└И─═Е┤╫Ф∙╟Е┬²Е╖▀Е▄√Ф╦╡Ф÷⌠Д╦┼Д╦▀Ф√┤Ф╗║Е²≈О╪▄Е▄┘Ф▀╛Е⌡╬Е╫╒Д╦┼Д╦▀Ф√┤Ц─│Х╝╬Е╓┤Х╝╬Г╫╝Е▓▄Д╨╓Ф█╒И⌠╬
  */
 	AdRenderContext::AdRenderContext(AdWindow* window) {
-		// ╢╢╫╗м╪пниообнд
+		// Е┬⌡Е╩╨Е⌡╬Е╫╒Д╦┼Д╦▀Ф√┤
 		mGraphicContext = WuDu::AdGraphicContext::Create(window);
-		// ╩Ях║Vulkanм╪пниообнд
+		// Х▌╥Е▐√VulkanЕ⌡╬Е╫╒Д╦┼Д╦▀Ф√┤
 		auto vkContext = dynamic_cast<WuDu::AdVKGraphicContext*>(mGraphicContext.get());
-		// ╢╢╫╗VulkanиХ╠╦╤тоС
+		// Е┬⌡Е╩╨VulkanХ╝╬Е╓┤Х╝╬Г╫╝
 		mDevice = std::make_shared<WuDu::AdVKDevice>(vkContext, 1, 1);
-		// ╢╢╫╗Vulkan╫╩╩╩а╢
+		// Е┬⌡Е╩╨VulkanД╨╓Ф█╒И⌠╬
 		mSwapchain = std::make_shared<WuDu::AdVKSwapchain>(vkContext, mDevice.get());
 	}
 

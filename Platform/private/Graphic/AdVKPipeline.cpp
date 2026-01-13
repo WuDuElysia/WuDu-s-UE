@@ -1,4 +1,4 @@
-﻿#include "Graphic/AdVKPipeline.h"
+#include "Graphic/AdVKPipeline.h"
 #include "AdFileUtil.h"
 #include "Graphic/AdVKDevice.h"
 #include "Graphic/AdVKRenderPass.h"
@@ -321,7 +321,7 @@ namespace WuDu {
 		return this;
 	}
 
-	void AdVKPipeline::SetSubPassIndex(uint32_t index){
+	void AdVKPipeline::SetSubPassIndex(uint32_t index) {
 		mSubPassIndex = index;
 	}
 

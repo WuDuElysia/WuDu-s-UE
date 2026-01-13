@@ -8,92 +8,92 @@ namespace WuDu {
 	AdAppContext AdApplication::sAppContext{};
 
 	/**
-	 * @brief Æô¶¯Ó¦ÓÃ³ÌĞò£¬³õÊ¼»¯ÈÕÖ¾¡¢´°¿Ú¡¢äÖÈ¾ÉÏÏÂÎÄµÈºËĞÄ×é¼ş
-	 * @param argc ÃüÁîĞĞ²ÎÊı¸öÊı
-	 * @param argv ÃüÁîĞĞ²ÎÊıÊı×é
+	 * @brief å¯åŠ¨åº”ç”¨ç¨‹åºï¼Œåˆå§‹åŒ–æ—¥å¿—ç³»ç»Ÿã€çª—å£ã€æ¸²æŸ“ä¸Šä¸‹æ–‡ç­‰ç»„ä»¶
+	 * @param argc å‘½ä»¤è¡Œå‚æ•°æ•°é‡
+	 * @param argv å‘½ä»¤è¡Œå‚æ•°æ•°ç»„
 	 */
 	void AdApplication::Start(int argc, char** argv) {
-		Adlog::Init(); // ³õÊ¼»¯ÈÕÖ¾ÏµÍ³
+		Adlog::Init(); // åˆå§‹åŒ–æ—¥å¿—ç³»ç»Ÿ
 
-		ParseArgs(argc, argv); // ½âÎöÃüÁîĞĞ²ÎÊı
-		OnConfiguration(&mAppSettings); // ÅäÖÃÓ¦ÓÃ³ÌĞòÉèÖÃ
+		ParseArgs(argc, argv); // è§£æå‘½ä»¤è¡Œå‚æ•°
+		OnConfiguration(&mAppSettings); // é…ç½®åº”ç”¨ç¨‹åºè®¾ç½®
 
-		// ´´½¨´°¿ÚºÍäÖÈ¾ÉÏÏÂÎÄ
+		// åˆ›å»ºçª—å£å’Œæ¸²æŸ“ä¸Šä¸‹æ–‡
 		mWindow = AdWindow::Create(mAppSettings.width, mAppSettings.height, mAppSettings.title);
 		mRenderContext = std::make_shared<AdRenderContext>(mWindow.get());
 
-		// ÉèÖÃÈ«¾ÖÓ¦ÓÃÉÏÏÂÎÄ
+		// è®¾ç½®å…¨å±€åº”ç”¨ä¸Šä¸‹æ–‡
 		sAppContext.app = this;
 		sAppContext.renderCxt = mRenderContext.get();
 
-		OnInit(); // µ÷ÓÃ³õÊ¼»¯»Øµ÷
-		LoadScene(); // ¼ÓÔØ³¡¾°
+		OnInit(); // è°ƒç”¨åˆå§‹åŒ–å›è°ƒ
+		LoadScene(); // åŠ è½½åœºæ™¯
 
-		mStartTimePoint = std::chrono::steady_clock::now(); // ¼ÇÂ¼Æô¶¯Ê±¼äµã
+		mStartTimePoint = std::chrono::steady_clock::now(); // è®°å½•å¼€å§‹æ—¶é—´ç‚¹
 	}
 
 	/**
-	 * @brief Í£Ö¹Ó¦ÓÃ³ÌĞò£¬Ğ¶ÔØ³¡¾°²¢Ö´ĞĞÏú»ÙÂß¼­
+	 * @brief åœæ­¢åº”ç”¨ç¨‹åºå¹¶å¸è½½åœºæ™¯ã€æ‰§è¡Œé”€æ¯æ“ä½œ
 	 */
 	void AdApplication::Stop() {
-		UnLoadScene(); // Ğ¶ÔØµ±Ç°³¡¾°
-		OnDestroy(); // Ö´ĞĞÏú»Ù»Øµ÷
+		UnLoadScene(); // å¸è½½å½“å‰åœºæ™¯
+		OnDestroy(); // æ‰§è¡Œé”€æ¯å›è°ƒ
 	}
 
 	/**
-	 * @brief Ó¦ÓÃ³ÌĞòÖ÷Ñ­»·£¬´¦ÀíÊÂ¼ş¡¢¸üĞÂÂß¼­ºÍäÖÈ¾
+	 * @brief åº”ç”¨ç¨‹åºä¸»å¾ªç¯ï¼Œå¤„ç†äº‹ä»¶ã€æ›´æ–°é€»è¾‘å’Œæ¸²æŸ“
 	 */
 	void AdApplication::MainLoop() {
-		mLastTimePoint = std::chrono::steady_clock::now(); // ³õÊ¼»¯ÉÏÒ»Ö¡Ê±¼äµã
-		while (!mWindow->ShouldClose()) { // Ö÷Ñ­»·Ö±µ½´°¿Ú¹Ø±Õ
-			mWindow->PollEvents(); // ´¦Àí´°¿ÚÊÂ¼ş
+		mLastTimePoint = std::chrono::steady_clock::now(); // è®°å½•ä¸Šä¸€å¸§æ—¶é—´ç‚¹
+		while (!mWindow->ShouldClose()) { // å¾ªç¯ç›´åˆ°çª—å£å…³é—­
+			mWindow->PollEvents(); // å¤„ç†çª—å£äº‹ä»¶
 			
-			// ¼ÆËãÖ¡¼ä¸ôÊ±¼ä
+			// è®¡ç®—å¸§é—´éš”æ—¶é—´
 			float deltaTime = std::chrono::duration<float>(std::chrono::steady_clock::now() - mLastTimePoint).count();
 			mLastTimePoint = std::chrono::steady_clock::now();
-			mFrameIndex++; // Ö¡¼ÆÊıÆ÷µİÔö
+			mFrameIndex++; // å¸§è®¡æ•°å™¨é€’å¢
 
-			if (!bPause) { // Èç¹ûÎ´ÔİÍ££¬Ôò¸üĞÂÂß¼­
+			if (!bPause) { // å¦‚æœæœªæš‚åœï¼Œæ›´æ–°æ¸¸æˆé€»è¾‘
 				OnUpdate(deltaTime);
 			}
-			OnRender(); // Ö´ĞĞäÖÈ¾Âß¼­
+			OnRender(); // æ‰§è¡Œæ¸²æŸ“æ“ä½œ
 
-			mWindow->SwapBuffer(); // ½»»»»º³åÇøÏÔÊ¾»­Ãæ
+			mWindow->SwapBuffer(); // äº¤æ¢çª—å£æ˜¾ç¤ºç¼“å†²
 		}
 	}
 
 	/**
-	 * @brief ½âÎöÃüÁîĞĞ²ÎÊı£¨Ä¿Ç°Îª¿ÕÊµÏÖ£©
-	 * @param argc ÃüÁîĞĞ²ÎÊı¸öÊı
-	 * @param argv ÃüÁîĞĞ²ÎÊıÊı×é
+	 * @brief è§£æå‘½ä»¤è¡Œå‚æ•°ï¼Œå½“å‰ä¸ºæœªå®ç°
+	 * @param argc å‘½ä»¤è¡Œå‚æ•°æ•°é‡
+	 * @param argv å‘½ä»¤è¡Œå‚æ•°æ•°ç»„
 	 */
 	void AdApplication::ParseArgs(int argc, char** argv) {
 
 	}
 
 	/**
-	 * @brief ¼ÓÔØÖ¸¶¨Â·¾¶µÄ³¡¾°ÎÄ¼ş
-	 * @param filePath ³¡¾°ÎÄ¼şÂ·¾¶£¨µ±Ç°Î´Ê¹ÓÃ£©
-	 * @return ÊÇ·ñ¼ÓÔØ³É¹¦
+	 * @brief åŠ è½½æŒ‡å®šè·¯å¾„çš„åœºæ™¯æ–‡ä»¶
+	 * @param filePath åœºæ™¯æ–‡ä»¶è·¯å¾„ï¼Œå½“å‰æœªä½¿ç”¨
+	 * @return æ˜¯å¦åŠ è½½æˆåŠŸ
 	 */
 	bool AdApplication::LoadScene(const std::string& filePath) {
-		if (mScene) { // Èç¹ûÒÑÓĞ³¡¾°£¬ÏÈĞ¶ÔØ
+		if (mScene) { // å¦‚æœå·²æœ‰åœºæ™¯ï¼Œå…ˆå¸è½½
 			UnLoadScene();
 		}
-		mScene = std::make_unique<AdScene>(); // ´´½¨ĞÂ³¡¾°
-		OnSceneInit(mScene.get()); // ³õÊ¼»¯³¡¾°»Øµ÷
-		sAppContext.scene = mScene.get(); // ¸üĞÂÈ«¾ÖÉÏÏÂÎÄÖĞµÄ³¡¾°Ö¸Õë
+		mScene = std::make_unique<AdScene>(); // åˆ›å»ºæ–°åœºæ™¯
+		OnSceneInit(mScene.get()); // åˆå§‹åŒ–åœºæ™¯å›è°ƒ
+		sAppContext.scene = mScene.get(); // è®¾ç½®å…¨å±€ä¸Šä¸‹æ–‡çš„åœºæ™¯æŒ‡é’ˆ
 		return true;
 	}
 
 	/**
-	 * @brief Ğ¶ÔØµ±Ç°¼ÓÔØµÄ³¡¾°
+	 * @brief å¸è½½å½“å‰åŠ è½½çš„åœºæ™¯
 	 */
 	void AdApplication::UnLoadScene() {
-		if (mScene) { // Èç¹û´æÔÚ³¡¾°
-			OnSceneDestroy(mScene.get()); // Ö´ĞĞ³¡¾°Ïú»Ù»Øµ÷
-			mScene.reset(); // ÊÍ·Å³¡¾°×ÊÔ´
-			sAppContext.scene = nullptr; // Çå¿ÕÈ«¾ÖÉÏÏÂÎÄÖĞµÄ³¡¾°Ö¸Õë
+		if (mScene) { // å¦‚æœå­˜åœ¨åœºæ™¯
+			OnSceneDestroy(mScene.get()); // æ‰§è¡Œåœºæ™¯é”€æ¯å›è°ƒ
+			mScene.reset(); // é‡Šæ”¾åœºæ™¯èµ„æº
+			sAppContext.scene = nullptr; // æ¸…é™¤å…¨å±€ä¸Šä¸‹æ–‡çš„åœºæ™¯æŒ‡é’ˆ
 		}
 	}
 }
