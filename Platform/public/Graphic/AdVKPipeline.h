@@ -8,82 +8,82 @@ namespace WuDu {
 	class AdVKRenderPass;
 
 	/**
-	 * @brief ÃèÊö×ÅÉ«Æ÷µÄ²¼¾ÖĞÅÏ¢£¬°üÀ¨ÃèÊö·û¼¯ºÏ²¼¾ÖºÍÍÆËÍ³£Á¿·¶Î§
+	 * @brief æè¿°ç€è‰²å™¨çš„å¸ƒå±€ä¿¡æ¯ï¼ŒåŒ…æ‹¬æè¿°ç¬¦é›†åˆå¸ƒå±€å’Œæ¨é€å¸¸é‡èŒƒå›´
 	 */
 	struct ShaderLayout {
-		std::vector<VkDescriptorSetLayout> descriptorSetLayouts; ///< ÃèÊö·û¼¯²¼¾ÖÊı×é
-		std::vector<VkPushConstantRange> pushConstants;          ///< ÍÆËÍ³£Á¿·¶Î§Êı×é
+		std::vector<VkDescriptorSetLayout> descriptorSetLayouts; ///< æè¿°ç¬¦é›†å¸ƒå±€æ•°ç»„
+		std::vector<VkPushConstantRange> pushConstants;          ///< æ¨é€å¸¸é‡èŒƒå›´æ•°ç»„
 	};
 
 	/**
-	 * @brief ¹ÜÏß¶¥µãÊäÈë×´Ì¬ÅäÖÃ½á¹¹Ìå
+	 * @brief ç®¡çº¿é¡¶ç‚¹è¾“å…¥çŠ¶æ€é…ç½®ç»“æ„ä½“
 	 */
 	struct PipelineVertexInputState {
-		std::vector<VkVertexInputBindingDescription> vertexBindings;     ///< ¶¥µã°ó¶¨ÃèÊöÊı×é
-		std::vector<VkVertexInputAttributeDescription> vertexAttributes; ///< ¶¥µãÊôĞÔÃèÊöÊı×é
+		std::vector<VkVertexInputBindingDescription> vertexBindings;     ///< é¡¶ç‚¹ç»‘å®šæè¿°æ•°ç»„
+		std::vector<VkVertexInputAttributeDescription> vertexAttributes; ///< é¡¶ç‚¹å±æ€§æè¿°æ•°ç»„
 	};
 
 	/**
-	 * @brief ¹ÜÏßÊäÈë×°Åä×´Ì¬ÅäÖÃ½á¹¹Ìå
+	 * @brief ç®¡çº¿è¾“å…¥è£…é…çŠ¶æ€é…ç½®ç»“æ„ä½“
 	 */
 	struct PipelineInputAssemblyState {
-		VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST; ///< Í¼ÔªÍØÆËÀàĞÍ£¬Ä¬ÈÏÎªÈı½ÇĞÎÁĞ±í
-		VkBool32 primitiveRestartEnable = VK_FALSE;                         ///< ÊÇ·ñÆôÓÃÍ¼ÔªÖØÆô¹¦ÄÜ£¬Ä¬ÈÏ¹Ø±Õ
+		VkPrimitiveTopology topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST; ///< å›¾å…ƒæ‹“æ‰‘ç±»å‹ï¼Œé»˜è®¤ä¸ºä¸‰è§’å½¢åˆ—è¡¨
+		VkBool32 primitiveRestartEnable = VK_FALSE;                         ///< æ˜¯å¦å¯ç”¨å›¾å…ƒé‡å¯åŠŸèƒ½ï¼Œé»˜è®¤å…³é—­
 	};
 
 	/**
-	 * @brief ¹ÜÏß¹âÕ¤»¯×´Ì¬ÅäÖÃ½á¹¹Ìå
+	 * @brief ç®¡çº¿å…‰æ …åŒ–çŠ¶æ€é…ç½®ç»“æ„ä½“
 	 */
 	struct PipelineRasterizationState {
-		VkBool32 depthClampEnable = VK_FALSE;                ///< ÊÇ·ñÆôÓÃÉî¶È½ØÈ¡£¬Ä¬ÈÏ¹Ø±Õ
-		VkBool32 rasterizerDiscardEnable = VK_FALSE;         ///< ÊÇ·ñ¶ªÆú¹âÕ¤»¯½á¹û£¬Ä¬ÈÏ²»¶ªÆú
-		VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL;    ///< ¶à±ßĞÎÌî³äÄ£Ê½£¬Ä¬ÈÏÌî³ä
-		VkCullModeFlags cullMode = VK_CULL_MODE_NONE;        ///< ÃæÌŞ³ıÄ£Ê½£¬Ä¬ÈÏ²»ÌŞ³ı
-		VkFrontFace frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; ///< Ç°ÃæÈÆÏò£¬Ä¬ÈÏÄæÊ±Õë
-		VkBool32 depthBiasEnable = VK_FALSE;                 ///< ÊÇ·ñÆôÓÃÉî¶ÈÆ«ÒÆ£¬Ä¬ÈÏ¹Ø±Õ
-		float depthBiasConstantFactor = 0;                   ///< Éî¶ÈÆ«ÒÆ³£Á¿Òò×Ó
-		float depthBiasClamp = 0;                            ///< Éî¶ÈÆ«ÒÆÇ¯Î»Öµ
-		float depthBiasSlopeFactor = 0;                      ///< Éî¶ÈÆ«ÒÆĞ±ÂÊÒò×Ó
-		float lineWidth = 1.f;                               ///< Ïß¿í£¬Ä¬ÈÏÎª1.0
+		VkBool32 depthClampEnable = VK_FALSE;                ///< æ˜¯å¦å¯ç”¨æ·±åº¦æˆªå–ï¼Œé»˜è®¤å…³é—­
+		VkBool32 rasterizerDiscardEnable = VK_FALSE;         ///< æ˜¯å¦ä¸¢å¼ƒå…‰æ …åŒ–ç»“æœï¼Œé»˜è®¤ä¸ä¸¢å¼ƒ
+		VkPolygonMode polygonMode = VK_POLYGON_MODE_FILL;    ///< å¤šè¾¹å½¢å¡«å……æ¨¡å¼ï¼Œé»˜è®¤å¡«å……
+		VkCullModeFlags cullMode = VK_CULL_MODE_NONE;        ///< é¢å‰”é™¤æ¨¡å¼ï¼Œé»˜è®¤ä¸å‰”é™¤
+		VkFrontFace frontFace = VK_FRONT_FACE_COUNTER_CLOCKWISE; ///< å‰é¢ç»•å‘ï¼Œé»˜è®¤é€†æ—¶é’ˆ
+		VkBool32 depthBiasEnable = VK_FALSE;                 ///< æ˜¯å¦å¯ç”¨æ·±åº¦åç§»ï¼Œé»˜è®¤å…³é—­
+		float depthBiasConstantFactor = 0;                   ///< æ·±åº¦åç§»å¸¸é‡å› å­
+		float depthBiasClamp = 0;                            ///< æ·±åº¦åç§»é’³ä½å€¼
+		float depthBiasSlopeFactor = 0;                      ///< æ·±åº¦åç§»æ–œç‡å› å­
+		float lineWidth = 1.f;                               ///< çº¿å®½ï¼Œé»˜è®¤ä¸º1.0
 	};
 
 	/**
-	 * @brief ¹ÜÏß¶àÖØ²ÉÑù×´Ì¬ÅäÖÃ½á¹¹Ìå
+	 * @brief ç®¡çº¿å¤šé‡é‡‡æ ·çŠ¶æ€é…ç½®ç»“æ„ä½“
 	 */
 	struct PipelineMultisampleState {
-		VkSampleCountFlagBits rasterizationSamples = VK_SAMPLE_COUNT_1_BIT; ///< ¹âÕ¤»¯²ÉÑùÊı£¬Ä¬ÈÏÎª1¸öÑù±¾
-		VkBool32 sampleShadingEnable = VK_FALSE;                            ///< ÊÇ·ñÆôÓÃÑù±¾×ÅÉ«£¬Ä¬ÈÏ¹Ø±Õ
-		float minSampleShading = 0.2f;                                      ///< ×îĞ¡Ñù±¾×ÅÉ«±ÈÀı
+		VkSampleCountFlagBits rasterizationSamples = VK_SAMPLE_COUNT_1_BIT; ///< å…‰æ …åŒ–é‡‡æ ·æ•°ï¼Œé»˜è®¤ä¸º1ä¸ªæ ·æœ¬
+		VkBool32 sampleShadingEnable = VK_FALSE;                            ///< æ˜¯å¦å¯ç”¨æ ·æœ¬ç€è‰²ï¼Œé»˜è®¤å…³é—­
+		float minSampleShading = 0.2f;                                      ///< æœ€å°æ ·æœ¬ç€è‰²æ¯”ä¾‹
 	};
 
 	/**
-	 * @brief ¹ÜÏßÉî¶ÈºÍÄ£°å²âÊÔ×´Ì¬ÅäÖÃ½á¹¹Ìå
+	 * @brief ç®¡çº¿æ·±åº¦å’Œæ¨¡æ¿æµ‹è¯•çŠ¶æ€é…ç½®ç»“æ„ä½“
 	 */
 	struct PipelineDepthStencilState {
-		VkBool32 depthTestEnable = VK_FALSE;       ///< ÊÇ·ñÆôÓÃÉî¶È²âÊÔ£¬Ä¬ÈÏ¹Ø±Õ
-		VkBool32 depthWriteEnable = VK_FALSE;      ///< ÊÇ·ñÆôÓÃÉî¶ÈĞ´Èë£¬Ä¬ÈÏ¹Ø±Õ
-		VkCompareOp depthCompareOp = VK_COMPARE_OP_NEVER; ///< Éî¶È±È½Ï²Ù×÷£¬Ä¬ÈÏÓÀ²»Í¨¹ı
-		VkBool32 depthBoundsTestEnable = VK_FALSE; ///< ÊÇ·ñÆôÓÃÉî¶È±ß½ç²âÊÔ£¬Ä¬ÈÏ¹Ø±Õ
-		VkBool32 stencilTestEnable = VK_FALSE;     ///< ÊÇ·ñÆôÓÃÄ£°å²âÊÔ£¬Ä¬ÈÏ¹Ø±Õ
+		VkBool32 depthTestEnable = VK_FALSE;       ///< æ˜¯å¦å¯ç”¨æ·±åº¦æµ‹è¯•ï¼Œé»˜è®¤å…³é—­
+		VkBool32 depthWriteEnable = VK_FALSE;      ///< æ˜¯å¦å¯ç”¨æ·±åº¦å†™å…¥ï¼Œé»˜è®¤å…³é—­
+		VkCompareOp depthCompareOp = VK_COMPARE_OP_NEVER; ///< æ·±åº¦æ¯”è¾ƒæ“ä½œï¼Œé»˜è®¤æ°¸ä¸é€šè¿‡
+		VkBool32 depthBoundsTestEnable = VK_FALSE; ///< æ˜¯å¦å¯ç”¨æ·±åº¦è¾¹ç•Œæµ‹è¯•ï¼Œé»˜è®¤å…³é—­
+		VkBool32 stencilTestEnable = VK_FALSE;     ///< æ˜¯å¦å¯ç”¨æ¨¡æ¿æµ‹è¯•ï¼Œé»˜è®¤å…³é—­
 	};
 
 	/**
-	 * @brief ¹ÜÏß¶¯Ì¬×´Ì¬ÅäÖÃ½á¹¹Ìå
+	 * @brief ç®¡çº¿åŠ¨æ€çŠ¶æ€é…ç½®ç»“æ„ä½“
 	 */
 	struct PipelineDynamicState {
-		std::vector<VkDynamicState> dynamicStates; ///< ¶¯Ì¬×´Ì¬Êı×é
+		std::vector<VkDynamicState> dynamicStates; ///< åŠ¨æ€çŠ¶æ€æ•°ç»„
 	};
 
 	/**
-	 * @brief ¹ÜÏßÍêÕûÅäÖÃ½á¹¹Ìå£¬°üº¬ËùÓĞÍ¼ĞÎ¹ÜÏß×´Ì¬
+	 * @brief ç®¡çº¿å®Œæ•´é…ç½®ç»“æ„ä½“ï¼ŒåŒ…å«æ‰€æœ‰å›¾å½¢ç®¡çº¿çŠ¶æ€
 	 */
 	struct PipelineConfig {
-		PipelineVertexInputState vertexInputState;                    ///< ¶¥µãÊäÈë×´Ì¬
-		PipelineInputAssemblyState inputAssemblyState;                ///< ÊäÈë×°Åä×´Ì¬
-		PipelineRasterizationState rasterizationState;                ///< ¹âÕ¤»¯×´Ì¬
-		PipelineMultisampleState multisampleState;                    ///< ¶àÖØ²ÉÑù×´Ì¬
-		PipelineDepthStencilState depthStencilState;                  ///< Éî¶È/Ä£°å²âÊÔ×´Ì¬
-		VkPipelineColorBlendAttachmentState colorBlendAttachmentState{ ///< ÑÕÉ«»ìºÏ¸½¼ş×´Ì¬
+		PipelineVertexInputState vertexInputState;                    ///< é¡¶ç‚¹è¾“å…¥çŠ¶æ€
+		PipelineInputAssemblyState inputAssemblyState;                ///< è¾“å…¥è£…é…çŠ¶æ€
+		PipelineRasterizationState rasterizationState;                ///< å…‰æ …åŒ–çŠ¶æ€
+		PipelineMultisampleState multisampleState;                    ///< å¤šé‡é‡‡æ ·çŠ¶æ€
+		PipelineDepthStencilState depthStencilState;                  ///< æ·±åº¦/æ¨¡æ¿æµ‹è¯•çŠ¶æ€
+		VkPipelineColorBlendAttachmentState colorBlendAttachmentState{ ///< é¢œè‰²æ··åˆé™„ä»¶çŠ¶æ€
 			.blendEnable = VK_FALSE,
 			.srcColorBlendFactor = VK_BLEND_FACTOR_ONE,
 			.dstColorBlendFactor = VK_BLEND_FACTOR_ZERO,
@@ -96,178 +96,178 @@ namespace WuDu {
 					  | VK_COLOR_COMPONENT_B_BIT
 					  | VK_COLOR_COMPONENT_A_BIT
 		};
-		PipelineDynamicState dynamicState;                            ///< ¶¯Ì¬×´Ì¬
+		PipelineDynamicState dynamicState;                            ///< åŠ¨æ€çŠ¶æ€
 	};
 
 	/**
-	 * @brief Vulkan¹ÜÏß²¼¾ÖÀà£¬ÓÃÓÚ´´½¨ºÍ¹ÜÀí×ÅÉ«Æ÷Ä£¿é¼°¹ÜÏß²¼¾Ö¶ÔÏó
+	 * @brief Vulkanç®¡çº¿å¸ƒå±€ç±»ï¼Œç”¨äºåˆ›å»ºå’Œç®¡ç†ç€è‰²å™¨æ¨¡å—åŠç®¡çº¿å¸ƒå±€å¯¹è±¡
 	 */
 	class AdVKPipelineLayout {
 	public:
 		/**
-		 * @brief ¹¹Ôìº¯Êı£¬³õÊ¼»¯¹ÜÏß²¼¾Ö¶ÔÏó
-		 * @param device Ö¸ÏòVulkanÉè±¸¶ÔÏóµÄÖ¸Õë
-		 * @param vertexShaderFile ¶¥µã×ÅÉ«Æ÷ÎÄ¼şÂ·¾¶
-		 * @param fragShaderFile Æ¬¶Î×ÅÉ«Æ÷ÎÄ¼şÂ·¾¶
-		 * @param shaderLayout ×ÅÉ«Æ÷²¼¾ÖĞÅÏ¢£¨¿ÉÑ¡£©
+		 * @brief æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç®¡çº¿å¸ƒå±€å¯¹è±¡
+		 * @param device æŒ‡å‘Vulkanè®¾å¤‡å¯¹è±¡çš„æŒ‡é’ˆ
+		 * @param vertexShaderFile é¡¶ç‚¹ç€è‰²å™¨æ–‡ä»¶è·¯å¾„
+		 * @param fragShaderFile ç‰‡æ®µç€è‰²å™¨æ–‡ä»¶è·¯å¾„
+		 * @param shaderLayout ç€è‰²å™¨å¸ƒå±€ä¿¡æ¯ï¼ˆå¯é€‰ï¼‰
 		 */
 		AdVKPipelineLayout(AdVKDevice* device, const std::string& vertexShaderFile, const std::string& fragShaderFile, const ShaderLayout& shaderLayout = {});
 
 		/**
-		 * @brief Îö¹¹º¯Êı£¬ÊÍ·Å×ÊÔ´
+		 * @brief ææ„å‡½æ•°ï¼Œé‡Šæ”¾èµ„æº
 		 */
 		~AdVKPipelineLayout();
 
 		/**
-		 * @brief »ñÈ¡¹ÜÏß²¼¾Ö¾ä±ú
-		 * @return ·µ»ØVulkan¹ÜÏß²¼¾Ö¾ä±ú
+		 * @brief è·å–ç®¡çº¿å¸ƒå±€å¥æŸ„
+		 * @return è¿”å›Vulkanç®¡çº¿å¸ƒå±€å¥æŸ„
 		 */
 		VkPipelineLayout GetHandle() const { return mHandle; }
 
 		/**
-		 * @brief »ñÈ¡¶¥µã×ÅÉ«Æ÷Ä£¿é¾ä±ú
-		 * @return ·µ»ØVulkan×ÅÉ«Æ÷Ä£¿é¾ä±ú
+		 * @brief è·å–é¡¶ç‚¹ç€è‰²å™¨æ¨¡å—å¥æŸ„
+		 * @return è¿”å›Vulkanç€è‰²å™¨æ¨¡å—å¥æŸ„
 		 */
 		VkShaderModule GetVertexShaderModule() const { return mVertexShaderModule; }
 
 		/**
-		 * @brief »ñÈ¡Æ¬¶Î×ÅÉ«Æ÷Ä£¿é¾ä±ú
-		 * @return ·µ»ØVulkan×ÅÉ«Æ÷Ä£¿é¾ä±ú
+		 * @brief è·å–ç‰‡æ®µç€è‰²å™¨æ¨¡å—å¥æŸ„
+		 * @return è¿”å›Vulkanç€è‰²å™¨æ¨¡å—å¥æŸ„
 		 */
 		VkShaderModule GetFragShaderModule() const { return mFragShaderModule; }
 
 	private:
 		/**
-		 * @brief ´´½¨×ÅÉ«Æ÷Ä£¿é
-		 * @param filePath ×ÅÉ«Æ÷ÎÄ¼şÂ·¾¶
-		 * @param outShaderModule Êä³ö²ÎÊı£¬Ö¸Ïò´´½¨µÄ×ÅÉ«Æ÷Ä£¿é¾ä±ú
-		 * @return Vulkan½á¹û´úÂë
+		 * @brief åˆ›å»ºç€è‰²å™¨æ¨¡å—
+		 * @param filePath ç€è‰²å™¨æ–‡ä»¶è·¯å¾„
+		 * @param outShaderModule è¾“å‡ºå‚æ•°ï¼ŒæŒ‡å‘åˆ›å»ºçš„ç€è‰²å™¨æ¨¡å—å¥æŸ„
+		 * @return Vulkanç»“æœä»£ç 
 		 */
 		VkResult CreateShaderModule(const std::string& filePath, VkShaderModule* outShaderModule);
 
-		VkPipelineLayout mHandle = VK_NULL_HANDLE;           ///< ¹ÜÏß²¼¾Ö¾ä±ú
-		VkShaderModule mVertexShaderModule = VK_NULL_HANDLE; ///< ¶¥µã×ÅÉ«Æ÷Ä£¿é¾ä±ú
-		VkShaderModule mFragShaderModule = VK_NULL_HANDLE;   ///< Æ¬¶Î×ÅÉ«Æ÷Ä£¿é¾ä±ú
-		AdVKDevice* mDevice;                                 ///< Ö¸ÏòVulkanÉè±¸¶ÔÏóµÄÖ¸Õë
+		VkPipelineLayout mHandle = VK_NULL_HANDLE;           ///< ç®¡çº¿å¸ƒå±€å¥æŸ„
+		VkShaderModule mVertexShaderModule = VK_NULL_HANDLE; ///< é¡¶ç‚¹ç€è‰²å™¨æ¨¡å—å¥æŸ„
+		VkShaderModule mFragShaderModule = VK_NULL_HANDLE;   ///< ç‰‡æ®µç€è‰²å™¨æ¨¡å—å¥æŸ„
+		AdVKDevice* mDevice;                                 ///< æŒ‡å‘Vulkanè®¾å¤‡å¯¹è±¡çš„æŒ‡é’ˆ
 	};
 
 	/**
-	 * @brief VulkanÍ¼ĞÎ¹ÜÏßÀà£¬ÓÃÓÚ¹¹½¨ºÍ¹ÜÀíÍ¼ĞÎ¹ÜÏß¶ÔÏó
+	 * @brief Vulkanå›¾å½¢ç®¡çº¿ç±»ï¼Œç”¨äºæ„å»ºå’Œç®¡ç†å›¾å½¢ç®¡çº¿å¯¹è±¡
 	 */
 	class AdVKPipeline {
 	public:
 		/**
-		 * @brief ¹¹Ôìº¯Êı£¬³õÊ¼»¯¹ÜÏß¶ÔÏó
-		 * @param device Ö¸ÏòVulkanÉè±¸¶ÔÏóµÄÖ¸Õë
-		 * @param renderPass Ö¸ÏòäÖÈ¾Í¨µÀ¶ÔÏóµÄÖ¸Õë
-		 * @param pipelineLayout Ö¸Ïò¹ÜÏß²¼¾Ö¶ÔÏóµÄÖ¸Õë
+		 * @brief æ„é€ å‡½æ•°ï¼Œåˆå§‹åŒ–ç®¡çº¿å¯¹è±¡
+		 * @param device æŒ‡å‘Vulkanè®¾å¤‡å¯¹è±¡çš„æŒ‡é’ˆ
+		 * @param renderPass æŒ‡å‘æ¸²æŸ“é€šé“å¯¹è±¡çš„æŒ‡é’ˆ
+		 * @param pipelineLayout æŒ‡å‘ç®¡çº¿å¸ƒå±€å¯¹è±¡çš„æŒ‡é’ˆ
 		 */
 		AdVKPipeline(AdVKDevice* device, AdVKRenderPass* renderPass, AdVKPipelineLayout* pipelineLayout);
 
 		/**
-		 * @brief Îö¹¹º¯Êı£¬ÊÍ·Å×ÊÔ´
+		 * @brief ææ„å‡½æ•°ï¼Œé‡Šæ”¾èµ„æº
 		 */
 		~AdVKPipeline();
 
 		/**
-		 * @brief ´´½¨Í¼ĞÎ¹ÜÏß¶ÔÏó
+		 * @brief åˆ›å»ºå›¾å½¢ç®¡çº¿å¯¹è±¡
 		 */
 		void Create();
 
 		void SetSubPassIndex(uint32_t index);
 
 		/**
-		 * @brief °ó¶¨µ±Ç°¹ÜÏßµ½ÃüÁî»º³åÇø
-		 * @param cmdBuffer ÃüÁî»º³åÇø¾ä±ú
+		 * @brief ç»‘å®šå½“å‰ç®¡çº¿åˆ°å‘½ä»¤ç¼“å†²åŒº
+		 * @param cmdBuffer å‘½ä»¤ç¼“å†²åŒºå¥æŸ„
 		 */
 		void Bind(VkCommandBuffer cmdBuffer);
 
 		/**
-		 * @brief ÉèÖÃ¶¥µãÊäÈë×´Ì¬
-		 * @param vertexBindings ¶¥µã°ó¶¨ÃèÊöÊı×é
-		 * @param vertexAttrs ¶¥µãÊôĞÔÃèÊöÊı×é
-		 * @return ·µ»Øµ±Ç°¶ÔÏóÖ¸Õë£¬Ö§³ÖÁ´Ê½µ÷ÓÃ
+		 * @brief è®¾ç½®é¡¶ç‚¹è¾“å…¥çŠ¶æ€
+		 * @param vertexBindings é¡¶ç‚¹ç»‘å®šæè¿°æ•°ç»„
+		 * @param vertexAttrs é¡¶ç‚¹å±æ€§æè¿°æ•°ç»„
+		 * @return è¿”å›å½“å‰å¯¹è±¡æŒ‡é’ˆï¼Œæ”¯æŒé“¾å¼è°ƒç”¨
 		 */
 		AdVKPipeline* SetVertexInputState(const std::vector<VkVertexInputBindingDescription>& vertexBindings, const std::vector<VkVertexInputAttributeDescription>& vertexAttrs);
 
 		/**
-		 * @brief ÉèÖÃÊäÈë×°Åä×´Ì¬
-		 * @param topology Í¼ÔªÍØÆËÀàĞÍ
-		 * @param primitiveRestartEnable ÊÇ·ñÆôÓÃÍ¼ÔªÖØÆô¹¦ÄÜ£¬Ä¬ÈÏ¹Ø±Õ
-		 * @return ·µ»Øµ±Ç°¶ÔÏóÖ¸Õë£¬Ö§³ÖÁ´Ê½µ÷ÓÃ
+		 * @brief è®¾ç½®è¾“å…¥è£…é…çŠ¶æ€
+		 * @param topology å›¾å…ƒæ‹“æ‰‘ç±»å‹
+		 * @param primitiveRestartEnable æ˜¯å¦å¯ç”¨å›¾å…ƒé‡å¯åŠŸèƒ½ï¼Œé»˜è®¤å…³é—­
+		 * @return è¿”å›å½“å‰å¯¹è±¡æŒ‡é’ˆï¼Œæ”¯æŒé“¾å¼è°ƒç”¨
 		 */
 		AdVKPipeline* SetInputAssemblyState(VkPrimitiveTopology topology, VkBool32 primitiveRestartEnable = VK_FALSE);
 
 		/**
-		 * @brief ÉèÖÃ¹âÕ¤»¯×´Ì¬
-		 * @param rasterizationState ¹âÕ¤»¯×´Ì¬ÅäÖÃ½á¹¹Ìå
-		 * @return ·µ»Øµ±Ç°¶ÔÏóÖ¸Õë£¬Ö§³ÖÁ´Ê½µ÷ÓÃ
+		 * @brief è®¾ç½®å…‰æ …åŒ–çŠ¶æ€
+		 * @param rasterizationState å…‰æ …åŒ–çŠ¶æ€é…ç½®ç»“æ„ä½“
+		 * @return è¿”å›å½“å‰å¯¹è±¡æŒ‡é’ˆï¼Œæ”¯æŒé“¾å¼è°ƒç”¨
 		 */
 		AdVKPipeline* SetRasterizationState(const PipelineRasterizationState& rasterizationState);
 
 		/**
-		 * @brief ÉèÖÃ¶àÖØ²ÉÑù×´Ì¬
-		 * @param samples ²ÉÑùÊı
-		 * @param sampleShadingEnable ÊÇ·ñÆôÓÃÑù±¾×ÅÉ«
-		 * @param minSampleShading ×îĞ¡Ñù±¾×ÅÉ«±ÈÀı£¬Ä¬ÈÏÎª0
-		 * @return ·µ»Øµ±Ç°¶ÔÏóÖ¸Õë£¬Ö§³ÖÁ´Ê½µ÷ÓÃ
+		 * @brief è®¾ç½®å¤šé‡é‡‡æ ·çŠ¶æ€
+		 * @param samples é‡‡æ ·æ•°
+		 * @param sampleShadingEnable æ˜¯å¦å¯ç”¨æ ·æœ¬ç€è‰²
+		 * @param minSampleShading æœ€å°æ ·æœ¬ç€è‰²æ¯”ä¾‹ï¼Œé»˜è®¤ä¸º0
+		 * @return è¿”å›å½“å‰å¯¹è±¡æŒ‡é’ˆï¼Œæ”¯æŒé“¾å¼è°ƒç”¨
 		 */
 		AdVKPipeline* SetMultisampleState(VkSampleCountFlagBits samples, VkBool32 sampleShadingEnable, float minSampleShading = 0.f);
 
 		/**
-		 * @brief ÉèÖÃÉî¶ÈºÍÄ£°å²âÊÔ×´Ì¬
-		 * @param depthStencilState Éî¶È/Ä£°å²âÊÔ×´Ì¬ÅäÖÃ½á¹¹Ìå
-		 * @return ·µ»Øµ±Ç°¶ÔÏóÖ¸Õë£¬Ö§³ÖÁ´Ê½µ÷ÓÃ
+		 * @brief è®¾ç½®æ·±åº¦å’Œæ¨¡æ¿æµ‹è¯•çŠ¶æ€
+		 * @param depthStencilState æ·±åº¦/æ¨¡æ¿æµ‹è¯•çŠ¶æ€é…ç½®ç»“æ„ä½“
+		 * @return è¿”å›å½“å‰å¯¹è±¡æŒ‡é’ˆï¼Œæ”¯æŒé“¾å¼è°ƒç”¨
 		 */
 		AdVKPipeline* SetDepthStencilState(const PipelineDepthStencilState& depthStencilState);
 
 		/**
-		 * @brief ÉèÖÃÑÕÉ«»ìºÏ¸½¼ş×´Ì¬
-		 * @param blendEnable ÊÇ·ñÆôÓÃ»ìºÏ
-		 * @param srcColorBlendFactor Ô´ÑÕÉ«»ìºÏÒò×Ó£¬Ä¬ÈÏÎªVK_BLEND_FACTOR_ONE
-		 * @param dstColorBlendFactor Ä¿±êÑÕÉ«»ìºÏÒò×Ó£¬Ä¬ÈÏÎªVK_BLEND_FACTOR_ZERO
-		 * @param colorBlendOp ÑÕÉ«»ìºÏ²Ù×÷£¬Ä¬ÈÏÎªVK_BLEND_OP_ADD
-		 * @param srcAlphaBlendFactor Ô´Alpha»ìºÏÒò×Ó£¬Ä¬ÈÏÎªVK_BLEND_FACTOR_ONE
-		 * @param dstAlphaBlendFactor Ä¿±êAlpha»ìºÏÒò×Ó£¬Ä¬ÈÏÎªVK_BLEND_FACTOR_ZERO
-		 * @param alphaBlendOp Alpha»ìºÏ²Ù×÷£¬Ä¬ÈÏÎªVK_BLEND_OP_ADD
-		 * @return ·µ»Øµ±Ç°¶ÔÏóÖ¸Õë£¬Ö§³ÖÁ´Ê½µ÷ÓÃ
+		 * @brief è®¾ç½®é¢œè‰²æ··åˆé™„ä»¶çŠ¶æ€
+		 * @param blendEnable æ˜¯å¦å¯ç”¨æ··åˆ
+		 * @param srcColorBlendFactor æºé¢œè‰²æ··åˆå› å­ï¼Œé»˜è®¤ä¸ºVK_BLEND_FACTOR_ONE
+		 * @param dstColorBlendFactor ç›®æ ‡é¢œè‰²æ··åˆå› å­ï¼Œé»˜è®¤ä¸ºVK_BLEND_FACTOR_ZERO
+		 * @param colorBlendOp é¢œè‰²æ··åˆæ“ä½œï¼Œé»˜è®¤ä¸ºVK_BLEND_OP_ADD
+		 * @param srcAlphaBlendFactor æºAlphaæ··åˆå› å­ï¼Œé»˜è®¤ä¸ºVK_BLEND_FACTOR_ONE
+		 * @param dstAlphaBlendFactor ç›®æ ‡Alphaæ··åˆå› å­ï¼Œé»˜è®¤ä¸ºVK_BLEND_FACTOR_ZERO
+		 * @param alphaBlendOp Alphaæ··åˆæ“ä½œï¼Œé»˜è®¤ä¸ºVK_BLEND_OP_ADD
+		 * @return è¿”å›å½“å‰å¯¹è±¡æŒ‡é’ˆï¼Œæ”¯æŒé“¾å¼è°ƒç”¨
 		 */
 		AdVKPipeline* SetColorBlendAttachmentState(VkBool32 blendEnable,
 			VkBlendFactor srcColorBlendFactor = VK_BLEND_FACTOR_ONE, VkBlendFactor dstColorBlendFactor = VK_BLEND_FACTOR_ZERO, VkBlendOp colorBlendOp = VK_BLEND_OP_ADD,
 			VkBlendFactor srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE, VkBlendFactor dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO, VkBlendOp alphaBlendOp = VK_BLEND_OP_ADD);
 
 		/**
-		 * @brief ÉèÖÃ¶¯Ì¬×´Ì¬
-		 * @param dynamicStates ¶¯Ì¬×´Ì¬Êı×é
-		 * @return ·µ»Øµ±Ç°¶ÔÏóÖ¸Õë£¬Ö§³ÖÁ´Ê½µ÷ÓÃ
+		 * @brief è®¾ç½®åŠ¨æ€çŠ¶æ€
+		 * @param dynamicStates åŠ¨æ€çŠ¶æ€æ•°ç»„
+		 * @return è¿”å›å½“å‰å¯¹è±¡æŒ‡é’ˆï¼Œæ”¯æŒé“¾å¼è°ƒç”¨
 		 */
 		AdVKPipeline* SetDynamicState(const std::vector<VkDynamicState>& dynamicStates);
 
 		/**
-		 * @brief ÆôÓÃAlpha»ìºÏ
-		 * @return ·µ»Øµ±Ç°¶ÔÏóÖ¸Õë£¬Ö§³ÖÁ´Ê½µ÷ÓÃ
+		 * @brief å¯ç”¨Alphaæ··åˆ
+		 * @return è¿”å›å½“å‰å¯¹è±¡æŒ‡é’ˆï¼Œæ”¯æŒé“¾å¼è°ƒç”¨
 		 */
 		AdVKPipeline* EnableAlphaBlend();
 
 		/**
-		 * @brief ÆôÓÃÉî¶È²âÊÔ
-		 * @return ·µ»Øµ±Ç°¶ÔÏóÖ¸Õë£¬Ö§³ÖÁ´Ê½µ÷ÓÃ
+		 * @brief å¯ç”¨æ·±åº¦æµ‹è¯•
+		 * @return è¿”å›å½“å‰å¯¹è±¡æŒ‡é’ˆï¼Œæ”¯æŒé“¾å¼è°ƒç”¨
 		 */
 		AdVKPipeline* EnableDepthTest();
 
 		/**
-		 * @brief »ñÈ¡¹ÜÏß¾ä±ú
-		 * @return ·µ»ØVulkan¹ÜÏß¾ä±ú
+		 * @brief è·å–ç®¡çº¿å¥æŸ„
+		 * @return è¿”å›Vulkanç®¡çº¿å¥æŸ„
 		 */
 		VkPipeline GetHandle() const { return mHandle; }
 
 	private:
-		VkPipeline mHandle = VK_NULL_HANDLE;         ///< ¹ÜÏß¾ä±ú
-		AdVKDevice* mDevice;                         ///< Ö¸ÏòVulkanÉè±¸¶ÔÏóµÄÖ¸Õë
-		AdVKRenderPass* mRenderPass;                 ///< Ö¸ÏòäÖÈ¾Í¨µÀ¶ÔÏóµÄÖ¸Õë
-		AdVKPipelineLayout* mPipelineLayout;         ///< Ö¸Ïò¹ÜÏß²¼¾Ö¶ÔÏóµÄÖ¸Õë
+		VkPipeline mHandle = VK_NULL_HANDLE;         ///< ç®¡çº¿å¥æŸ„
+		AdVKDevice* mDevice;                         ///< æŒ‡å‘Vulkanè®¾å¤‡å¯¹è±¡çš„æŒ‡é’ˆ
+		AdVKRenderPass* mRenderPass;                 ///< æŒ‡å‘æ¸²æŸ“é€šé“å¯¹è±¡çš„æŒ‡é’ˆ
+		AdVKPipelineLayout* mPipelineLayout;         ///< æŒ‡å‘ç®¡çº¿å¸ƒå±€å¯¹è±¡çš„æŒ‡é’ˆ
 		uint32_t mSubPassIndex;
-		PipelineConfig mPipelineConfig;              ///< ¹ÜÏßÅäÖÃĞÅÏ¢
+		PipelineConfig mPipelineConfig;              ///< ç®¡çº¿é…ç½®ä¿¡æ¯
 	};
 }
 

@@ -12,11 +12,11 @@
 #include "ECS/Component/AdTransformComponent.h"
 
 namespace WuDu {
-	//³õÊ¼»¯¹âÕÕ²ÄÖÊÏµÍ³
+	//åˆå§‹åŒ–å…‰ç…§æè´¨ç³»ç»Ÿ
 	void AdPBRMaterialSystem::OnInit(AdVKRenderPass* renderPass) {
 		AdVKDevice* device = GetDevice();
 
-		// ´´½¨Ö¡UBOÃèÊö·û¼¯²¼¾Ö£ºÓÃÓÚ´«µİÍ¶Ó°¾ØÕó¡¢ÊÓÍ¼¾ØÕóµÈÃ¿Ö¡²»±äµÄÊı¾İ
+		// åˆ›å»ºå¸§UBOæè¿°ç¬¦é›†å¸ƒå±€ï¼šç”¨äºä¼ é€’æŠ•å½±çŸ©é˜µã€è§†å›¾çŸ©é˜µç­‰æ¯å¸§ä¸å˜çš„æ•°æ®
 		{
 			const std::vector<VkDescriptorSetLayoutBinding> bindings = {
 				{
@@ -40,7 +40,7 @@ namespace WuDu {
 			mMaterialParamDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
 		}
 
-		// ´´½¨²ÄÖÊ×ÊÔ´ÃèÊö·û¼¯²¼¾Ö£ºÓÃÓÚ´«µİÎÆÀí²ÉÑùÆ÷ºÍÍ¼ÏñÊÓÍ¼
+		// åˆ›å»ºæè´¨èµ„æºæè¿°ç¬¦é›†å¸ƒå±€ï¼šç”¨äºä¼ é€’çº¹ç†é‡‡æ ·å™¨å’Œå›¾åƒè§†å›¾
 		{
 			const std::vector<VkDescriptorSetLayoutBinding> bindings = {
 				{
@@ -59,14 +59,14 @@ namespace WuDu {
 			mMaterialResourceDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
 		}
 
-		//¶¨ÒåÍÆËÍ³£Á¿: ÓÃÓÚ´«µİÄ£ĞÍ±ä»»¾ØÕó
+		//å®šä¹‰æ¨é€å¸¸é‡: ç”¨äºä¼ é€’æ¨¡å‹å˜æ¢çŸ©é˜µ
 		VkPushConstantRange modelPC = {
 			.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
 			.offset = 0,
 			.size = sizeof(ModelPC)
 		};
 
-		//¹¹½¨×ÅÉ«Æ÷²¼¾Ö²¢´´½¨¹ÜÏß²¼¾Ö
+		//æ„å»ºç€è‰²å™¨å¸ƒå±€å¹¶åˆ›å»ºç®¡çº¿å¸ƒå±€
 		ShaderLayout shaderLayout = {
 			.descriptorSetLayouts = { mFrameUboDescSetLayout->GetHandle(), mMaterialParamDescSetLayout->GetHandle(), mMaterialResourceDescSetLayout->GetHandle() },
 			.pushConstants = { modelPC }
@@ -78,7 +78,7 @@ namespace WuDu {
 			shaderLayout
 		);
 
-		//ÅäÖÃ¶¥µãÊäÈë¸ñÊ½
+		//é…ç½®é¡¶ç‚¹è¾“å…¥æ ¼å¼
 		std::vector<VkVertexInputBindingDescription> vertexBindings = {
 			{
 				.binding = 0,
@@ -120,7 +120,7 @@ namespace WuDu {
 			}
 		};
 
-		//´´½¨Í¼ĞÎ¹ÜÏß²¢ÉèÖÃÏà¹Ø²ÎÊı
+		//åˆ›å»ºå›¾å½¢ç®¡çº¿å¹¶è®¾ç½®ç›¸å…³å‚æ•°
 		mPipeline = std::make_shared<AdVKPipeline>(device, renderPass, mPipelineLayout.get());
 		mPipeline->SetVertexInputState(vertexBindings, vertexAttrs);
 		mPipeline->EnableDepthTest();
@@ -129,7 +129,7 @@ namespace WuDu {
 		mPipeline->SetSubPassIndex(0);
 		mPipeline->Create();
 
-		//´´½¨ÃèÊö·û³Ø²¢·ÖÅäÖ¡UBOÃèÊö·û¼¯
+		//åˆ›å»ºæè¿°ç¬¦æ± å¹¶åˆ†é…å¸§UBOæè¿°ç¬¦é›†
 		std::vector<VkDescriptorPoolSize> poolSizes = {
 			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
@@ -140,18 +140,69 @@ namespace WuDu {
 		mFrameUboDescSet = mDescriptorPool->AllocateDescriptorSet(mFrameUboDescSetLayout.get(), 1)[0];
 		mFrameUboBuffer = std::make_shared<AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(FrameUbo), nullptr, true);
 
-		//³õÊ¼»¯²ÄÖÊÃèÊö·û³Ø
+		//åˆå§‹åŒ–æè´¨æè¿°ç¬¦æ± 
 		ReCreateMaterialDescPool(NUM_MATERIAL_BATCH);
 
-		//´´½¨Ä¬ÈÏÎÆÀí
+		//åˆ›å»ºé»˜è®¤çº¹ç†
 		//std::unique_ptr<RGBAColor> whitePixel = std::make_unique<RGBAColor>(255, 255, 255, 255);
 		RGBAColor pixel { 255, 255, 255, 255 };
 		mDefaultTexture = std::make_shared<AdTexture>(1, 1, & pixel);
 
-		//´´½¨Ä¬ÈÏ²ÉÑùÆ÷
+		//åˆ›å»ºé»˜è®¤é‡‡æ ·å™¨
 
 		mDefaultSampler = std::make_shared<AdSampler>();
 	}
 
-	void AdPBRMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) {}
+	void AdPBRMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) {
+		Adscene* scene = GetScene();
+		if(!scene){
+			return;
+		}
+		entt::registry& reg = scene->GetEcsRegistry();
+
+
+		//è·å–å…·æœ‰çœ‹æ¢ç»„ä»¶å’Œæ— å…‰ç…§è¾èŒç»„ä»¶çš„å®è§†å›¾
+		auto view = reg.view<AdTransformComponent, AdPBRMaterialComponent>
+		if(std::distance(view.begin(), view.end()) == 0){
+			return;
+		}
+
+		//ç»‘å®šå›¾å½¢ç®¡çº¿å¹¶è®¾ç½®è§†å£å’Œè£å‰ªåŒºåŸŸ
+		mPipeline->Bind(cmdBuffer);
+		AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
+		VkViewport viewport = {
+			.x = 0,
+			.y = 0,
+			.width = static_cast<float>(frameBuffer->GetWidth()),
+			.height = static_cast<float>(frameBuffer->GetHeight()),
+			.minDepth = 0.f,
+			.maxDepth = 1.f
+		};
+		vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+
+		VkRect2D scissor = {
+			.offset = { 0 , 0 },
+			.extent = { frameBuffer->GetWidth(), frameBuffer->GetHeight() }
+		};
+		vkCmdSetScissor(cmdBuffer,0,1,&scissor);
+
+		//æ›´æ–°å¸§UBOæè¿°ç¬¦é›†
+		UpdateFrameUboDescSet(renderTarget);
+
+		//æ£€æŸ¥æ˜¯å¦éœ€è¦é‡æ–°åˆ›å»ºæè´¨æè¿°ç¬¦æ± 
+		bool bShouldForceUpdateMaterial = false;
+		uin32_t materialCount = AdMaterialFactory::GetInstance()->GetMaterialSize<AdPBRMaterial>();
+		if(materialCount > mLastDescriptorSetCount){
+			ReCreateMaterialDescPool(materialCount);
+			bShouldForceUpdateMaterial = true;
+		}
+
+		//éå†æ‰€æœ‰å®ä½“å¹¶æ¸²æŸ“
+		std::vector<bool> updateFlags(materialCount);
+		view.each([this, &updateFlags, &bShouldForceUpdateMaterial, &cmdBuffer](AdTransformComponent& transComp,AdPBRMaterialComponent& materialComp){
+			for(const auto& entry : materialComp.GetMeshMaterials()){
+				AdPBRMaterial* material = entry.first;
+			}
+		})
+	}
 }
