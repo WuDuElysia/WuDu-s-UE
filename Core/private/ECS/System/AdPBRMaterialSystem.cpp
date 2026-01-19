@@ -202,7 +202,139 @@ namespace WuDu {
 		view.each([this, &updateFlags, &bShouldForceUpdateMaterial, &cmdBuffer](AdTransformComponent& transComp,AdPBRMaterialComponent& materialComp){
 			for(const auto& entry : materialComp.GetMeshMaterials()){
 				AdPBRMaterial* material = entry.first;
+				if(!material || material->GetIndex()<0){
+					LOG_W("TODO: default material or error material ?");
+					continue;
+				}
+
+				//查找当前材质对应的索引
+				uint32_t materialIndex = material->GetIndex();
+				VkDescriptorSet paramsDescSet = mMaterialDescSets[materialIndex];
+				VkDescriptorSet resourceDescSet = mMaterialResourceDescSets[materialIndex];
+
+				//更新材质参数和资源描述符集
+				if(!updateFlags[materialIndex] || bShouldForceUpdateMaterial){
+					UpdateMaterialParamsDescSet(paramsDescSet,material);
+					UpdateMaterialResourceDescSet(resourceDescSet,material);
+					updateFlags[materialIndex] = true;
+				}
+
+				//绑定描述符集并推送模型矩阵常量
+				VkDescriptorSet descriptorSets[] = { mFrameUboDescSet, paramsDescSet, resourceDescSet };
+				vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetHandle(),
+					0, ARRAY_SIZE(descriptorSets), descriptorSets, 0, nullptr);
+
+				ModelPC pc = { transComp.GetTransform() };
+				vkCmdPushConstants(cmdBuffer, mPipelineLayout->GetHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(ModelPC), &pc);
+
+				//绘制网格
+				for(const auto& meshIndex : entry.second){
+					materialComp.GetMesh(meshIndex)->Draw(cmdBuffer);
+
+				}
 			}
 		});
 	}
+
+	//销毁pbr材质系统资源
+	void AdPBRMaterialSystem::OnDestroy() {
+		mPipeline.reset();
+		mPipelineLayout.reset();
+	}
+
+	//重新创建材质描述符池
+	void AdPBRMaterialSystem::ReCreateMaterialDescPool(uint32_t materialCount) {
+		AdVKDevice* device = GetDevice();
+
+		//计算新的描述符集数量
+		uint32_t newDescriptorSetCount = mLastDescriptorSetCount;
+		if (mLastDescriptorSetCount == 0) {
+			newDescriptorSetCount = NUM_MATERIAL_BATCH;
+		}
+
+		while (newDescriptorSetCount < materialCount) {
+			newDescriptorSetCount *= 2;
+		}
+
+		if (newDescriptorSetCount > NUM_MATERIAL_BATCH_MAX) {
+			LOG_E("Descriptor Set max count is : {0}, but request : {1}", NUM_MATERIAL_BATCH_MAX, newDescriptorSetCount);
+			return;
+		}
+
+		LOG_W("{0}: {1} -> {2} S.", __FUNCTION__, mLastDescriptorSetCount, newDescriptorSetCount);
+
+		//销毁旧的描述符池和相关资源
+		mMaterialDescSets.clear();
+		mMaterialResourceDescSets.clear();
+		if (mMaterialDescriptorPool) {
+			mMaterialDescriptorPool.reset();
+		}
+
+		//创建新的描述符池
+		std::vector<VkDescriptorPoolSize> poolSizes = {
+			{
+				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+				.descriptorCount = newDescriptorSetCount
+			},
+			{
+				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+				.descriptorCount = newDescriptorSetCount * 2
+			}
+		};
+		mMaterialDescriptorPool = std::make_shared<WuDu::AdVKDescriptorPool>(device, newDescriptorSetCount * 2, poolSizes);
+
+		//分配新的描述符集
+		mMaterialDescSets = mMaterialDescriptorPool->AllocateDescriptorSet(mMaterialParamDescSetLayout.get(), newDescriptorSetCount);
+		mMaterialResourceDescSets = mMaterialDescriptorPool->AllocateDescriptorSet(mMaterialResourceDescSetLayout.get(), newDescriptorSetCount);
+		assert(mMaterialDescSets.size() == newDescriptorSetCount && "Failed to AllocateDescriptorSet");
+		assert(mMaterialResourceDescSets.size() == newDescriptorSetCount && "Failed to AllocateDescriptorSet");
+
+		//创建新的材质缓冲区
+		uint32_t diffCount = newDescriptorSetCount - mLastDescriptorSetCount;
+		for (int i = 0; i < diffCount; i++) {
+			auto materialBuffer = std::make_shared<AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(PBRMaterialUbo), nullptr, true);
+			mMaterialBuffers.push_back(materialBuffer);
+		}
+		LOG_W("{0}: {1} -> {2} E.", __FUNCTION__, mLastDescriptorSetCount, newDescriptorSetCount);
+		mLastDescriptorSetCount = newDescriptorSetCount;
+	}
+
+	//更新帧UBO描述符集
+	void AdPBRMaterialSystem::UpdateFrameUboDescSet(AdRenderTarget* renderTarget) {
+		AdApplication* app = GetApp();
+		AdVKDevice* device = GetDevice();
+
+		AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
+		glm::ivec2 resolution = { frameBuffer->GetWidth(), frameBuffer->GetHeight() };
+
+		//构造帧UBO数据
+		FrameUbo frameUbo = {
+			.projMat = GetProjMat(renderTarget),
+			.viewMat = GetViewMat(renderTarget),
+			.resolution = resolution,
+			.frameId = static_cast<uint32_t>(app->GetFrameIndex()),
+			.time = app->GetStartTimeSecond()
+		};
+
+		//写入缓冲区并更新描述符集
+		mFrameUboBuffer->WriteData(&frameUbo);
+		VkDescriptorBufferInfo bufferInfo = DescriptorSetWriter::BuildBufferInfo(mFrameUboBuffer->GetHandle(), 0, sizeof(frameUbo));
+		VkWriteDescriptorSet bufferWrite = DescriptorSetWriter::WriteBuffer(mFrameUboDescSet, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
+		DescriptorSetWriter::UpdateDescriptorSets(device->GetHandle(), { bufferWrite });
+	}
+	
+	//更新材质参数描述符集
+	void AdPBRMaterialSystem::UpdateMaterialParamsDescSet(VkDescriptorSet descSet, AdPBRMaterial* material){
+		AdVKDevice* device = GetDevice();
+
+		AdVKBuffer* materialBuffer = mMaterialBuffers[material->GetIndex()].get();
+		
+		//获取材质参数
+		PBRMaterialUbo params = material->GetParams();
+
+		//这里需要去找我的材质然后根据我的材质去找数据
+		const TextureView* texture0 = material->GetTextureView(PBR_MAT_BASE_COLOR);
+
+	}
+	
 }

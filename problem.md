@@ -15,3 +15,5 @@ modelmesh属性需要扩展
 每个mesh所对应的material，需要添加关联方法
 材质系统中 配置顶点的输入格式需要更改
 vulkan y轴向向下，目前临时解决方案是更改了摄像机的p矩阵，使y轴反转
+
+在我的AdPBRMaterialSystem里面，UpdateMaterialParamsDescSet函数里面的具体材质需要去导入而不是现在的自建
