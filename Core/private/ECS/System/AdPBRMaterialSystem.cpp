@@ -73,8 +73,8 @@ namespace WuDu {
 		};
 		mPipelineLayout = std::make_shared<AdVKPipelineLayout>(
 			device,
-			AD_RES_SHADER_DIR"",
-			AD_RES_SHADER_DIR"",
+			AD_RES_SHADER_DIR"PBR_Forward.vert",
+			AD_RES_SHADER_DIR"PBR_Forward.frag",
 			shaderLayout
 		);
 
@@ -332,9 +332,106 @@ namespace WuDu {
 		//获取材质参数
 		PBRMaterialUbo params = material->GetParams();
 
-		//这里需要去找我的材质然后根据我的材质去找数据
-		const TextureView* texture0 = material->GetTextureView(PBR_MAT_BASE_COLOR);
+		//更新基础颜色纹理参数
+		const TextureView* baseColorTexture = material->GetTextureView(PBR_MAT_BASE_COLOR);
+		if (baseColorTexture) {
+			AdMaterial::UpdateTextureParams(baseColorTexture, &params.baseColorTextureParam);
+		}
 
+		//更新法线纹理参数
+		const TextureView* normalTexture = material->GetTextureView(PBR_MAT_NORMAL);
+		if (normalTexture) {
+			AdMaterial::UpdateTextureParams(normalTexture, &params.normalTextureParam);
+		}
+
+		//更新金属度-粗糙度纹理参数
+		const TextureView* metallicRoughnessTexture = material->GetTextureView(PBR_MAT_METALLIC_ROUGHNESS);
+		if (metallicRoughnessTexture) {
+			AdMaterial::UpdateTextureParams(metallicRoughnessTexture, &params.metallicRoughnessTextureParam);
+		}
+
+		//更新环境光遮蔽纹理参数
+		const TextureView* aoTexture = material->GetTextureView(PBR_MAT_AO);
+		if (aoTexture) {
+			AdMaterial::UpdateTextureParams(aoTexture, &params.aoTextureParam);
+		}
+
+		//更新自发光纹理参数
+		const TextureView* emissiveTexture = material->GetTextureView(PBR_MAT_EMISSIVE);
+		if (emissiveTexture) {
+			AdMaterial::UpdateTextureParams(emissiveTexture, &params.emissiveTextureParam);
+		}
+
+		//写入缓冲区并更新描述符集
+		materialBuffer->WriteData(&params);
+		VkDescriptorBufferInfo bufferInfo = DescriptorSetWriter::BuildBufferInfo(materialBuffer->GetHandle(), 0, sizeof(params));
+		VkWriteDescriptorSet bufferWrite = DescriptorSetWriter::WriteBuffer(descSet, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
+		DescriptorSetWriter::UpdateDescriptorSets(device->GetHandle(), { bufferWrite });
+	}
+
+	//更新材质资源描述符集，传递纹理采样器和图像视图
+	void AdPBRMaterialSystem::UpdateMaterialResourceDescSet(VkDescriptorSet descSet, AdPBRMaterial* material){
+		AdVKDevice* device = GetDevice();
+
+		//获取纹理资源
+		const TextureView* baseColorTexture = material->GetTextureView(PBR_MAT_BASE_COLOR);
+		const TextureView* normalTexture = material->GetTextureView(PBR_MAT_NORMAL);
+		const TextureView* metallicRoughnessTexture = material->GetTextureView(PBR_MAT_METALLIC_ROUGHNESS);
+		const TextureView* aoTexture = material->GetTextureView(PBR_MAT_AO);
+		const TextureView* emissiveTexture = material->GetTextureView(PBR_MAT_EMISSIVE);
+
+		//设置默认纹理资源
+		TextureView defaultView;
+		defaultView.texture = mDefaultTexture.get();
+		defaultView.sampler = mDefaultSampler.get();
+
+		//如果没有设置纹理,使用默认纹理
+		if(!baseColorTexture->sampler || !baseColorTexture->texture) baseColorTexture = &defaultView;
+		if(!normalTexture->sampler || !normalTexture->texture) normalTexture = &defaultView;
+		if(!metallicRoughnessTexture->sampler || !metallicRoughnessTexture->texture) metallicRoughnessTexture = &defaultView;
+		if(!aoTexture->sampler || !aoTexture->texture) aoTexture = &defaultView;
+		if(!emissiveTexture->sampler || !emissiveTexture->texture) emissiveTexture = &defaultView;
+
+		//构建图像信息
+		VkDescriptorImageInfo baseColorImageInfo = DescriptorSetWriter::BuildImageInfo(
+			baseColorTexture->sampler->GetHandle(),
+			baseColorTexture->texture->GetImageView()->GetHandle()
+		);
+		VkDescriptorImageInfo normalImageInfo = DescriptorSetWriter::BuildImageInfo(
+			normalTexture->sampler->GetHandle(),
+			normalTexture->texture->GetImageView()->GetHandle()
+		);
+		VkDescriptorImageInfo metallicRoughnessImageInfo = DescriptorSetWriter::BuildImageInfo(
+			metallicRoughnessTexture->sampler->GetHandle(),
+			metallicRoughnessTexture->texture->GetImageView()->GetHandle()
+		);
+		VkDescriptorImageInfo aoImageInfo = DescriptorSetWriter::BuildImageInfo(
+			aoTexture->sampler->GetHandle(),
+			aoTexture->texture->GetImageView()->GetHandle()
+		);
+		VkDescriptorImageInfo emissiveImageInfo = DescriptorSetWriter::BuildImageInfo(
+			emissiveTexture->sampler->GetHandle(),
+			emissiveTexture->texture->GetImageView()->GetHandle()
+		);
+
+		//更新描述符集
+		VkWriteDescriptorSet baseColorWrite = DescriptorSetWriter::WriteImage(
+			descSet, PBR_MAT_BASE_COLOR, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &baseColorImageInfo
+		);
+		VkWriteDescriptorSet normalWrite = DescriptorSetWriter::WriteImage(
+			descSet, PBR_MAT_NORMAL, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &normalImageInfo
+		);
+		VkWriteDescriptorSet metallicRoughnessWrite = DescriptorSetWriter::WriteImage(
+			descSet, PBR_MAT_METALLIC_ROUGHNESS, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &metallicRoughnessImageInfo
+		);
+		VkWriteDescriptorSet aoWrite = DescriptorSetWriter::WriteImage(
+			descSet, PBR_MAT_AO, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &aoImageInfo
+		);
+		VkWriteDescriptorSet emissiveWrite = DescriptorSetWriter::WriteImage(
+			descSet, PBR_MAT_EMISSIVE, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, &emissiveImageInfo
+		);
+
+		DescriptorSetWriter::UpdateDescriptorSets(device->GetHandle(), { baseColorWrite, normalWrite, metallicRoughnessWrite, aoWrite, emissiveWrite });	
 	}
 	
 }
