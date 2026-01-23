@@ -6,10 +6,11 @@
 #include "Graphic/AdVKDescriptorSet.h"
 #include "Graphic/AdVKImageView.h"
 #include "Graphic/AdVKFrameBuffer.h"
-
 #include "Render/AdRenderTarget.h"
-
 #include "ECS/Component/AdTransformComponent.h"
+#include "ECS/Component/Light/AdDirectionalLightComponent.h"
+#include "ECS/Component/Light/AdPointLightComponent.h"
+#include "ECS/Component/Light/AdSpotLightComponent.h"
 
 namespace WuDu {
 	//初始化PBR材质渲染系统
@@ -28,6 +29,7 @@ namespace WuDu {
 			};
 			mFrameUboDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
 		}
+		//创建材质参数描述符布局
 		{
 			const std::vector<VkDescriptorSetLayoutBinding> bindings = {
 				{
@@ -39,7 +41,18 @@ namespace WuDu {
 			};
 			mMaterialParamDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
 		}
-
+		//创建光照UBO描述符布局
+		{
+			const std::vector<VkDescriptorSetLayoutBinding> bindings = {
+				{
+					.binding = 0,
+					.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+					.descriptorCount = 1,
+					.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
+				}
+			};
+			mLightUboDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
+		}
 		// 创建材质资源描述符布局，用于存储材质参数和纹理等
 		{
 			const std::vector<VkDescriptorSetLayoutBinding> bindings = {
@@ -54,7 +67,25 @@ namespace WuDu {
 					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
 					.descriptorCount = 1,
 					.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT
-			}
+				},
+				{
+					.binding = 2,
+					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+					.descriptorCount = 1,
+					.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT
+				},
+				{
+					.binding = 3,
+					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+					.descriptorCount = 1,
+					.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT
+				},
+				{
+					.binding = 4,
+					.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+					.descriptorCount = 1,
+					.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT
+				}
 			};
 			mMaterialResourceDescSetLayout = std::make_shared<AdVKDescriptorSetLayout>(device, bindings);
 		}
@@ -68,7 +99,12 @@ namespace WuDu {
 
 		//创建着色器资源布局和推送常量
 		ShaderLayout shaderLayout = {
-			.descriptorSetLayouts = { mFrameUboDescSetLayout->GetHandle(), mMaterialParamDescSetLayout->GetHandle(), mMaterialResourceDescSetLayout->GetHandle() },
+			.descriptorSetLayouts = { 
+				mFrameUboDescSetLayout->GetHandle(),
+				mMaterialParamDescSetLayout->GetHandle(),
+				mLightUboDescSetLayout->GetHandle(),
+				mMaterialResourceDescSetLayout->GetHandle() 
+			},
 			.pushConstants = { modelPC }
 		};
 		mPipelineLayout = std::make_shared<AdVKPipelineLayout>(
@@ -139,6 +175,7 @@ namespace WuDu {
 		mDescriptorPool = std::make_shared<AdVKDescriptorPool>(device, 1, poolSizes);
 		mFrameUboDescSet = mDescriptorPool->AllocateDescriptorSet(mFrameUboDescSetLayout.get(), 1)[0];
 		mFrameUboBuffer = std::make_shared<AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(FrameUbo), nullptr, true);
+		mLightUboBuffer = std::make_shared<AdVKBuffer>(device,VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,sizeof(LightUbo),nullptr,true);
 
 		//初始化材质描述符池
 		ReCreateMaterialDescPool(NUM_MATERIAL_BATCH);
@@ -189,6 +226,9 @@ namespace WuDu {
 		//更新每帧UBO描述符集
 		UpdateFrameUboDescSet(renderTarget);
 
+		//更新光照UBO
+		UpdateLightUboDescSet();
+
 		//检查是否需要重建材质描述符池
 		bool bShouldForceUpdateMaterial = false;
 		uint32_t materialCount = AdMaterialFactory::GetInstance()->GetMaterialSize<AdPBRMaterial>();
@@ -220,9 +260,22 @@ namespace WuDu {
 				}
 
 				//绑定描述符集并推送模型矩阵常量
-				VkDescriptorSet descriptorSets[] = { mFrameUboDescSet, paramsDescSet, resourceDescSet };
-				vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetHandle(),
-					0, ARRAY_SIZE(descriptorSets), descriptorSets, 0, nullptr);
+				VkDescriptorSet descriptorSets[] = { 
+					mFrameUboDescSet, 
+					paramsDescSet,
+					mLightUboDescSet, 
+					resourceDescSet
+				 };
+				vkCmdBindDescriptorSets(
+					cmdBuffer,
+					VK_PIPELINE_BIND_POINT_GRAPHICS,
+					mPipelineLayout->GetHandle(),
+					0, 
+					ARRAY_SIZE(descriptorSets), 
+					descriptorSets, 
+					0, 
+					nullptr
+				);
 
 				ModelPC pc = { transComp.GetTransform() };
 				vkCmdPushConstants(cmdBuffer, mPipelineLayout->GetHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(ModelPC), &pc);
@@ -433,5 +486,50 @@ namespace WuDu {
 
 		DescriptorSetWriter::UpdateDescriptorSets(device->GetHandle(), { baseColorWrite, normalWrite, metallicRoughnessWrite, aoWrite, emissiveWrite });	
 	}
-	
+
+	//更新光照UBO描述符集
+	void AdPBRMaterialSystem::UpdateLightUboDescSet(){
+		AdVKDevice* device = GetDevice();
+		auto& registry = GetScene()->GetEcsRegistry();
+
+		//收集所有光源组件
+		std::vector<LightUbo> lightUbos;
+
+		//遍历方向光
+		auto directionalLightView = registry.view<AdDirectionalLightComponent, AdTransformComponent>();
+		directionalLightView.each([&lightUbos](AdDirectionalLightComponent& dirLightComp, AdTransformComponent& transComp) {
+			lightUbos.push_back(dirLightComp.GetLightUbo());
+		});
+
+		//遍历点光
+		auto pointLightView = registry.view<AdPointLightComponent, AdTransformComponent>();
+		pointLightView.each([&lightUbos](AdPointLightComponent& pointLightComp, AdTransformComponent& transComp) {
+			lightUbos.push_back(pointLightComp.GetLightUbo());
+		});
+
+		//遍历聚光灯
+		auto spotLightView = registry.view<AdSpotLightComponent, AdTransformComponent>();
+		spotLightView.each([&lightUbos](AdSpotLightComponent& spotLightComp, AdTransformComponent& transComp) {
+			lightUbos.push_back(spotLightComp.GetLightUbo());
+		});
+
+		//更新光照UBO数据
+		LightingUbo lightingUbo{};
+		lightingUbo.ambientColor = mAmbientColor;
+		lightingUbo.ambientIntensity = mAmbientIntensity;
+		lightingUbo.numLights = static_cast<uint32_t>(lightUbos.size());
+
+		//复制光源数据到光照UBO
+		for (size_t i = 0; i < lightUbos.size() && i < MAX_LIGHTS; ++i) {
+			lightingUbo.lights[i] = lightUbos[i];
+		}
+
+		//写入光照UBO缓冲区
+		mLightUboBuffer->WriteData(&lightingUbo);
+
+		//更新描述符集
+		VkDescriptorBufferInfo bufferInfo = DescriptorSetWriter::BuildBufferInfo(mLightUboBuffer->GetHandle(), 0, sizeof(LightingUbo));
+		VkWriteDescriptorSet bufferWrite = DescriptorSetWriter::WriteBuffer(mLightUboDescSet, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
+		DescriptorSetWriter::UpdateDescriptorSets(device->GetHandle(), { bufferWrite });
+	}
 }
