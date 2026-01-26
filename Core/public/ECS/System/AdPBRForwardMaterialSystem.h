@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ECS/System/AdMaterialSystem.h"
-#include "ECS/Component/Material/AdPBRMaterialComponent.h"
+#include "ECS/Component/Material/AdPBRForwardMaterialComponent.h"
 #include "ECS/Component/Light/AdLightComponent.h"
 
 namespace WuDu {

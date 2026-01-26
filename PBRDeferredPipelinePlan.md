@@ -231,6 +231,49 @@ std::vector<AdVKRenderPass::RenderSubPass> subPasses = {
 };
 ```
 
+### 5.3 Subpass配置与AdVKPipeline的关联
+
+Subpass配置通过以下流程与AdVKPipeline关联起来：
+
+1. **创建渲染通道时使用subpass配置**：
+   ```cpp
+   std::shared_ptr<AdVKRenderPass> renderPass = std::make_shared<AdVKRenderPass>(
+       device,
+       attachments,  // 附件配置
+       subPasses     // subpass配置
+   );
+   ```
+
+2. **将渲染通道传递给AdVKPipeline**：
+   ```cpp
+   mGbufferPipeline = std::make_shared<AdVKPipeline>(
+       device,
+       renderPass,   // 关联到渲染通道
+       mGbufferPipelineLayout.get()
+   );
+   ```
+
+3. **为每个管线设置对应的subpass索引**：
+   ```cpp
+   mGbufferPipeline->SetSubPassIndex(0);  // 绑定到 Subpass 0
+   mDirectLightingPipeline->SetSubPassIndex(1);  // 绑定到 Subpass 1
+   mIBLPipeline->SetSubPassIndex(2);  // 绑定到 Subpass 2
+   mMergePipeline->SetSubPassIndex(3);  // 绑定到 Subpass 3
+   mPostProcessPipeline->SetSubPassIndex(4);  // 绑定到 Subpass 4
+   ```
+
+4. **AdVKPipeline内部处理**：
+   - 当调用`mGbufferPipeline->Create()`时，会将设置的subpass索引传递给Vulkan API
+   - 在`VkGraphicsPipelineCreateInfo`结构体中，`subpass`字段会被设置为`mSubPassIndex`
+   - 这样，每个管线就知道在渲染通道的哪个subpass中执行
+
+5. **渲染时自动处理subpass转换**：
+   - 当调用`renderPass->Begin(cmdBuffer, frameBuffer, clearValues)`时，会开始渲染通道
+   - 当在不同subpass的管线之间切换时，Vulkan会自动处理subpass之间的依赖关系和布局转换
+   - 无需手动管理subpass之间的状态切换
+
+通过这个流程，subpass配置就与AdVKPipeline紧密关联起来，实现了多阶段渲染管线的高效执行。
+
 ## 6. 管线设计
 
 ### 6.1 延迟材质系统架构
@@ -251,7 +294,8 @@ private:
     std::shared_ptr<AdVKDescriptorSetLayout> mLightUboDescSetLayout;
     std::shared_ptr<AdVKDescriptorSetLayout> mMaterialResourceDescSetLayout;
     std::shared_ptr<AdVKDescriptorSetLayout> mGbufferDescSetLayout;
-    std::shared_ptr<AdVKDescriptorSetLayout> mLightingDescSetLayout;
+    std::shared_ptr<AdVKDescriptorSetLayout> mIBLResourceDescSetLayout;
+    std::shared_ptr<AdVKDescriptorSetLayout> mLightingDescSetLayout;  // 合并阶段使用的描述符布局
     std::shared_ptr<AdVKDescriptorSetLayout> mPostProcessDescSetLayout;
     
     // 各 subpass 的管线
@@ -273,6 +317,9 @@ private:
     // 描述符集
     VkDescriptorSet mFrameUboDescSet;
     VkDescriptorSet mLightUboDescSet;
+    VkDescriptorSet mGbufferDescSet;
+    VkDescriptorSet mIBLResourceDescSet;
+    VkDescriptorSet mLightingDescSet;
     VkDescriptorSet mPostProcessDescSet;
     std::vector<VkDescriptorSet> mMaterialDescSets;
     std::vector<VkDescriptorSet> mMaterialResourceDescSets;
@@ -300,6 +347,9 @@ private:
             mFrameUboDescSetLayout->GetHandle(),
             mMaterialParamDescSetLayout->GetHandle(),
             mMaterialResourceDescSetLayout->GetHandle()
+            // 注意：几何阶段不需要 mGbufferDescSetLayout
+            // 因为几何阶段是**写入**GBuffer，而不是**读取**GBuffer
+            // 只有后续阶段（直接光照、IBL、合并）才需要读取GBuffer，所以它们需要 mGbufferDescSetLayout
         },
         .pushConstants = { modelPC }
     };
@@ -415,7 +465,8 @@ private:
     ShaderLayout shaderLayout = {
         .descriptorSetLayouts = {
             mFrameUboDescSetLayout->GetHandle(),
-            mPostProcessDescSetLayout->GetHandle()
+            mPostProcessDescSetLayout->GetHandle(),
+            mLightingDescSetLayout->GetHandle()  // 添加光照结果描述符集
         }
     };
     mPostProcessPipelineLayout = std::make_shared<AdVKPipelineLayout>(
@@ -434,7 +485,143 @@ private:
 }
 ```
 
-### 6.3 渲染循环
+### 6.3 描述符布局设计详解
+
+#### 6.3.1 各阶段描述符布局用途
+
+| 描述符布局 | 对应阶段 | 用途 | binding数量 |
+|-----------|---------|------|------------|
+| mFrameUboDescSetLayout | 所有阶段 | 帧级UBO（相机、分辨率等） | 1 |
+| mLightUboDescSetLayout | 直接光照阶段 | 光源参数UBO | 1 |
+| mGbufferDescSetLayout | 直接光照、IBL、合并阶段 | 访问GBuffer附件 | 4 |
+| mIBLResourceDescSetLayout | IBL阶段 | 访问IBL纹理资源 | 3 |
+| mLightingDescSetLayout | 合并阶段、后处理阶段 | 访问光照结果（直接光照+IBL） | 2 |
+| mPostProcessDescSetLayout | 后处理阶段 | 后处理参数UBO | 1 |
+| mMaterialParamDescSetLayout | 几何阶段 | 材质参数UBO | 根据材质模板确定 |
+| mMaterialResourceDescSetLayout | 几何阶段 | 材质纹理资源 | 根据材质模板确定 |
+
+#### 6.3.2 合并阶段描述符布局详解
+
+`mLightingDescSetLayout` 就是合并阶段使用的描述符布局，它包含2个binding：
+
+| Binding | 类型 | 用途 | 说明 |
+|---------|------|------|------|
+| 0 | VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT | 直接光照结果 | Subpass 1的输出（附件4） |
+| 1 | VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT | IBL结果 | Subpass 2的输出（附件5） |
+
+在合并阶段，我们需要访问这两个光照结果，将它们与GBuffer的基础颜色和自发光数据合并。
+
+#### 6.3.3 后处理阶段描述符布局详解
+
+后处理阶段需要以下binding：
+
+| Binding | 类型 | 用途 | 说明 |
+|---------|------|------|------|
+| 0 | VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER | 帧UBO | 分辨率、时间等 |
+| 1 | VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER | 后处理参数UBO | 曝光、FXAA、Bloom等 |
+| 2 | VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER | 合并光照结果 | Subpass 3的输出（附件6） |
+
+#### 6.3.4 缓冲区设计说明
+
+在延迟渲染管线中，某些资源不需要专门的缓冲区的原因如下：
+
+1. **GBuffer资源**：
+   - GBuffer是由渲染通道的附件（attachment）直接提供的
+   - 这些附件在渲染通道创建时就已经分配了内存（通过VkImage和VkDeviceMemory）
+   - 后续阶段通过采样器（sampler2D）访问这些附件，不需要额外的缓冲区
+   - 描述符集`mGbufferDescSet`用于绑定这些附件的视图，而不是创建新的缓冲区
+
+#### 6.3.5 GBuffer读写流程详解
+
+在延迟渲染管线中，GBuffer的使用分为两个阶段，它们的工作机制完全不同：
+
+### 写入阶段（几何阶段，Subpass 0）
+
+**为什么不需要描述符布局？**
+
+1. **直接写入附件**：
+   - 几何阶段是**写入**GBuffer，而不是**读取**GBuffer
+   - 渲染通道在创建时就已经定义了附件的格式、布局和用途
+   - 着色器只需要通过`location`指定输出到哪个附件，不需要知道附件的具体内存布局
+
+2. **Vulkan渲染管线的输出机制**：
+   - 着色器通过`layout(location=N) out vec4 outColor;`指定输出目标
+   - `location=N`直接对应渲染通道中的附件索引
+   - 渲染管线会自动处理数据从着色器输出到附件的过程
+   - 这个过程不需要描述符集，因为是Vulkan渲染管线的内置功能
+
+3. **类比理解**：
+   - 就像打印机不需要知道纸张的内部结构，只需要知道将内容输出到哪张纸上
+   - 几何阶段只需要知道将数据输出到哪个附件，不需要知道附件的具体实现
+
+### 读取阶段（后续阶段，Subpass 1-3）
+
+**为什么需要描述符布局？**
+
+1. **通过采样器读取**：
+   - 后续阶段是**读取**GBuffer，需要通过采样器（sampler2D）访问数据
+   - 采样器需要知道从哪里读取数据，以及如何读取（过滤方式、寻址模式等）
+
+2. **资源绑定机制**：
+   - Vulkan使用描述符集来绑定资源（纹理、缓冲区等）到着色器
+   - 描述符集布局定义了着色器如何访问这些资源，包括：
+     - 绑定点（binding）
+     - 资源类型（sampler2D、uniform buffer等）
+     - 访问权限（只读、只写等）
+
+3. **附件到纹理的转换**：
+   - GBuffer附件在Vulkan中是VkImage对象
+   - 要通过采样器访问，需要创建VkImageView和VkSampler
+   - 这些对象需要通过描述符集绑定到着色器
+
+4. **类比理解**：
+   - 就像读取文件需要知道文件名和文件系统的结构
+   - 后续阶段需要通过描述符集知道如何访问GBuffer附件
+
+### 具体工作流程
+
+```
++----------------+     +----------------+     +----------------+
+| 几何阶段       |     | 直接光照阶段   |     | IBL阶段        |
+| （Subpass 0）  |     | （Subpass 1）  |     | （Subpass 2）  |
++----------------+     +----------------+     +----------------+
+|                |     |                |     |                |
+| 写入GBuffer：  |     | 读取GBuffer：  |     | 读取GBuffer：  |
+| 1. 顶点变换    |     | 1. 通过采样器  |     | 1. 通过采样器  |
+| 2. 片段着色    |     |    访问GBuffer |     |    访问GBuffer |
+| 3. 输出到附件  |     | 2. 计算直接光照|     | 2. 计算IBL     |
+|    （无描述符）|     | 3. 输出直接光照|     | 3. 输出IBL结果 |
++----------------+     +----------------+     +----------------+
+         |                        |                        |
+         v                        v                        v
++----------------+     +----------------+     +----------------+
+| GBuffer附件    |     | 直接光照结果  |     | IBL结果        |
++----------------+     +----------------+     +----------------+
+```
+
+这种设计是延迟渲染的核心特性，通过分离写入和读取阶段，实现了高效的多光源渲染。
+
+2. **IBL资源**：
+   - IBL资源主要是纹理（环境贴图、辐照度贴图等）
+   - 这些纹理在应用初始化时就已加载并分配内存
+   - 描述符集`mIBLResourceDescSet`用于绑定这些纹理，而不是创建新的缓冲区
+
+3. **Lighting结果**：
+   - 直接光照和IBL结果是渲染通道中间阶段的输出附件
+   - 这些附件同样在渲染通道创建时分配了内存
+   - 描述符集`mLightingDescSet`用于绑定这些中间结果，供后续阶段访问
+
+#### 6.3.2 缓冲区与附件的关系
+
+| 资源类型 | 存储方式 | 访问方式 |
+|---------|---------|---------|
+| UBO数据（帧、光源、材质） | 专用缓冲区 | 描述符集绑定 |
+| GBuffer数据 | 渲染通道附件 | 描述符集绑定采样器 |
+| IBL纹理 | 纹理资源 | 描述符集绑定采样器 |
+| Lighting结果 | 渲染通道附件 | 描述符集绑定采样器 |
+| 后处理参数 | 专用缓冲区 | 描述符集绑定 |
+
+### 6.4 渲染循环
 
 ```cpp
 void AdPBRDeferredMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) {
@@ -443,6 +630,15 @@ void AdPBRDeferredMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTa
     
     // 更新光源 UBO
     UpdateLightUboDescSet();
+    
+    // 更新 GBuffer 描述符集（将 GBuffer 附件绑定到描述符集）
+    UpdateGbufferDescSet();
+    
+    // 更新 IBL 资源描述符集
+    UpdateIBLResourceDescSet();
+    
+    // 更新光照结果描述符集（将直接光照和 IBL 结果绑定到描述符集）
+    UpdateLightingDescSet();
     
     // 更新后处理 UBO
     UpdatePostProcessDescSet();
@@ -476,9 +672,14 @@ void AdPBRDeferredMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTa
     {
         mDirectLightingPipeline->Bind(cmdBuffer);
         
-        // 绑定描述符集（GBuffer、光源等）
+        // 绑定描述符集：帧 UBO、光源 UBO、GBuffer
+        VkDescriptorSet directLightingDescSets[] = {
+            mFrameUboDescSet,
+            mLightUboDescSet,
+            mGbufferDescSet
+        };
         vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-            mDirectLightingPipelineLayout->GetHandle(), 0, 3, descriptorSets, 0, nullptr);
+            mDirectLightingPipelineLayout->GetHandle(), 0, 3, directLightingDescSets, 0, nullptr);
         
         // 绘制全屏四边形
         vkCmdDraw(cmdBuffer, 3, 1, 0, 0); // 覆盖屏幕的三角形
@@ -488,9 +689,14 @@ void AdPBRDeferredMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTa
     {
         mIBLPipeline->Bind(cmdBuffer);
         
-        // 绑定描述符集（GBuffer、IBL 资源等）
+        // 绑定描述符集：帧 UBO、GBuffer、IBL 资源
+        VkDescriptorSet iblDescSets[] = {
+            mFrameUboDescSet,
+            mGbufferDescSet,
+            mIBLResourceDescSet
+        };
         vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-            mIBLPipelineLayout->GetHandle(), 0, 3, descriptorSets, 0, nullptr);
+            mIBLPipelineLayout->GetHandle(), 0, 3, iblDescSets, 0, nullptr);
         
         // 绘制全屏四边形
         vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
@@ -500,9 +706,13 @@ void AdPBRDeferredMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTa
     {
         mMergePipeline->Bind(cmdBuffer);
         
-        // 绑定描述符集（光照结果、GBuffer 等）
+        // 绑定描述符集：GBuffer、光照结果（直接光照 + IBL）
+        VkDescriptorSet mergeDescSets[] = {
+            mGbufferDescSet,
+            mLightingDescSet
+        };
         vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-            mMergePipelineLayout->GetHandle(), 0, 2, descriptorSets, 0, nullptr);
+            mMergePipelineLayout->GetHandle(), 0, 2, mergeDescSets, 0, nullptr);
         
         // 绘制全屏四边形
         vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
@@ -512,9 +722,14 @@ void AdPBRDeferredMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTa
     {
         mPostProcessPipeline->Bind(cmdBuffer);
         
-        // 绑定描述符集（合并后的光照、后处理参数等）
+        // 绑定描述符集：帧 UBO、后处理参数、合并光照结果
+        VkDescriptorSet postProcessDescSets[] = {
+            mFrameUboDescSet,
+            mPostProcessDescSet,
+            mLightingDescSet
+        };
         vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
-            mPostProcessPipelineLayout->GetHandle(), 0, 2, descriptorSets, 0, nullptr);
+            mPostProcessPipelineLayout->GetHandle(), 0, 3, postProcessDescSets, 0, nullptr);
         
         // 绘制全屏四边形
         vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
@@ -523,7 +738,6 @@ void AdPBRDeferredMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTa
     // 结束渲染通道
     renderPass->End(cmdBuffer);
 }
-```
 
 ## 7. 着色器设计
 
@@ -746,11 +960,14 @@ layout(location=0) in vec2 v_ScreenPos;
 
 layout(location=0) out vec4 outFinalColor;
 
-// 输入纹理
-layout(set=1, binding=0) uniform sampler2D u_MergedLighting;
+// 帧 UBO
+layout(set=0, binding=0) uniform FrameUbo {
+    vec2 resolution;
+    float time;
+} u_FrameUbo;
 
 // 后处理参数
-layout(set=0, binding=0) uniform PostProcessUbo {
+layout(set=1, binding=0) uniform PostProcessUbo {
     float exposure;
     bool enableFXAA;
     float fxaaQuality;
@@ -759,11 +976,8 @@ layout(set=0, binding=0) uniform PostProcessUbo {
     float bloomIntensity;
 } u_PostProcessUbo;
 
-// 帧 UBO
-layout(set=0, binding=1) uniform FrameUbo {
-    vec2 resolution;
-    float time;
-} u_FrameUbo;
+// 输入纹理（合并光照结果）
+layout(set=2, binding=0) uniform sampler2D u_MergedLighting;
 
 // FXAA 函数声明
 vec3 FXAA(vec2 uv, sampler2D tex, vec2 resolution);

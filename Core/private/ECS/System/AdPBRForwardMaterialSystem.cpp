@@ -1,4 +1,4 @@
-#include "ECS/System/AdPBRMaterialSystem.h"
+#include "ECS/System/AdPBRForwardMaterialSystem.h"
 
 #include "AdFileUtil.h"
 #include "AdApplication.h"
@@ -14,7 +14,7 @@
 
 namespace WuDu {
 	//初始化PBR材质渲染系统
-	void AdPBRMaterialSystem::OnInit(AdVKRenderPass* renderPass) {
+	void AdPBRForwardMaterialSystem::OnInit(AdVKRenderPass* renderPass) {
 		AdVKDevice* device = GetDevice();
 
 		// 创建帧UBO描述符布局，用于存储投影矩阵和纹理等每一帧更新的数据
@@ -190,7 +190,7 @@ namespace WuDu {
 		mDefaultSampler = std::make_shared<AdSampler>();
 	}
 
-	void AdPBRMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) {
+	void AdPBRForwardMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) {
 		AdScene* scene = GetScene();
 		if(!scene){
 			return;
@@ -290,13 +290,13 @@ namespace WuDu {
 	}
 
 	//销毁pbr材质系统资源
-	void AdPBRMaterialSystem::OnDestroy() {
+	void AdPBRForwardMaterialSystem::OnDestroy() {
 		mPipeline.reset();
 		mPipelineLayout.reset();
 	}
 
 	//重新创建材质描述符池
-	void AdPBRMaterialSystem::ReCreateMaterialDescPool(uint32_t materialCount) {
+	void AdPBRForwardMaterialSystem::ReCreateMaterialDescPool(uint32_t materialCount) {
 		AdVKDevice* device = GetDevice();
 
 		//计算新的描述符集数量
@@ -353,7 +353,7 @@ namespace WuDu {
 	}
 
 	//更新帧UBO描述符集
-	void AdPBRMaterialSystem::UpdateFrameUboDescSet(AdRenderTarget* renderTarget) {
+	void AdPBRForwardMaterialSystem::UpdateFrameUboDescSet(AdRenderTarget* renderTarget) {
 		AdApplication* app = GetApp();
 		AdVKDevice* device = GetDevice();
 
@@ -377,7 +377,7 @@ namespace WuDu {
 	}
 	
 	//更新材质参数描述符集
-	void AdPBRMaterialSystem::UpdateMaterialParamsDescSet(VkDescriptorSet descSet, AdPBRMaterial* material){
+	void AdPBRForwardMaterialSystem::UpdateMaterialParamsDescSet(VkDescriptorSet descSet, AdPBRMaterial* material){
 		AdVKDevice* device = GetDevice();
 
 		AdVKBuffer* materialBuffer = mMaterialBuffers[material->GetIndex()].get();
@@ -423,7 +423,7 @@ namespace WuDu {
 	}
 
 	//更新材质资源描述符集，传递纹理采样器和图像视图
-	void AdPBRMaterialSystem::UpdateMaterialResourceDescSet(VkDescriptorSet descSet, AdPBRMaterial* material){
+	void AdPBRForwardMaterialSystem::UpdateMaterialResourceDescSet(VkDescriptorSet descSet, AdPBRMaterial* material){
 		AdVKDevice* device = GetDevice();
 
 		//获取纹理资源
@@ -488,7 +488,7 @@ namespace WuDu {
 	}
 
 	//更新光照UBO描述符集
-	void AdPBRMaterialSystem::UpdateLightUboDescSet(){
+	void AdPBRForwardMaterialSystem::UpdateLightUboDescSet(){
 		AdVKDevice* device = GetDevice();
 		auto& registry = GetScene()->GetEcsRegistry();
 
