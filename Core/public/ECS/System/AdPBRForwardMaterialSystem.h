@@ -14,7 +14,7 @@ namespace WuDu {
 	class AdVKDescriptorSetLayout;
 	class AdVKDescriptorPool;
 
-	class AdPBRMaterialSystem : public AdMaterialSystem {
+	class AdPBRForwardMaterialSystem : public AdMaterialSystem {
 	public:
 		void OnInit(AdVKRenderPass* renderPass) override;
 		void OnRender(VkCommandBuffer cmdbuffer, AdRenderTarget* renderTarget) override;
