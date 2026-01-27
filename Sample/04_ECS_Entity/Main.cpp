@@ -211,7 +211,7 @@ protected:
 		//处理队列事件
 		WuDu::InputManager::GetInstance().ProcessEvents();
 
-		// 更新相机控制器
+		// 更新相机控制器PP
 		if (m_CameraController) {
 			m_CameraController->Update(deltaTime);
 		}
