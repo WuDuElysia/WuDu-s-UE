@@ -8,6 +8,10 @@ namespace WuDu {
 #define NUM_MATERIAL_BATCH_MAX          2048
 #define MAX_LIGHTS                      16
 
+    struct PostProcessUbo {
+        
+    };
+
     class AdVKPipelineLayout;
 	class AdVKPipeline;
 	class AdVKDescriptorSetLayout;
@@ -24,6 +28,10 @@ namespace WuDu {
         void UpdateMaterialParamsDescSet(VkDescriptorSet descSet, AdPBRMaterial* material);
         void UpdateMaterialResourceDescSet(VkDescriptorSet descSet, AdPBRMaterial* material);
         void UpdateLightUboDescSet();
+        void UpdateGBufferDescSet();
+        void UpdateIBLResourceDescSet();
+        void UpdateLightingDescSet();
+        void UpdatePostProcessDescSet();
 
         std::shared_ptr<AdVKDescriptorSetLayout> mFrameUboDescSetLayout;
         std::shared_ptr<AdVKDescriptorSetLayout> mLightUboDescSetLayout;
@@ -53,6 +61,9 @@ namespace WuDu {
         //PostProcess
         std::shared_ptr<AdVKPipelineLayout> mPostProcessPipelineLayout;
         std::shared_ptr<AdVKPipeline> mPostProcessPipeline;
+
+        std::shared_ptr<AdVKDescriptorPool> mDescriptorPool;
+		std::shared_ptr<AdVKDescriptorPool> mMaterialDescriptorPool;
 
         VkDescriptorSet mFrameUboDescSet;
         VkDescriptorSet mLightUboDescSet;

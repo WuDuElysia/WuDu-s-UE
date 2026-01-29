@@ -391,7 +391,9 @@ private:
     
     mDirectLightingPipeline = std::make_shared<AdVKPipeline>(device, renderPass, mDirectLightingPipelineLayout.get());
     // 全屏四边形顶点输入（仅位置）
-    mDirectLightingPipeline->SetVertexInputState(/* 全屏顶点绑定 */);
+    // 全屏顶点绑定：传入空的绑定和属性数组
+    // 因为我们使用空顶点缓冲区，在顶点着色器中通过gl_VertexIndex生成全屏三角形
+    mDirectLightingPipeline->SetVertexInputState({}, {});
     mDirectLightingPipeline->DisableDepthTest();
     mDirectLightingPipeline->SetDynamicState({ VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR });
     mDirectLightingPipeline->SetSubPassIndex(1);  // 绑定到 Subpass 1
@@ -420,7 +422,9 @@ private:
     );
     
     mIBLPipeline = std::make_shared<AdVKPipeline>(device, renderPass, mIBLPipelineLayout.get());
-    mIBLPipeline->SetVertexInputState(/* 全屏顶点绑定 */);
+    // 全屏顶点绑定：传入空的绑定和属性数组
+    // 因为我们使用空顶点缓冲区，在顶点着色器中通过gl_VertexIndex生成全屏三角形
+    mIBLPipeline->SetVertexInputState({}, {});
     mIBLPipeline->DisableDepthTest();
     mIBLPipeline->SetDynamicState({ VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR });
     mIBLPipeline->SetSubPassIndex(2);  // 绑定到 Subpass 2
@@ -448,7 +452,9 @@ private:
     );
     
     mMergePipeline = std::make_shared<AdVKPipeline>(device, renderPass, mMergePipelineLayout.get());
-    mMergePipeline->SetVertexInputState(/* 全屏顶点绑定 */);
+    // 全屏顶点绑定：传入空的绑定和属性数组
+    // 因为我们使用空顶点缓冲区，在顶点着色器中通过gl_VertexIndex生成全屏三角形
+    mMergePipeline->SetVertexInputState({}, {});
     mMergePipeline->DisableDepthTest();
     mMergePipeline->SetDynamicState({ VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR });
     mMergePipeline->SetSubPassIndex(3);  // 绑定到 Subpass 3
@@ -477,7 +483,9 @@ private:
     );
     
     mPostProcessPipeline = std::make_shared<AdVKPipeline>(device, renderPass, mPostProcessPipelineLayout.get());
-    mPostProcessPipeline->SetVertexInputState(/* 全屏顶点绑定 */);
+    // 全屏顶点绑定：传入空的绑定和属性数组
+    // 因为我们使用空顶点缓冲区，在顶点着色器中通过gl_VertexIndex生成全屏三角形
+    mPostProcessPipeline->SetVertexInputState({}, {});
     mPostProcessPipeline->DisableDepthTest();
     mPostProcessPipeline->SetDynamicState({ VK_DYNAMIC_STATE_VIEWPORT, VK_DYNAMIC_STATE_SCISSOR });
     mPostProcessPipeline->SetSubPassIndex(4);  // 绑定到 Subpass 4
