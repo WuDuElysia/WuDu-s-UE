@@ -369,14 +369,142 @@ namespace WuDu {
     }
 
     void AdPBRDeferredMaterialSystem::OnRender(VkCommandBuffer cmdBuffer, AdRenderTarget* renderTarget) {
+
         AdScene* scene = GetScene();
         if(!scene) return;
         
         entt::registry& reg = scene->GetEcsRegistry();
 
+		// 更新帧 UBO
+		UpdateFrameUboDescSet(renderTarget);
+		
+		// 更新光源 UBO
+		UpdateLightUboDescSet();
+		
+		// 更新 GBuffer 描述符集（将 GBuffer 附件绑定到描述符集）
+		UpdateGbufferDescSet();
+		
+		// 更新 IBL 资源描述符集
+		UpdateIBLResourceDescSet();
+		
+		// 更新光照结果描述符集（将直接光照和 IBL 结果绑定到描述符集）
+		UpdateLightingDescSet();
+		
+		// 更新后处理 UBO
+		UpdatePostProcessDescSet();
+
+		//鉴擦是否需要重建材质描述符集
+		bool bShouldForceUpdateMaterial = false;
+		uint32_t materialCount = AdMaterialFactory::GetInstance()->GetMaterialSize<AdPBRMaterial>();
+
         //获取所有变换和PBR材质组件
         auto view = reg.view<AdTransformComponent, AdPBRMaterialComponent>();
-        if(std::distance(view.begin(),view.end())==0)return;
+        if(std::distance(view.begin(),view.end()) == 0) return;
+
+		//将图形管线绑定到命令缓冲区
+
+		//subpass 0: GBuffer
+		{
+			mGBufferPipeline->Bind(cmdBuffer);
+			AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
+			VkViewport viewport = {
+				.x = 0.f,
+				.y = 0.f,
+				.width = static_cast<float>(frameBuffer->GetWidth()),
+				.height = static_cast<float>(frameBuffer->GetHeight()),
+				.minDepth = 0.f,
+				.maxDepth = 1.f
+			};
+			vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+
+			VkRect2D scissor = {
+				.offset = {0,0},
+				.extent = {frameBuffer->GetWidth(), frameBuffer->GetHeight()}
+			};
+			vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
+
+			//绑定帧UBO描述符集
+			vkCmdBindDescriptorSets(cmdBuffer,VK_PIPELINE_BIND_POINT_GRAPHICS,
+				mGBufferPipelineLayout->GetHandle(),0,1,&mFrameUboDescSet,0,nullptr);
+
+			//遍历所有实体，渲染具有PBR材质的实体
+			std::vector<bool> updateFlags(materialCount);
+			view.each([this, &updateFlags, &bShouldForceUpdateMaterial, &cmdBuffer](AdTransformComponent& transComp, AdPBRMaterialComponent& materialComp) {
+				for(const auto& entry : materialComp.GetMeshMaterials()) {
+					AdPBRMaterial* material = entry.first;
+					if(!material || material->GetIndex() < 0) {
+						LOG_W("default material or error material");
+						continue;
+					}
+
+					//查找当前材质对应的索引
+					uint32_t materialIndex = material->GetIndex();
+					VkDescriptorSet paramsDescSet = mMaterialDescSets[materialIndex];
+					VkDescriptorSet resourceDescSet = mMaterialResourceDescSets[materialIndex];
+
+                    //绑定材质参数描述符集和材质资源描述符集
+                    if(!updateFlags[materialIndex] || bShouldForceUpdateMaterial) {
+                        UpdateMaterialParamsDescSet(paramsDescSet, material);
+                        UpdateMaterialResourceDescSet(resourceDescSet, material);
+                        updateFlags[materialIndex] = true;
+                    }
+
+                    //绑定材质描述符集
+                    VkDescriptorSet descriptorSets[] = {
+                        mFrameUboDescSet,
+                        paramsDescSet,
+                        resourceDescSet
+                    };
+
+                    vkCmdBindDescriptorSets(
+                        cmdBuffer,
+                        VK_PIPELINE_BIND_POINT_GRAPHICS,
+                        mGBufferPipelineLayout->GetHandle(),
+                        0,
+                        ARRAY_SIZE(descriptorSets),
+                        descriptorSets,
+                        0,
+                        nullptr
+                    );
+                    
+                    ModelPC pc = {
+                        transComp.GetTransform()
+                    };
+                    vkCmdPushContants(
+                        cmdBuffer,
+                        mGBufferPipelineLayout->GetHandle(),
+                        VK_SHADER_STAGE_VERTEX_BIT,
+                        0,
+                        sizeof(ModelPC),
+                        &pc
+                    );
+
+                    //绘制网格
+                    for(const auto& meshIndex : entry.second){
+                        materialComp.GetMesh(meshIndex)->Draw(cmdBuffer);
+                    }
+				}
+					
+			});
+
+		}
+
+        //subpass 1: Direct Lighting
+        {
+            mDirectLightingPipeline->Bind(cmdBuffer);
+
+            //设置视口和裁剪区域
+            AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
+            VkViewport viewport = {
+                .x = 0.f,
+                .y = 0.f,
+                .width = static_cast<float>(frameBuffer->GetWidth()),
+                .height = static_cast<float>(frameBuffer->GetHeight()),
+                .minDepth = 0.f,
+                .maxDepth = 1.f
+            };
+            
+        }
     }
 
 }
