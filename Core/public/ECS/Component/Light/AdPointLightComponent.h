@@ -18,11 +18,11 @@ namespace WuDu {
 			LightUbo ubo{};
 
 			// 获取实体变换组件，计算世界空间位置
-			auto& transformComp = GetEntity()->GetComponent<AdTransformComponent>();
-			glm::vec3 worldPos = transformComp.GetWorldPosition();
+			//auto& transformComp = GetEntity()->GetComponent<AdTransformComponent>();
+			//glm::vec3 worldPos = transformComp.GetWorldPosition();
 
 			// 点光的位置w分量为1，表示这是一个位置点
-			ubo.position = glm::vec4(worldPos, 1.0f);
+			ubo.position = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
 
 			// 设置光源颜色和强度
 			ubo.color = GetColor();

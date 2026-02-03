@@ -25,7 +25,8 @@ add_library(WuDu_core
 	 "private/Gui/AdGuiEventHandler.cpp"
 	 "private/Resource/AdModelLoader.cpp" 
 	 "private/Resource/AdModelResource.cpp"
-	 "private/ECS/System/AdPBRMaterialSystem.cpp"
+	 "private/ECS/System/AdPBRForwardMaterialSystem.cpp"
+	 "private/ECS/System/AdPBRDeferredMaterialSystem.cpp"
 	 )
 
 target_include_directories(WuDu_core PUBLIC
