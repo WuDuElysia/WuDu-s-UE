@@ -382,7 +382,7 @@ namespace WuDu {
 		UpdateLightUboDescSet();
 		
 		// 更新 GBuffer 描述符集（将 GBuffer 附件绑定到描述符集）
-		UpdateGbufferDescSet();
+		UpdateGBufferDescSet();
 		
 		// 更新 IBL 资源描述符集
 		UpdateIBLResourceDescSet();
@@ -503,8 +503,296 @@ namespace WuDu {
                 .minDepth = 0.f,
                 .maxDepth = 1.f
             };
-            
+            vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+
+            VkRect2D scissor = {
+                .offset = {0, 0},
+                .extent = {frameBuffer->GetWidth(), frameBuffer->GetHeight()}
+            };
+            vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
+
+            //绑定描述符集
+            VkDescriptorSet lightDescSets[] = {
+                mFrameUboDescSet,
+                mGBufferDescSet,
+                mLightUboDescSet
+            };
+            vkCmdBindDescriptorSets(
+                cmdBuffer,
+                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                mDirectLightingPipelineLayout->GetHandle(),
+                0,
+                ARRAY_SIZE(lightDescSets),
+                lightDescSets,
+                0,
+                nullptr
+            );
+
+            //绘制全屏四边形
+            vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
         }
+
+        //subpass 2: IBL
+        {
+            mIBLPipeline->Bind(cmdBuffer);
+
+            //设置视口和裁剪区域
+            AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
+            VkViewport viewport = {
+                .x = 0.f,
+                .y = 0.f,
+                .width = static_cast<float>(frameBuffer->GetWidth()),
+                .height = static_cast<float>(frameBuffer->GetHeight()),
+                .minDepth = 0.f,
+                .maxDepth = 1.f
+            };
+            vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+
+            VkRect2D scissor = {
+                .offset = {0, 0},
+                .extent = {frameBuffer->GetWidth(), frameBuffer->GetHeight()}
+            };
+            vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
+
+            //绑定描述符集
+            VkDescriptorSet iblDescSets[] = {
+                mFrameUboDescSet,
+                mGBufferDescSet,
+                mIBLResourceDescSet
+            };
+            vkCmdBindDescriptorSets(
+                cmdBuffer,
+                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                mIBLPipelineLayout->GetHandle(),
+                0,
+                ARRAY_SIZE(iblDescSets),
+                iblDescSets,
+                0,
+                nullptr
+            );
+
+            //绘制全屏四边形
+            vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
+        }
+
+        //subpass 3: Merge
+        {
+            mMergePipeline->Bind(cmdBuffer);
+
+            //设置视口和裁剪区域
+            AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
+            VkViewport viewport = {
+                .x = 0.f,
+                .y = 0.f,
+                .width = static_cast<float>(frameBuffer->GetWidth()),
+                .height = static_cast<float>(frameBuffer->GetHeight()),
+                .minDepth = 0.f,
+                .maxDepth = 1.f
+            };
+            vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+
+            VkRect2D scissor = {
+                .offset = {0, 0},
+                .extent = {frameBuffer->GetWidth(), frameBuffer->GetHeight()}
+            };
+            vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
+
+            //绑定描述符集
+            VkDescriptorSet mergeDescSets[] = {
+                mGBufferDescSet,
+                mLightingDescSet
+            };
+            vkCmdBindDescriptorSets(
+                cmdBuffer,
+                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                mMergePipelineLayout->GetHandle(),
+                0,
+                ARRAY_SIZE(mergeDescSets),
+                mergeDescSets,
+                0,
+                nullptr
+            );
+
+            //绘制全屏四边形
+            vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
+        }
+
+        //subpass 4: PostProcess
+        {
+            mPostProcessPipeline->Bind(cmdBuffer);
+
+            //设置视口和裁剪区域
+            AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
+            VkViewport viewport = {
+                .x = 0.f,
+                .y = 0.f,
+                .width = static_cast<float>(frameBuffer->GetWidth()),
+                .height = static_cast<float>(frameBuffer->GetHeight()),
+                .minDepth = 0.f,
+                .maxDepth = 1.f
+            };
+            vkCmdSetViewport(cmdBuffer, 0, 1, &viewport);
+
+            VkRect2D scissor = {
+                .offset = {0, 0},
+                .extent = {frameBuffer->GetWidth(), frameBuffer->GetHeight()}
+            };
+            vkCmdSetScissor(cmdBuffer, 0, 1, &scissor);
+
+            //绑定描述符集
+            VkDescriptorSet postProcessDescSets[] = {
+                mFrameUboDescSet,
+                mLightingDescSet,
+                mPostProcessDescSet
+            };
+            vkCmdBindDescriptorSets(
+                cmdBuffer,
+                VK_PIPELINE_BIND_POINT_GRAPHICS,
+                mPostProcessPipelineLayout->GetHandle(),
+                0,
+                ARRAY_SIZE(postProcessDescSets),
+                postProcessDescSets,
+                0,
+                nullptr
+            );
+
+            //绘制全屏四边形
+            vkCmdDraw(cmdBuffer, 3, 1, 0, 0);
+        }   
+        mLastDescriptorSetCount = materialCount;
+    }
+
+    //销毁pbr材质系统资源
+    void AdPBRDeferredMaterialSystem::OnDestroy() {
+        mGBufferPipeline.reset();
+        mGBufferPipelineLayout.reset();
+        mDirectLightingPipeline.reset();
+        mDirectLightingPipelineLayout.reset();
+        mIBLPipeline.reset();
+        mIBLPipelineLayout.reset();
+        mMergePipeline.reset();
+        mMergePipelineLayout.reset();
+        mPostProcessPipeline.reset();
+        mPostProcessPipelineLayout.reset();
+
+    }
+
+    //重新创建材质描述符池
+    void AdPBRDeferredMaterialSystem::ReCreateMaterialDescPool(uint32_t materialCount){
+        AdVKDevice* device = GetDevice();
+
+        //计算新的描述符集数量
+        uint32_t newDescriptorSetCount = mLastDescriptorSetCount;
+        if(mLastDescriptorSetCount == 0){
+            newDescriptorSetCount = NUM_MATERIAL_BATCH;
+        }
+
+        while(newDescriptorSetCount < materialCount){
+            newDescriptorSetCount *= 2;
+        }
+
+        if(newDescriptorSetCount > NUM_MATERIAL_BATCH_MAX){
+            LOG_E("Descriptor Set max count is : {0}, but request : {1}", NUM_MATERIAL_BATCH_MAX, newDescriptorSetCount);
+			return;
+        }
+
+        LOG_W("{0}: {1} -> {2} S.", __FUNCTION__, mLastDescriptorSetCount, newDescriptorSetCount);
+
+        //销毁旧的描述符池和相关资源
+        std::vector<VkDescriptorPoolSize> poosize = {
+            {
+                .type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+                .descriptorCount = newDescriptorSetCount
+            },
+            {
+                .type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+                .descriptorCount = newDescriptorSetCount * 5
+            },
+        };
+
+        mMaterialDescriptorPool = std::make_shared<WuDu::AdVKDescriptorPool>(device, newDescriptorSetCount * 2, poosize);
+
+        //分配新的描述符集
+		mMaterialDescSets = mMaterialDescriptorPool->AllocateDescriptorSet(mMaterialParamDescSetLayout.get(), newDescriptorSetCount);
+		mMaterialResourceDescSets = mMaterialDescriptorPool->AllocateDescriptorSet(mMaterialResourceDescSetLayout.get(), newDescriptorSetCount);
+		assert(mMaterialDescSets.size() == newDescriptorSetCount && "Failed to AllocateDescriptorSet");
+		assert(mMaterialResourceDescSets.size() == newDescriptorSetCount && "Failed to AllocateDescriptorSet");
+
+		//创建新的材质缓冲区
+		uint32_t diffCount = newDescriptorSetCount - mLastDescriptorSetCount;
+		for (int i = 0; i < diffCount; i++) {
+			auto materialBuffer = std::make_shared<AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(PBRMaterialUbo), nullptr, true);
+			mMaterialBuffers.push_back(materialBuffer);
+		}
+		LOG_W("{0}: {1} -> {2} E.", __FUNCTION__, mLastDescriptorSetCount, newDescriptorSetCount);
+		mLastDescriptorSetCount = newDescriptorSetCount;
+    }
+
+    //更新帧UBO的描述符集
+    void AdPBRDeferredMaterialSystem::UpdateFrameUboDescSet(AdRenderTarget* renderTarget){
+        AdApplication* app = GetApp();
+		AdVKDevice* device = GetDevice();
+
+		AdVKFrameBuffer* frameBuffer = renderTarget->GetFrameBuffer();
+		glm::ivec2 resolution = { frameBuffer->GetWidth(), frameBuffer->GetHeight() };
+
+		//构造帧UBO数据
+		FrameUbo frameUbo = {
+			.projMat = GetProjMat(renderTarget),
+			.viewMat = GetViewMat(renderTarget),
+			.resolution = resolution,
+			.frameId = static_cast<uint32_t>(app->GetFrameIndex()),
+			.time = app->GetStartTimeSecond()
+		};
+
+		//写入缓冲区并更新描述符集
+		mFrameUboBuffer->WriteData(&frameUbo);
+		VkDescriptorBufferInfo bufferInfo = DescriptorSetWriter::BuildBufferInfo(mFrameUboBuffer->GetHandle(), 0, sizeof(frameUbo));
+		VkWriteDescriptorSet bufferWrite = DescriptorSetWriter::WriteBuffer(mFrameUboDescSet, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
+		DescriptorSetWriter::UpdateDescriptorSets(device->GetHandle(), { bufferWrite });
+    }
+
+    //更新材质参数描述符集
+    void AdPBRDeferredMaterialSystem::UpdateMaterialParamsDescSet(VkDescriptorSet descSet, AdPBRMaterial* material){
+        AdVKDevice* device = GetDevice();
+
+        AdVKBuffer* materialBuffer = mMaterialBuffers[material->GetIndex()].get();
+
+
+        //获取材质参数
+        PBRMaterialUbo params = material->GetParams();
+
+        //更新参数
+        const TextureView* baseColorTexture = material->GetTextureView(PBR_MAT_BASE_COLOR);
+        if(baseColorTexture){
+            AdMaterial::UpdateTextureParams(baseColorTexture, &params.baseColorTextureParam);
+        }
+
+        const TextureView* normalTexture = material->GetTextureView(PBR_MAT_NORMAL);
+        if(normalTexture){
+            AdMaterial::UpdateTextureParams(normalTexture, &params.normalTextureParam);
+        }
+
+        const TextureView* metallicRoughnessTexture = material->GetTextureView(PBR_MAT_METALLIC_ROUGHNESS);
+        if(metallicRoughnessTexture){
+            AdMaterial::UpdateTextureParams(metallicRoughnessTexture, &params.metallicRoughnessTextureParam);
+        }
+
+        const TextureView* aoTexture = material->GetTextureView(PBR_MAT_AO);
+        if(aoTexture){
+            AdMaterial::UpdateTextureParams(aoTexture, &params.aoTextureParam);
+        }
+
+        const TextureView* emissiveTexture = material->GetTextureView(PBR_MAT_EMISSIVE);
+        if(emissiveTexture){
+            AdMaterial::UpdateTextureParams(emissiveTexture, &params.emissiveTextureParam);
+        }
+
+        //写入缓冲区并更新描述符集
+        materialBuffer->WriteData(&params);
+        VkDescriptorBufferInfo bufferInfo = DescriptorSetWriter::BuildBufferInfo(materialBuffer->GetHandle(), 0, sizeof(params));
+        VkWriteDescriptorSet bufferWrite = DescriptorSetWriter::WriteBuffer(descSet, 0, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, &bufferInfo);
+		DescriptorSetWriter::UpdateDescriptorSets(device->GetHandle(), { bufferWrite });
     }
 
 }

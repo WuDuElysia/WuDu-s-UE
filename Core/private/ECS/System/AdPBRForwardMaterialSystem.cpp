@@ -331,7 +331,7 @@ namespace WuDu {
 			},
 			{
 				.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-				.descriptorCount = newDescriptorSetCount * 2
+				.descriptorCount = newDescriptorSetCount * 5
 			}
 		};
 		mMaterialDescriptorPool = std::make_shared<WuDu::AdVKDescriptorPool>(device, newDescriptorSetCount * 2, poolSizes);

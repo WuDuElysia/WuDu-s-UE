@@ -74,7 +74,7 @@ namespace WuDu {
         std::vector<VkDescriptorSet> mMaterialDescSets;
         std::vector<VkDescriptorSet> mMaterialResourceDescSets;
 
-        std::shared_ptr<AdVKBuffer> mFrameUbobuffer;
+        std::shared_ptr<AdVKBuffer> mFrameUboBuffer;
         std::shared_ptr<AdVKBuffer> mLightUboBuffer;
         std::shared_ptr<AdVKBuffer> mPostProcessBuffer;
         std::vector<std::shared_ptr<AdVKBuffer>> mMaterialBuffers;
