@@ -97,6 +97,7 @@ namespace WuDu {
 					  | VK_COLOR_COMPONENT_A_BIT
 		};
 		PipelineDynamicState dynamicState;                            ///< 动态状态
+		uint32_t colorAttachmentCount = 1;                            ///< 颜色附件数量，默认为1
 	};
 
 	/**
@@ -254,6 +255,13 @@ namespace WuDu {
 		 * @return 返回当前对象指针，支持链式调用
 		 */
 		AdVKPipeline* EnableDepthTest();
+
+		/**
+		 * @brief 设置颜色附件数量
+		 * @param count 颜色附件数量
+		 * @return 返回当前对象指针，支持链式调用
+		 */
+		AdVKPipeline* SetColorAttachmentCount(uint32_t count);
 
 		/**
 		 * @brief 获取管线句柄

@@ -3,8 +3,8 @@
 
 // 顶点属性
 layout(location=0) in vec3 a_Pos;
-layout(location=1) in vec2 a_Texcoord;
-layout(location=2) in vec3 a_Normal;
+layout(location=1) in vec3 a_Normal;
+layout(location=2) in vec2 a_Texcoord;
 layout(location=3) in vec3 a_Tangent;
 layout(location=4) in vec3 a_Bitangent;
 
@@ -23,6 +23,8 @@ layout(location=5) out vec3 v_Bitangent;
 layout(set=0, binding=0, std140) uniform FrameUbo{
     mat4  projMat;
     mat4  viewMat;
+    vec3  camPos;
+    float _pad0;
     ivec2 resolution;
     uint  frameId;
     float time;

@@ -1,4 +1,4 @@
-#pragma
+#pragma once
 #include "AdLightComponent.h"
 
 namespace WuDu {
@@ -17,19 +17,14 @@ namespace WuDu {
 		LightUbo GetLightUbo() const override {
 			LightUbo ubo{};
 
-			// 获取实体变换组件，计算世界空间位置
-			//auto& transformComp = GetEntity()->GetComponent<AdTransformComponent>();
-			//glm::vec3 worldPos = transformComp.GetWorldPosition();
-
 			// 点光的位置w分量为1，表示这是一个位置点
 			ubo.position = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
+			ubo.directionAndRange = glm::vec4(0.0f, 0.0f, 0.0f, mRange);
 
 			// 设置光源颜色和强度
-			ubo.color = GetColor();
-			ubo.intensity = GetIntensity();
+			ubo.colorAndIntensity = glm::vec4(GetColor(), GetIntensity());
 
 			// 设置点光特有参数
-			ubo.range = mRange;
 			ubo.attenuationConstant = mAttenuationConstant;
 			ubo.attenuationLinear = mAttenuationLinear;
 			ubo.attenuationQuadratic = mAttenuationQuadratic;

@@ -7,6 +7,7 @@
 #include "ECS/AdEntity.h"
 #include "ECS/Component/AdTransformComponent.h"
 #include "ECS/Component/Material/AdUnlitMaterialComponent.h"
+#include "ECS/Component/Material/AdPBRMaterialComponent.h"
 #include "ECS/Component/AdFirstPersonCameraComponent.h"
 #include "ECS/AdScene.h"
 
@@ -21,7 +22,7 @@ namespace WuDu {
 			AdScene* scene,
 			AdEntity* activeCamera,
 			AdMesh* cubeMesh,
-			AdUnlitMaterial* defaultMaterial
+			AdMaterial* defaultMaterial
 		);
 
 		// 添加场景编辑器UI
@@ -52,7 +53,7 @@ namespace WuDu {
 		AdScene* mScene = nullptr;
 		AdEntity* mActiveCamera = nullptr;
 		AdMesh* mCubeMesh = nullptr;
-		AdUnlitMaterial* mDefaultMaterial = nullptr;
+		AdMaterial* mDefaultMaterial = nullptr;
 
 		// 编辑状态
 		AdEntity* mSelectedEntity = nullptr;

@@ -34,6 +34,15 @@ namespace WuDu {
 			mMaterialSystemList.push_back(system);
 		}
 
+		template<typename T>
+		T* GetMaterialSystem() const {
+			for (auto& item : mMaterialSystemList) {
+				T* casted = dynamic_cast<T*>(item.get());
+				if (casted) return casted;
+			}
+			return nullptr;
+		}
+
 		void RenderMaterialSystems(VkCommandBuffer cmdBuffer) {
 			for (auto& item : mMaterialSystemList) {
 				item->OnRender(cmdBuffer, this);

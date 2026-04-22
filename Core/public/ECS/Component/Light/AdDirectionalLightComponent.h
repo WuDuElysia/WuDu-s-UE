@@ -1,4 +1,4 @@
-#pragma
+#pragma once
 
 #include "AdLightComponent.h"
 
@@ -14,11 +14,10 @@ namespace WuDu {
 
 			// 方向光的位置w分量为0，表示这是一个方向向量
 			ubo.position = glm::vec4(mDirection, 0.0f);
-			ubo.direction = mDirection;
+			ubo.directionAndRange = glm::vec4(mDirection, 0.0f);
 
 			// 设置光源颜色和强度
-			ubo.color = GetColor();
-			ubo.intensity = GetIntensity();
+			ubo.colorAndIntensity = glm::vec4(GetColor(), GetIntensity());
 
 			// 设置光源类型和启用状态
 			ubo.type = static_cast<uint32_t>(LightType::LIGHT_TYPE_DIRECTIONAL);

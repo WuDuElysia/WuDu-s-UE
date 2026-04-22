@@ -14,13 +14,13 @@ namespace WuDu {
 		PBR_MAT_EMISSIVE         // 自发光纹理
 	};
 
-	struct FrameUbo {
+	/*struct FrameUbo {
 		glm::mat4  projMat{ 1.f };
 		glm::mat4  viewMat{ 1.f };
 		alignas(8) glm::ivec2 resolution;
 		alignas(4) uint32_t frameId;
 		alignas(4) float time;
-	};
+	};*/
 
 	// PBR材质UBO结构体
 	struct PBRMaterialUbo {
@@ -76,7 +76,13 @@ namespace WuDu {
 		}
 		
 	private:
-		PBRMaterialUbo mParams{};
+		PBRMaterialUbo mParams{
+			.baseColorFactor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f),
+			.metallicFactor = 0.0f,
+			.roughnessFactor = 0.5f,
+			.aoFactor = 1.0f,
+			.emissiveFactor = 0.0f
+		};
 	};
 
 	// PBR材质组件类

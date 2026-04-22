@@ -19,6 +19,18 @@ namespace WuDu {
 			glm::mat4 scaleMat = glm::scale(glm::mat4(1.f), scale);
 			return transMat * rotationMat * scaleMat;
 		}
+
+		glm::vec3 GetWorldPosition() const {
+			return position;
+		}
+
+		glm::vec3 GetForwardDirection() const {
+			glm::mat4 rotationMat = glm::rotate(glm::mat4(1.f), glm::radians(rotation.x), glm::vec3{ 1, 0, 0 });
+			rotationMat = glm::rotate(rotationMat, glm::radians(rotation.y), glm::vec3{ 0, 1, 0 });
+			rotationMat = glm::rotate(rotationMat, glm::radians(rotation.z), glm::vec3{ 0, 0, 1 });
+			glm::vec4 forward = rotationMat * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f);
+			return glm::vec3(forward);
+		}
 	};
 }
 

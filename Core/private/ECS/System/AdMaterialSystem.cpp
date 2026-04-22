@@ -101,4 +101,14 @@ namespace WuDu {
 		}
 		return viewMat;
 	}
+
+	glm::vec3 AdMaterialSystem::GetCameraPosition(AdRenderTarget* renderTarget) const {
+		glm::vec3 camPos{ 0.f };
+		AdEntity* camera = renderTarget->GetCamera();
+		if (camera && AdEntity::HasComponent<AdTransformComponent>(camera)) {
+			auto& transComp = camera->GetComponent<AdTransformComponent>();
+			camPos = transComp.position;
+		}
+		return camPos;
+	}
 }

@@ -113,4 +113,49 @@ namespace WuDu {
 			20, 21, 22, 20, 22, 23
 		};
 	}
+
+	void AdGeometryUtil::CreateSphere(float radius, uint32_t sectors, uint32_t stacks,
+		std::vector<AdVertex>& vertices, std::vector<uint32_t>& indices) {
+		vertices.clear();
+		indices.clear();
+
+		const float PI = glm::pi<float>();
+
+		for (uint32_t i = 0; i <= stacks; ++i) {
+			float stackAngle = PI / 2.0f - PI * static_cast<float>(i) / static_cast<float>(stacks);
+			float xy = radius * cosf(stackAngle);
+			float z = radius * sinf(stackAngle);
+
+			for (uint32_t j = 0; j <= sectors; ++j) {
+				float sectorAngle = 2.0f * PI * static_cast<float>(j) / static_cast<float>(sectors);
+
+				AdVertex v{};
+				v.Position = glm::vec3(xy * cosf(sectorAngle), z, xy * sinf(sectorAngle));
+				v.Normal = glm::normalize(v.Position);
+				v.TexCoord = glm::vec2(
+					static_cast<float>(j) / static_cast<float>(sectors),
+					static_cast<float>(i) / static_cast<float>(stacks));
+				v.Tangent = glm::vec3(-sinf(sectorAngle), 0.0f, cosf(sectorAngle));
+				v.Bitangent = glm::cross(v.Normal, v.Tangent);
+				vertices.push_back(v);
+			}
+		}
+
+		for (uint32_t i = 0; i < stacks; ++i) {
+			uint32_t k1 = i * (sectors + 1);
+			uint32_t k2 = k1 + sectors + 1;
+			for (uint32_t j = 0; j < sectors; ++j, ++k1, ++k2) {
+				if (i != 0) {
+					indices.push_back(k1);
+					indices.push_back(k2);
+					indices.push_back(k1 + 1);
+				}
+				if (i != (stacks - 1)) {
+					indices.push_back(k1 + 1);
+					indices.push_back(k2);
+					indices.push_back(k2 + 1);
+				}
+			}
+		}
+	}
 }

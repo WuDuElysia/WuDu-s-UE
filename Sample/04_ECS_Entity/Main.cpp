@@ -9,9 +9,13 @@
 #include "ECS/AdEntity.h"
 #include "ECS/System/AdBaseMaterialSystem.h"
 #include "ECS/System/AdUnlitMaterialSystem.h"
+#include "ECS/System/AdPBRForwardMaterialSystem.h"
+#include "ECS/System/AdSkyboxMaterialSystem.h"
 #include "ECS/System/AdCameraControllerManager.h"
 #include "ECS/Component/AdLookAtCameraComponent.h"
 #include "ECS/Component/AdFirstPersonCameraComponent.h"
+#include "ECS/Component/Light/AdDirectionalLightComponent.h"
+#include "ECS/Component/Light/AdPointLightComponent.h"
 #include "Event/AdInputManager.h"
 #include "Event/AdEvent.h"
 #include "Event/AdEventAdaper.h"
@@ -99,8 +103,10 @@ protected:
 		mRenderTarget = std::make_shared<WuDu::AdRenderTarget>(mRenderPass.get());
 		mRenderTarget->SetColorClearValue({ 0.1f, 0.2f, 0.3f, 1.f });
 		mRenderTarget->SetDepthStencilClearValue({ 1, 0 });
-		mRenderTarget->AddMaterialSystem<WuDu::AdUnlitMaterialSystem>();
-		mRenderTarget->AddMaterialSystem<WuDu::AdBaseMaterialSystem>();
+		//mRenderTarget->AddMaterialSystem<WuDu::AdUnlitMaterialSystem>();
+		//mRenderTarget->AddMaterialSystem<WuDu::AdBaseMaterialSystem>();
+		mRenderTarget->AddMaterialSystem<WuDu::AdSkyboxMaterialSystem>();
+		mRenderTarget->AddMaterialSystem<WuDu::AdPBRForwardMaterialSystem>();
 
 
 		// 创建渲染器
@@ -117,29 +123,20 @@ protected:
 		mCubeMesh = std::make_shared<WuDu::AdMesh>(vertices, indices);
 
 		//加载模型
-		std::shared_ptr<WuDu::AdModelResource> model = std::make_shared<WuDu::AdModelResource>(AD_RES_MODEL_DIR"Phainon.fbx");
-		std::vector<WuDu::ModelVertex> Vertices;
-		std::vector<uint32_t> Indices;
+		std::shared_ptr<WuDu::AdModelResource> model = std::make_shared<WuDu::AdModelResource>(AD_RES_MODEL_DIR"萨姆修复版+发光Miaobox.fbx");
 		if (model->Load()) {
 			const std::vector<WuDu::ModelMesh>& meshes = model->GetMeshes();
-
-			//处理每个网格
-			/*for (const auto& mesh : meshes) {
-
-			}*/
-			Vertices = meshes[0].Vertices;
-			Indices = meshes[0].Indices;
-			mModelMeshes.emplace_back(std::make_shared<WuDu::AdMesh>(Vertices, Indices));
+			for (size_t i = 0; i < meshes.size(); i++) {
+				mModelMeshes.emplace_back(std::make_shared<WuDu::AdMesh>(meshes[i].Vertices, meshes[i].Indices));
+			}
 		}
 		else {
 			mModelMeshes.emplace_back(std::make_shared<WuDu::AdMesh>(vertices, indices));
 		}
-		//mModelMesh = std::make_shared<WuDu::AdMesh>(Vertices, Indices);
-		//mModelMeshes.emplace_back(std::make_shared<WuDu::AdMesh>(Vertices,Indices));
 
 		// 创建材质
-		mBaseMaterial = std::shared_ptr<WuDu::AdUnlitMaterial>(WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdUnlitMaterial>());
-		mTexture0 = std::make_shared<WuDu::AdTexture>(AD_RES_TEXTURE_DIR"R-C.jpeg");
+		mBaseMaterial = std::shared_ptr<WuDu::AdPBRMaterial>(WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdPBRMaterial>());
+		mTexture0 = std::make_shared<WuDu::AdTexture>(AD_RES_TEXTURE_DIR"body_basecolor.jpg");
 
 		WuDu::AdSampler::Settings samplerSettings{};
 		samplerSettings.minFilter = VK_FILTER_LINEAR;
@@ -148,8 +145,17 @@ protected:
 		samplerSettings.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 		mSampler = std::make_shared<WuDu::AdSampler>(samplerSettings);
 
-		mBaseMaterial->SetTextureView(0, mTexture0.get(), mSampler.get());
-		mBaseMaterial->SetBaseColor0(glm::vec3(0.5f, 0.5f, 0.5f));
+		mBaseMaterial->SetTextureView(WuDu::PBR_MAT_BASE_COLOR, mTexture0.get(), mSampler.get());
+		mBaseMaterial->SetMetallicFactor(0.8f);
+		mBaseMaterial->SetRoughnessFactor(0.0f);
+
+		// 创建灯光可视化材质（高自发光，暖黄色）
+		mPointLightMaterial = std::shared_ptr<WuDu::AdPBRMaterial>(
+			WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdPBRMaterial>());
+		mPointLightMaterial->SetBaseColorFactor(glm::vec4(1.0f, 0.8f, 0.6f, 1.0f));
+		mPointLightMaterial->SetEmissiveFactor(5.0f);
+		mPointLightMaterial->SetMetallicFactor(0.0f);
+		mPointLightMaterial->SetRoughnessFactor(1.0f);
 
 
 		// 1. 初始化GUI系统
@@ -197,12 +203,50 @@ protected:
 		// 创建多个实体，并设置其材质和变换属性
 		{
 			mCubes.emplace_back(scene->CreateEntity("MiG-29"));
-			auto& materialComp = mCubes[0]->AddComponent<WuDu::AdUnlitMaterialComponent>();
-			materialComp.AddMesh(mModelMeshes[0].get(), mBaseMaterial.get());
+			auto& materialComp = mCubes[0]->AddComponent<WuDu::AdPBRMaterialComponent>();
+			for (size_t i = 0; i < mModelMeshes.size(); i++) {
+				materialComp.AddMesh(mModelMeshes[i].get(), mBaseMaterial.get());
+			}
 			auto& transComp = mCubes[0]->GetComponent<WuDu::AdTransformComponent>();
 			transComp.scale = { 0.4f, 0.4f, 0.4f };
 			transComp.position = { 0.f, 0.f, 0.0f };
 			transComp.rotation = { 0.f, 0.f, 0.f };
+		}
+
+		// 创建方向光实体
+		{
+			WuDu::AdEntity* directionalLight = scene->CreateEntity("Directional Light");
+			auto& dirLightComp = directionalLight->AddComponent<WuDu::AdDirectionalLightComponent>();
+			dirLightComp.SetDirection(glm::vec3(0.5f, -1.0f, 0.3f));
+			dirLightComp.SetColor(glm::vec3(1.0f, 0.95f, 0.9f));
+			dirLightComp.SetIntensity(2.0f);
+		}
+
+		// 创建点光源实体
+		{
+			WuDu::AdEntity* pointLight = scene->CreateEntity("Point Light");
+
+			auto& materialComp = pointLight->AddComponent<WuDu::AdPBRMaterialComponent>();
+			materialComp.AddMesh(mCubeMesh.get(), mPointLightMaterial.get());
+
+			auto& transComp = pointLight->GetComponent<WuDu::AdTransformComponent>();
+			transComp.position = { 0.0f, 1.5f, 1.0f };
+			transComp.scale = { 0.15f, 0.15f, 0.15f };
+
+			auto& pointLightComp = pointLight->AddComponent<WuDu::AdPointLightComponent>();
+			pointLightComp.SetColor(glm::vec3(1.0f, 0.8f, 0.6f));
+			pointLightComp.SetIntensity(50.0f);
+			pointLightComp.SetRange(20.0f);
+		}
+
+		// 测试cube
+		{
+			WuDu::AdEntity* testCube = scene->CreateEntity("Test Cube");
+			auto& matComp = testCube->AddComponent<WuDu::AdPBRMaterialComponent>();
+			matComp.AddMesh(mCubeMesh.get(), mBaseMaterial.get());
+			auto& transComp = testCube->GetComponent<WuDu::AdTransformComponent>();
+			transComp.position = { -1.0f, 0.5f, 0.0f };
+			transComp.scale = { 0.5f, 0.5f, 0.5f };
 		}
 	}
 
@@ -216,18 +260,18 @@ protected:
 			m_CameraController->Update(deltaTime);
 		}
 
-		// 旋转速度（度/秒）
-		float rotationSpeed = 90.0f; // 每秒旋转90度
+		//// 旋转速度（度/秒）
+		//float rotationSpeed = 90.0f; // 每秒旋转90度
 
-		// 更新 Cube 0 - 绕Y轴旋转
-		if (mCubes[0] && mCubes[0]->HasComponent<WuDu::AdTransformComponent>()) {
-			auto& transComp = mCubes[0]->GetComponent<WuDu::AdTransformComponent>();
-			transComp.rotation.y += rotationSpeed * deltaTime;
-			// 保持在0-360度范围内
-			if (transComp.rotation.y >= 360.0f) {
-				transComp.rotation.y -= 360.0f;
-			}
-		}
+		//// 更新 Cube 0 - 绕Y轴旋转
+		//if (mCubes[0] && mCubes[0]->HasComponent<WuDu::AdTransformComponent>()) {
+		//	auto& transComp = mCubes[0]->GetComponent<WuDu::AdTransformComponent>();
+		//	transComp.rotation.y += rotationSpeed * deltaTime;
+		//	// 保持在0-360度范围内
+		//	if (transComp.rotation.y >= 360.0f) {
+		//		transComp.rotation.y -= 360.0f;
+		//	}
+		//}
 
 	}
 
@@ -256,6 +300,10 @@ protected:
 		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
 
+		// 在录制命令缓冲区之前处理延迟纹理加载，确保新纹理在录制时已就位，
+		// 避免录制后销毁旧纹理导致命令缓冲区引用已销毁的 VkImageView
+		mGuiSystem->ProcessPendingTextureLoads();
+
 		int32_t imageIndex;
 		if (mRenderer->Begin(&imageIndex)) {
 			mRenderTarget->SetExtent({ swapchain->GetWidth(), swapchain->GetHeight() });
@@ -270,17 +318,21 @@ protected:
 		mRenderTarget->RenderMaterialSystems(cmdBuffer);
 		mRenderTarget->End(cmdBuffer);
 
-
 		WuDu::AdVKCommandPool::EndCommandBuffer(cmdBuffer);
-		if (mRenderer->End(imageIndex, { cmdBuffer })) {
+
+		// 录制 GUI 命令（不做独立的 acquire/present）
+		mGuiSystem->BeginGui();
+		mGuiSystem->EndGui();
+		VkCommandBuffer guiCmdBuffer = mGuiSystem->OnRenderGui(imageIndex);
+
+		// 场景 + GUI 命令缓冲区一起提交，只做一次 present
+		std::vector<VkCommandBuffer> allCmds = { cmdBuffer };
+		if (guiCmdBuffer != VK_NULL_HANDLE) {
+			allCmds.push_back(guiCmdBuffer);
+		}
+		if (mRenderer->End(imageIndex, allCmds)) {
 			mRenderTarget->SetExtent({ swapchain->GetWidth(), swapchain->GetHeight() });
 		}
-		mGuiSystem->BeginGui();      // 开始GUI帧（内部会调用UI构建函数）
-		// 3. 结束GUI帧
-		mGuiSystem->EndGui();
-		// 4. 渲染GUI
-		mGuiSystem->OnRender();
-
 	}
 
 
@@ -323,8 +375,11 @@ private:
 	std::shared_ptr<WuDu::AdTexture> mTexture0;
 	std::shared_ptr<WuDu::AdTexture> mTexture1;
 	std::shared_ptr<WuDu::AdSampler> mSampler;
-	std::shared_ptr<WuDu::AdUnlitMaterial> mBaseMaterial;
+	std::shared_ptr<WuDu::AdPBRMaterial> mBaseMaterial;
 	std::shared_ptr<WuDu::AdGuiSystem>mGuiSystem;
+
+	// 灯光可视化
+	std::shared_ptr<WuDu::AdPBRMaterial> mPointLightMaterial;
 
 
 

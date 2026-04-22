@@ -23,6 +23,7 @@ namespace WuDu {
 		AdVKDevice* GetDevice() const;
 		const glm::mat4 GetProjMat(AdRenderTarget* renderTarget) const;
 		const glm::mat4 GetViewMat(AdRenderTarget* renderTarget) const;
+		glm::vec3 GetCameraPosition(AdRenderTarget* renderTarget) const;
 	};
 }
 

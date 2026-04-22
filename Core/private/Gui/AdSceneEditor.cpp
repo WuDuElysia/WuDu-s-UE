@@ -12,7 +12,7 @@ namespace WuDu {
 		AdScene* scene,
 		AdEntity* activeCamera,
 		AdMesh* cubeMesh,
-		AdUnlitMaterial* defaultMaterial
+		AdMaterial* defaultMaterial
 	) {
 		mScene = scene;
 		mActiveCamera = activeCamera;
@@ -21,15 +21,7 @@ namespace WuDu {
 	}
 
 	void AdSceneEditor::AddSceneEditor() {
-		// 添加场景编辑器的GUI函数
-		ImGui::Begin("Scene Hierarchy");
-		ShowSceneHierarchy();
-		ImGui::End();
-
-		ImGui::Begin("Properties");
-		ShowTransformEditor();
-		ImGui::End();
-
+		// 仅渲染视口 — 层级面板和检查器面板已迁移到 AdHierarchyPanel 和 AdInspectorPanel
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 		ImGui::Begin("Viewport", nullptr, ImGuiWindowFlags_NoScrollbar);
 		HandleSceneViewport();
@@ -47,9 +39,9 @@ namespace WuDu {
 			// 创建新实体
 			AdEntity* cube = mScene->CreateEntity("Cube");
 
-			// 添加材质组件并关联网格和材质
-			auto& materialComp = cube->AddComponent<AdUnlitMaterialComponent>();
-			materialComp.AddMesh(mCubeMesh, mDefaultMaterial);
+			// 添加PBR材质组件并关联网格和材质
+			auto& materialComp = cube->AddComponent<AdPBRMaterialComponent>();
+			materialComp.AddMesh(mCubeMesh, static_cast<AdPBRMaterial*>(mDefaultMaterial));
 
 			// 选中新创建的实体
 			SelectEntity(cube);

@@ -23,10 +23,18 @@ add_library(WuDu_core
 	 "private/Gui/AdGuiRenderer.cpp"
 	 "private/Gui/AdGuiManager.cpp"
 	 "private/Gui/AdGuiEventHandler.cpp"
+	 "private/Gui/AdComponentRegistry.cpp"
+	 "private/Gui/AdEditorContext.cpp"
+	 "private/Gui/AdHierarchyPanel.cpp"
+	 "private/Gui/AdInspectorPanel.cpp"
+	 "private/Gui/AdBuiltinComponentRegistration.cpp"
+	 "private/Gui/AdResourceBrowserPanel.cpp"
 	 "private/Resource/AdModelLoader.cpp" 
 	 "private/Resource/AdModelResource.cpp"
 	 "private/ECS/System/AdPBRForwardMaterialSystem.cpp"
 	 "private/ECS/System/AdPBRDeferredMaterialSystem.cpp"
+	 "private/ECS/System/AdGridMaterialSystem.cpp"
+	 "private/ECS/System/AdSkyboxMaterialSystem.cpp"
 	 )
 
 target_include_directories(WuDu_core PUBLIC

@@ -1,4 +1,4 @@
-#pragma
+#pragma once
 
 #include "AdLightComponent.h"
 
@@ -20,21 +20,14 @@ namespace WuDu {
                 LightUbo GetLightUbo() const override {
                         LightUbo ubo{};
 
-                        // 获取实体变换组件，计算世界空间位置和方向
-                        //auto& transformComp = GetEntity()->GetComponent<AdTransformComponent>();
-                        //glm::vec3 worldPos = transformComp.GetWorldPosition();
-                        //glm::vec3 worldDir = transformComp.GetForwardDirection();
-
                         // 聚光灯的位置w分量为1，表示这是一个位置点
                         ubo.position = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f);
-                        //ubo.direction = worldDir;
+                        ubo.directionAndRange = glm::vec4(0.0f, 0.0f, 0.0f, mRange);
 
                         // 设置光源颜色和强度
-                        ubo.color = GetColor();
-                        ubo.intensity = GetIntensity();
+                        ubo.colorAndIntensity = glm::vec4(GetColor(), GetIntensity());
 
                         // 设置聚光灯特有参数
-                        ubo.range = mRange;
                         ubo.attenuationConstant = mAttenuationConstant;
                         ubo.attenuationLinear = mAttenuationLinear;
                         ubo.attenuationQuadratic = mAttenuationQuadratic;
@@ -69,6 +62,11 @@ namespace WuDu {
                 float GetRange() const { return mRange; }
                 float GetSpotInnerCutoff() const { return acos(mSpotInnerCutoff); }
                 float GetSpotOuterCutoff() const { return acos(mSpotOuterCutoff); }
+                float GetSpotInnerCutoffCos() const { return mSpotInnerCutoff; }
+                float GetSpotOuterCutoffCos() const { return mSpotOuterCutoff; }
+                float GetAttenuationConstant() const { return mAttenuationConstant; }
+                float GetAttenuationLinear() const { return mAttenuationLinear; }
+                float GetAttenuationQuadratic() const { return mAttenuationQuadratic; }
 
         private:
                 float mRange;                      // 光源范围

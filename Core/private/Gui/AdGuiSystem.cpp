@@ -1,6 +1,8 @@
 // AdGuiSystem.cpp - GUI系统主协调器
 #include "Gui/AdGuiSystem.h"
+#include "Gui/AdBuiltinComponentRegistration.h"
 #include "AdApplication.h"
+#include "AdFileUtil.h"
 #include "Graphic/AdVKRenderPass.h"
 #include <Window/AdGlfwWindow.h>
 
@@ -38,18 +40,36 @@ namespace WuDu {
 
 		// 等待初始化完成
 		vkDeviceWaitIdle(device->GetHandle());
+
+		// 注册所有内置组件到反射系统
+		RegisterBuiltinComponents();
+
+		// 扫描资源目录（使用引擎定义的资源根路径）
+		mResourceBrowserPanel.ScanResources(AD_RES_ROOT_DIR);
 	}
 
 	void AdGuiSystem::OnRender() {
-		// 渲染GUI
+		// 旧版渲染方式（独立acquire/present），保留向后兼容
 		mRenderer.OnRender();
 
-		// 处理多视口
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
 			ImGui::UpdatePlatformWindows();
 			ImGui::RenderPlatformWindowsDefault();
 		}
+	}
+
+	VkCommandBuffer AdGuiSystem::OnRenderGui(int32_t imageIndex) {
+		// 新版：只录制GUI命令缓冲区，不做acquire/present
+		VkCommandBuffer guiCmd = mRenderer.RecordGuiCommands(imageIndex);
+
+		ImGuiIO& io = ImGui::GetIO();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
+
+		return guiCmd;
 	}
 
 	void AdGuiSystem::OnDestroy() {
@@ -71,6 +91,10 @@ namespace WuDu {
 
 	void AdGuiSystem::OnBeforeRender() {
 		// 渲染前的准备工作
+	}
+
+	void AdGuiSystem::ProcessPendingTextureLoads() {
+		mInspectorPanel.ProcessPendingTextureLoads(mEditorContext);
 	}
 
 	// 转发给AdGuiManager的方法
@@ -101,14 +125,71 @@ namespace WuDu {
 			AdScene* scene,
 			AdEntity* activeCamera,
 			AdMesh* cubeMesh,
-			AdUnlitMaterial* defaultMaterial
+			AdMaterial* defaultMaterial
 		) {
 		mSceneEditor.SetResources(scene, activeCamera, cubeMesh, defaultMaterial);
+		mEditorContext.scene = scene;
 	}
 	
+	// 设置全屏 Dockspace 和主菜单栏
+	void AdGuiSystem::SetupDockspace() {
+		// 主菜单栏（必须在 DockSpace 之前）
+		if (ImGui::BeginMainMenuBar()) {
+			if (ImGui::BeginMenu("File")) {
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("View")) {
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
+		}
+
+		// 创建全屏 Dockspace，PassthruCentralNode 让中央区域透明不遮挡场景
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGuiID dockspaceId = ImGui::DockSpaceOverViewport(0, viewport, ImGuiDockNodeFlags_PassthruCentralNode);
+
+		// 首次运行时设置初始停靠布局
+		if (mFirstTimeDockLayout) {
+			mFirstTimeDockLayout = false;
+
+			// 使用 DockSpaceOverViewport 返回的 ID（不能用 GetID("DockSpace")，那是不同的 ID）
+			ImGui::DockBuilderRemoveNode(dockspaceId);
+			ImGui::DockBuilderAddNode(dockspaceId, ImGuiDockNodeFlags_DockSpace);
+			ImGui::DockBuilderSetNodeSize(dockspaceId, viewport->Size);
+
+			// 左侧: Scene Hierarchy (20%)
+			ImGuiID left, center;
+			ImGui::DockBuilderSplitNode(dockspaceId, ImGuiDir_Left, 0.2f, &left, &center);
+
+			// 右侧: Inspector (25% of remaining)
+			ImGuiID right, middle;
+			ImGui::DockBuilderSplitNode(center, ImGuiDir_Right, 0.25f, &right, &middle);
+
+			// 底部: Resource Browser (25% of remaining center)
+			ImGuiID bottom, viewportCenter;
+			ImGui::DockBuilderSplitNode(middle, ImGuiDir_Down, 0.25f, &bottom, &viewportCenter);
+
+			ImGui::DockBuilderDockWindow("Scene Hierarchy", left);
+			ImGui::DockBuilderDockWindow("Inspector", right);
+			ImGui::DockBuilderDockWindow("Resource Browser", bottom);
+			ImGui::DockBuilderDockWindow("Viewport", viewportCenter);
+
+			ImGui::DockBuilderFinish(dockspaceId);
+		}
+	}
+
 	// 添加场景编辑器UI
 	void AdGuiSystem::AddSceneEditor() {
 		AddGuiFunction([this]() {
+			// 每帧验证选中实体的有效性
+			mEditorContext.ValidateSelection();
+
+			// 渲染编辑器面板（独立浮动窗口，不占用主窗口）
+			mHierarchyPanel.OnImGui(mEditorContext);
+			mInspectorPanel.OnImGui(mEditorContext);
+			mResourceBrowserPanel.OnImGui();
+
+			// 保留现有的场景编辑器视口渲染
 			mSceneEditor.AddSceneEditor();
 		});
 	}

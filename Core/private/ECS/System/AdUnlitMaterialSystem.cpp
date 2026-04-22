@@ -98,25 +98,25 @@ namespace WuDu {
 				.offset = offsetof(AdVertex, Position)      // 在 AdVertex 中的偏移
 			},
 			{
-				.location = 1,                         // 属性位置 1：纹理坐标
-				.binding = 0,
-				.format = VK_FORMAT_R32G32_SFLOAT,     // 2个32位浮点数
-				.offset = offsetof(AdVertex, TexCoord)
-			},
-			{
-				.location = 2,                     //法线    
+				.location = 1,                         // 属性位置 1：法线
 				.binding = 0,
 				.format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
 				.offset = offsetof(AdVertex, Normal)
 			},
 			{
-				.location = 3,                         
+				.location = 2,                         // 属性位置 2：纹理坐标
+				.binding = 0,
+				.format = VK_FORMAT_R32G32_SFLOAT,     // 2个32位浮点数
+				.offset = offsetof(AdVertex, TexCoord)
+			},
+			{
+				.location = 3,                         // 属性位置 3：切线
 				.binding = 0,
 				.format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
 				.offset = offsetof(AdVertex, Tangent)
 			},
 			{
-				.location = 4,                         
+				.location = 4,                         // 属性位置 4：副切线
 				.binding = 0,
 				.format = VK_FORMAT_R32G32B32_SFLOAT,  // 3个32位浮点数
 				.offset = offsetof(AdVertex, Bitangent)
@@ -231,7 +231,13 @@ namespace WuDu {
 				vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, mPipelineLayout->GetHandle(),
 					0, ARRAY_SIZE(descriptorSets), descriptorSets, 0, nullptr);
 
-				ModelPC pc = { transComp.GetTransform() };
+				glm::mat4 modelMat = transComp.GetTransform();
+				ModelPC pc = {
+					modelMat,
+					glm::vec4(1, 0, 0, 0),
+					glm::vec4(0, 1, 0, 0),
+					glm::vec4(0, 0, 1, 0)
+				};
 				vkCmdPushConstants(cmdBuffer, mPipelineLayout->GetHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(pc), &pc);
 
 				// 绘制网格

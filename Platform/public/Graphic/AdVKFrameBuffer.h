@@ -2,11 +2,11 @@
 #define ADVKFRAMEBUFFER_H
 
 #include "Graphic/AdVKCommon.h"
+#include "Graphic/AdVKImageView.h"
 
 namespace WuDu {
 	class AdVKDevice;
 	class AdVKRenderPass;
-	class AdVKImageView;
 	class AdVKImage;
 
 	class AdVKFrameBuffer {
@@ -19,6 +19,11 @@ namespace WuDu {
 		VkFramebuffer GetHandle() const { return mHandle; }
 		uint32_t GetWidth() const { return mWidth; }
 		uint32_t GetHeight() const { return mHeight; }
+
+		// 按索引获取附件的 VkImageView 句柄
+		VkImageView GetAttachmentImageView(uint32_t index) const {
+			return mImageViews[index]->GetHandle();
+		}
 	private:
 		VkFramebuffer mHandle = VK_NULL_HANDLE;
 		AdVKDevice* mDevice;

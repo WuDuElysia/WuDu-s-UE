@@ -133,14 +133,14 @@ namespace WuDu {
 			{
 				.location = 1,
 				.binding = 0,
-				.format = VK_FORMAT_R32G32_SFLOAT,
-				.offset = offsetof(AdVertex,TexCoord)
+				.format = VK_FORMAT_R32G32B32_SFLOAT,
+				.offset = offsetof(AdVertex,Normal)
 			},
 			{
 				.location = 2,
 				.binding = 0,
-				.format = VK_FORMAT_R32G32B32_SFLOAT,
-				.offset = offsetof(AdVertex,Normal)
+				.format = VK_FORMAT_R32G32_SFLOAT,
+				.offset = offsetof(AdVertex,TexCoord)
 			},
 			{
 				.location = 3,
@@ -169,13 +169,15 @@ namespace WuDu {
 		std::vector<VkDescriptorPoolSize> poolSizes = {
 			{
 				.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.descriptorCount = 1
+				.descriptorCount = 2
 			}
 		};
-		mDescriptorPool = std::make_shared<AdVKDescriptorPool>(device, 1, poolSizes);
+		mDescriptorPool = std::make_shared<AdVKDescriptorPool>(device, 2, poolSizes);
 		mFrameUboDescSet = mDescriptorPool->AllocateDescriptorSet(mFrameUboDescSetLayout.get(), 1)[0];
 		mFrameUboBuffer = std::make_shared<AdVKBuffer>(device, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, sizeof(FrameUbo), nullptr, true);
-		mLightUboBuffer = std::make_shared<AdVKBuffer>(device,VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,sizeof(LightUbo),nullptr,true);
+		
+		mLightUboDescSet = mDescriptorPool->AllocateDescriptorSet(mLightUboDescSetLayout.get(), 1)[0];
+		mLightUboBuffer = std::make_shared<AdVKBuffer>(device,VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,sizeof(LightingUbo),nullptr,true);
 
 		//初始化材质描述符池
 		ReCreateMaterialDescPool(NUM_MATERIAL_BATCH);
@@ -277,7 +279,14 @@ namespace WuDu {
 					nullptr
 				);
 
-				ModelPC pc = { transComp.GetTransform() };
+				glm::mat4 modelMat = transComp.GetTransform();
+				glm::mat3 normalMat = -glm::transpose(glm::inverse(glm::mat3(modelMat)));
+				ModelPC pc = {
+					modelMat,
+					glm::vec4(normalMat[0], 0.0f),
+					glm::vec4(normalMat[1], 0.0f),
+					glm::vec4(normalMat[2], 0.0f)
+				};
 				vkCmdPushConstants(cmdBuffer, mPipelineLayout->GetHandle(), VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(ModelPC), &pc);
 
 				//绘制网格
@@ -364,6 +373,8 @@ namespace WuDu {
 		FrameUbo frameUbo = {
 			.projMat = GetProjMat(renderTarget),
 			.viewMat = GetViewMat(renderTarget),
+			.camPos = GetCameraPosition(renderTarget),
+			._pad0 = 0.0f,
 			.resolution = resolution,
 			.frameId = static_cast<uint32_t>(app->GetFrameIndex()),
 			.time = app->GetStartTimeSecond()
@@ -389,30 +400,40 @@ namespace WuDu {
 		const TextureView* baseColorTexture = material->GetTextureView(PBR_MAT_BASE_COLOR);
 		if (baseColorTexture) {
 			AdMaterial::UpdateTextureParams(baseColorTexture, &params.baseColorTextureParam);
+		} else {
+			params.baseColorTextureParam.enable = 0;
 		}
 
 		//更新法线纹理参数
 		const TextureView* normalTexture = material->GetTextureView(PBR_MAT_NORMAL);
 		if (normalTexture) {
 			AdMaterial::UpdateTextureParams(normalTexture, &params.normalTextureParam);
+		} else {
+			params.normalTextureParam.enable = 0;
 		}
 
 		//更新金属度-粗糙度纹理参数
 		const TextureView* metallicRoughnessTexture = material->GetTextureView(PBR_MAT_METALLIC_ROUGHNESS);
 		if (metallicRoughnessTexture) {
 			AdMaterial::UpdateTextureParams(metallicRoughnessTexture, &params.metallicRoughnessTextureParam);
+		} else {
+			params.metallicRoughnessTextureParam.enable = 0;
 		}
 
 		//更新环境光遮蔽纹理参数
 		const TextureView* aoTexture = material->GetTextureView(PBR_MAT_AO);
 		if (aoTexture) {
 			AdMaterial::UpdateTextureParams(aoTexture, &params.aoTextureParam);
+		} else {
+			params.aoTextureParam.enable = 0;
 		}
 
 		//更新自发光纹理参数
 		const TextureView* emissiveTexture = material->GetTextureView(PBR_MAT_EMISSIVE);
 		if (emissiveTexture) {
 			AdMaterial::UpdateTextureParams(emissiveTexture, &params.emissiveTextureParam);
+		} else {
+			params.emissiveTextureParam.enable = 0;
 		}
 
 		//写入缓冲区并更新描述符集
@@ -439,11 +460,11 @@ namespace WuDu {
 		defaultView.sampler = mDefaultSampler.get();
 
 		//如果没有设置纹理,使用默认纹理
-		if(!baseColorTexture->sampler || !baseColorTexture->texture) baseColorTexture = &defaultView;
-		if(!normalTexture->sampler || !normalTexture->texture) normalTexture = &defaultView;
-		if(!metallicRoughnessTexture->sampler || !metallicRoughnessTexture->texture) metallicRoughnessTexture = &defaultView;
-		if(!aoTexture->sampler || !aoTexture->texture) aoTexture = &defaultView;
-		if(!emissiveTexture->sampler || !emissiveTexture->texture) emissiveTexture = &defaultView;
+		if(!baseColorTexture || !baseColorTexture->sampler || !baseColorTexture->texture || !baseColorTexture->texture->GetImageView()) baseColorTexture = &defaultView;
+		if(!normalTexture || !normalTexture->sampler || !normalTexture->texture || !normalTexture->texture->GetImageView()) normalTexture = &defaultView;
+		if(!metallicRoughnessTexture || !metallicRoughnessTexture->sampler || !metallicRoughnessTexture->texture || !metallicRoughnessTexture->texture->GetImageView()) metallicRoughnessTexture = &defaultView;
+		if(!aoTexture || !aoTexture->sampler || !aoTexture->texture || !aoTexture->texture->GetImageView()) aoTexture = &defaultView;
+		if(!emissiveTexture || !emissiveTexture->sampler || !emissiveTexture->texture || !emissiveTexture->texture->GetImageView()) emissiveTexture = &defaultView;
 
 		//构建图像信息
 		VkDescriptorImageInfo baseColorImageInfo = DescriptorSetWriter::BuildImageInfo(
@@ -496,27 +517,46 @@ namespace WuDu {
 		std::vector<LightUbo> lightUbos;
 
 		//遍历方向光
-		auto directionalLightView = registry.view<AdDirectionalLightComponent, AdTransformComponent>();
-		directionalLightView.each([&lightUbos](AdDirectionalLightComponent& dirLightComp, AdTransformComponent& transComp) {
+		auto directionalLightView = registry.view<AdDirectionalLightComponent>();
+		directionalLightView.each([&lightUbos](AdDirectionalLightComponent& dirLightComp) {
 			lightUbos.push_back(dirLightComp.GetLightUbo());
 		});
 
-		//遍历点光
+		//遍历点光 - 在系统层组装LightUbo，从TransformComponent获取位置
 		auto pointLightView = registry.view<AdPointLightComponent, AdTransformComponent>();
 		pointLightView.each([&lightUbos](AdPointLightComponent& pointLightComp, AdTransformComponent& transComp) {
-			lightUbos.push_back(pointLightComp.GetLightUbo());
+			LightUbo ubo{};
+			ubo.position = glm::vec4(transComp.GetWorldPosition(), 1.0f);
+			ubo.directionAndRange = glm::vec4(0.0f, 0.0f, 0.0f, pointLightComp.GetRange());
+			ubo.colorAndIntensity = glm::vec4(pointLightComp.GetColor(), pointLightComp.GetIntensity());
+			ubo.attenuationConstant = pointLightComp.GetAttenuationConstant();
+			ubo.attenuationLinear = pointLightComp.GetAttenuationLinear();
+			ubo.attenuationQuadratic = pointLightComp.GetAttenuationQuadratic();
+			ubo.type = static_cast<uint32_t>(LightType::LIGHT_TYPE_POINT);
+			ubo.enabled = pointLightComp.IsEnabled() ? 1 : 0;
+			lightUbos.push_back(ubo);
 		});
 
-		//遍历聚光灯
+		//遍历聚光灯 - 在系统层组装LightUbo，从TransformComponent获取位置和方向
 		auto spotLightView = registry.view<AdSpotLightComponent, AdTransformComponent>();
 		spotLightView.each([&lightUbos](AdSpotLightComponent& spotLightComp, AdTransformComponent& transComp) {
-			lightUbos.push_back(spotLightComp.GetLightUbo());
+			LightUbo ubo{};
+			ubo.position = glm::vec4(transComp.GetWorldPosition(), 1.0f);
+			ubo.directionAndRange = glm::vec4(transComp.GetForwardDirection(), spotLightComp.GetRange());
+			ubo.colorAndIntensity = glm::vec4(spotLightComp.GetColor(), spotLightComp.GetIntensity());
+			ubo.spotInnerCutoff = spotLightComp.GetSpotInnerCutoffCos();
+			ubo.spotOuterCutoff = spotLightComp.GetSpotOuterCutoffCos();
+			ubo.attenuationConstant = spotLightComp.GetAttenuationConstant();
+			ubo.attenuationLinear = spotLightComp.GetAttenuationLinear();
+			ubo.attenuationQuadratic = spotLightComp.GetAttenuationQuadratic();
+			ubo.type = static_cast<uint32_t>(LightType::LIGHT_TYPE_SPOT);
+			ubo.enabled = spotLightComp.IsEnabled() ? 1 : 0;
+			lightUbos.push_back(ubo);
 		});
 
 		//更新光照UBO数据
 		LightingUbo lightingUbo{};
-		lightingUbo.ambientColor = mAmbientColor;
-		lightingUbo.ambientIntensity = mAmbientIntensity;
+		lightingUbo.ambientColorAndIntensity = glm::vec4(mAmbientColor, mAmbientIntensity);
 		lightingUbo.numLights = static_cast<uint32_t>(lightUbos.size());
 
 		//复制光源数据到光照UBO
