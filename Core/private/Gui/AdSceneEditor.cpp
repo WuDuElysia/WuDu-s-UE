@@ -1,5 +1,6 @@
 // AdSceneEditor.cpp
 #include "Gui/AdSceneEditor.h"
+#include "Gui/AdEditorContext.h"
 #include "AdApplication.h"
 #include "Graphic/AdVKRenderPass.h"
 #include "Window/AdGlfwWindow.h"
@@ -112,8 +113,10 @@ namespace WuDu {
 			mViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
 		}
 
+		// 创建一个覆盖整个视口区域的不可见按钮，作为交互和拖放的 item
+		ImGui::InvisibleButton("##ViewportDropArea", viewportPanelSize, ImGuiButtonFlags_MouseButtonLeft);
+
 		// 处理视口交互
-		ImGui::SetItemAllowOverlap();
 		if (ImGui::IsItemHovered()) {
 			// 处理鼠标点击选择
 			if (ImGui::IsMouseClicked(0) && !io.WantCaptureMouse) {
@@ -124,6 +127,17 @@ namespace WuDu {
 			if (mSelectedEntity && ImGui::IsMouseDown(0) && !io.WantCaptureMouse) {
 				HandleTransformDrag(io.MousePos);
 			}
+		}
+
+		// 注册 MODEL_PATH 拖放目标（紧跟 InvisibleButton 之后）
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("MODEL_PATH")) {
+				const char* modelPath = static_cast<const char*>(payload->Data);
+				if (mEditorContext) {
+					mEditorContext->CreateModelEntity(std::string(modelPath));
+				}
+			}
+			ImGui::EndDragDropTarget();
 		}
 	}
 

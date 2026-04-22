@@ -137,6 +137,15 @@ namespace WuDu {
 					}
 				}
 
+				// Set up drag source for model entries
+				if (entry.category == ResourceEntry::Category::Model) {
+					if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_SourceAllowNullID)) {
+						ImGui::SetDragDropPayload("MODEL_PATH", entry.fullPath.c_str(), entry.fullPath.size() + 1);
+						ImGui::Text("%s", entry.fileName.c_str());
+						ImGui::EndDragDropSource();
+					}
+				}
+
 				ImGui::PopID();
 			}
 		}

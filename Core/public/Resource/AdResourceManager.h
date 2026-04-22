@@ -43,30 +43,26 @@ namespace WuDu {
 			return resource;
 		}
 
-		// 通过路径获取资源
+		// 通过路径或UUID获取资源
+		// 注意：UUID 是 std::string 的 typedef，因此只能有一个 Get 重载
+		// 内部先按路径查找，再按UUID查找
 		template<typename T>
-		std::shared_ptr<T> Get(const std::string& path) {
+		std::shared_ptr<T> Get(const std::string& key) {
 			static_assert(std::is_base_of<AdResource, T>::value, "T must derive from AdResource");
 
 			std::lock_guard<std::mutex> lock(mMutex);
 
-			auto pathIt = mPathToUUID.find(path);
+			// 先尝试作为路径查找
+			auto pathIt = mPathToUUID.find(key);
 			if (pathIt != mPathToUUID.end()) {
-				const UUID& uuid = pathIt->second;
-				return Get<T>(uuid);
+				auto uuidIt = mUUIDToResource.find(pathIt->second);
+				if (uuidIt != mUUIDToResource.end()) {
+					return std::dynamic_pointer_cast<T>(uuidIt->second.lock());
+				}
 			}
 
-			return nullptr;
-		}
-
-		// 通过UUID获取资源
-		template<typename T>
-		std::shared_ptr<T> Get(const UUID& uuid) {
-			static_assert(std::is_base_of<AdResource, T>::value, "T must derive from AdResource");
-
-			std::lock_guard<std::mutex> lock(mMutex);
-
-			auto it = mUUIDToResource.find(uuid);
+			// 再尝试作为UUID直接查找
+			auto it = mUUIDToResource.find(key);
 			if (it != mUUIDToResource.end()) {
 				return std::dynamic_pointer_cast<T>(it->second.lock());
 			}

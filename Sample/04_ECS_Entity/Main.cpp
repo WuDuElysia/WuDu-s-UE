@@ -123,7 +123,7 @@ protected:
 		mCubeMesh = std::make_shared<WuDu::AdMesh>(vertices, indices);
 
 		//加载模型
-		std::shared_ptr<WuDu::AdModelResource> model = std::make_shared<WuDu::AdModelResource>(AD_RES_MODEL_DIR"萨姆修复版+发光Miaobox.fbx");
+		std::shared_ptr<WuDu::AdModelResource> model = std::make_shared<WuDu::AdModelResource>(AD_RES_MODEL_DIR"SAM.fbx");
 		if (model->Load()) {
 			const std::vector<WuDu::ModelMesh>& meshes = model->GetMeshes();
 			for (size_t i = 0; i < meshes.size(); i++) {

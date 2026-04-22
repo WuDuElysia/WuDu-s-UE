@@ -1,6 +1,7 @@
 // AdGuiSystem.cpp - GUI系统主协调器
 #include "Gui/AdGuiSystem.h"
 #include "Gui/AdBuiltinComponentRegistration.h"
+#include "Render/AdMaterial.h"
 #include "AdApplication.h"
 #include "AdFileUtil.h"
 #include "Graphic/AdVKRenderPass.h"
@@ -129,6 +130,9 @@ namespace WuDu {
 		) {
 		mSceneEditor.SetResources(scene, activeCamera, cubeMesh, defaultMaterial);
 		mEditorContext.scene = scene;
+		mEditorContext.cubeMesh = cubeMesh;
+		mEditorContext.defaultMaterial = static_cast<AdPBRMaterial*>(defaultMaterial);
+		mSceneEditor.SetEditorContext(&mEditorContext);
 	}
 	
 	// 设置全屏 Dockspace 和主菜单栏

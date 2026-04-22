@@ -31,6 +31,7 @@ add_library(WuDu_core
 	 "private/Gui/AdResourceBrowserPanel.cpp"
 	 "private/Resource/AdModelLoader.cpp" 
 	 "private/Resource/AdModelResource.cpp"
+	 "private/Resource/AdResourceManager.cpp"
 	 "private/ECS/System/AdPBRForwardMaterialSystem.cpp"
 	 "private/ECS/System/AdPBRDeferredMaterialSystem.cpp"
 	 "private/ECS/System/AdGridMaterialSystem.cpp"

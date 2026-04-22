@@ -228,7 +228,7 @@ protected:
 		mCubeMesh = std::make_shared<WuDu::AdMesh>(vertices, indices);
 
 		// 加载模型
-		std::shared_ptr<WuDu::AdModelResource> model = std::make_shared<WuDu::AdModelResource>(AD_RES_MODEL_DIR"萨姆修复版+发光Miaobox.fbx");
+		std::shared_ptr<WuDu::AdModelResource> model = std::make_shared<WuDu::AdModelResource>(AD_RES_MODEL_DIR"SAM.fbx");
 		if (model->Load()) {
 			const std::vector<WuDu::ModelMesh>& meshes = model->GetMeshes();
 			for (size_t i = 0; i < meshes.size(); i++) {
@@ -253,6 +253,16 @@ protected:
 		mBaseMaterial->SetTextureView(WuDu::PBR_MAT_BASE_COLOR, mTexture0.get(), mSampler.get());
 		mBaseMaterial->SetMetallicFactor(0.8f);
 		mBaseMaterial->SetRoughnessFactor(0.2f);
+
+		// 灯光可视化用的独立材质（白色，无贴图）
+		mLightMaterial = std::shared_ptr<WuDu::AdPBRMaterial>(WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdPBRMaterial>());
+		mLightMaterial->SetMetallicFactor(0.0f);
+		mLightMaterial->SetRoughnessFactor(0.5f);
+
+		// 测试 cube 用的独立材质
+		mCubeMaterial = std::shared_ptr<WuDu::AdPBRMaterial>(WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdPBRMaterial>());
+		mCubeMaterial->SetMetallicFactor(0.0f);
+		mCubeMaterial->SetRoughnessFactor(0.5f);
 
 		// 初始化 GUI 系统
 		mGuiSystem = std::make_shared<WuDu::AdGuiSystem>();
@@ -293,26 +303,36 @@ protected:
 			transComp.rotation = { 0.f, 0.f, 0.f };
 		}
 
-		// 创建方向光实体
+		// 创建方向光实体（绑定 cube 以便在场景中可视化位置）
 		{
 			WuDu::AdEntity* directionalLight = scene->CreateEntity("Directional Light");
 			auto& dirLightComp = directionalLight->AddComponent<WuDu::AdDirectionalLightComponent>();
 			dirLightComp.SetDirection(glm::vec3(0.5f, -1.0f, 0.3f));
 			dirLightComp.SetColor(glm::vec3(1.0f, 0.95f, 0.9f));
 			dirLightComp.SetIntensity(2.0f);
+
+			auto& matComp = directionalLight->AddComponent<WuDu::AdPBRMaterialComponent>();
+			matComp.AddMesh(mCubeMesh.get(), mLightMaterial.get());
+			auto& transComp = directionalLight->GetComponent<WuDu::AdTransformComponent>();
+			transComp.position = { 2.0f, 3.0f, 1.0f };
+			transComp.scale = { 0.2f, 0.2f, 0.2f };
 		}
 
-		// 创建点光源实体
+		// 创建点光源实体（绑定 cube 以便在场景中可视化位置）
 		{
 			WuDu::AdEntity* pointLight = scene->CreateEntity("Point Light");
 
 			auto& transComp = pointLight->GetComponent<WuDu::AdTransformComponent>();
 			transComp.position = { 0.0f, 1.5f, 1.0f };
+			transComp.scale = { 0.2f, 0.2f, 0.2f };
 
 			auto& pointLightComp = pointLight->AddComponent<WuDu::AdPointLightComponent>();
 			pointLightComp.SetColor(glm::vec3(1.0f, 0.8f, 0.6f));
 			pointLightComp.SetIntensity(50.0f);
 			pointLightComp.SetRange(20.0f);
+
+			auto& matComp = pointLight->AddComponent<WuDu::AdPBRMaterialComponent>();
+			matComp.AddMesh(mCubeMesh.get(), mLightMaterial.get());
 		}
 
 		// 加载 IBL 资源（当前为 stub，仅记录日志）
@@ -325,7 +345,7 @@ protected:
 		{
 			WuDu::AdEntity* testCube = scene->CreateEntity("Test Cube");
 			auto& matComp = testCube->AddComponent<WuDu::AdPBRMaterialComponent>();
-			matComp.AddMesh(mCubeMesh.get(), mBaseMaterial.get());
+			matComp.AddMesh(mCubeMesh.get(), mCubeMaterial.get());
 			auto& transComp = testCube->GetComponent<WuDu::AdTransformComponent>();
 			transComp.position = { -1.0f, 0.5f, 0.0f };
 			transComp.scale = { 0.5f, 0.5f, 0.5f };
@@ -420,6 +440,8 @@ private:
 	std::shared_ptr<WuDu::AdTexture> mTexture0;
 	std::shared_ptr<WuDu::AdSampler> mSampler;
 	std::shared_ptr<WuDu::AdPBRMaterial> mBaseMaterial;
+	std::shared_ptr<WuDu::AdPBRMaterial> mLightMaterial;
+	std::shared_ptr<WuDu::AdPBRMaterial> mCubeMaterial;
 	std::shared_ptr<WuDu::AdGuiSystem> mGuiSystem;
 };
 
