@@ -36,6 +36,9 @@ add_library(WuDu_core
 	 "private/ECS/System/AdPBRDeferredMaterialSystem.cpp"
 	 "private/ECS/System/AdGridMaterialSystem.cpp"
 	 "private/ECS/System/AdSkyboxMaterialSystem.cpp"
+	 "private/Serialization/AdComponentSerializerRegistry.cpp"
+	 "private/Serialization/AdBuiltinComponentSerializers.cpp"
+	 "private/Serialization/AdSceneSerializer.cpp"
 	 )
 
 target_include_directories(WuDu_core PUBLIC

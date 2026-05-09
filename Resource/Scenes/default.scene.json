@@ -1,0 +1,296 @@
+{
+  "entities": [
+    {
+      "components": {
+        "AdPBRMaterialComponent": {
+          "materials": [
+            {
+              "aoFactor": 1.0,
+              "baseColorFactor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "emissiveFactor": 0.0,
+              "metallicFactor": 1.0,
+              "roughnessFactor": 0.44999998807907104,
+              "textures": {
+                "ao": null,
+                "baseColor": {
+                  "resource": "body_tex"
+                },
+                "emissive": null,
+                "metallicRoughness": null,
+                "normal": null
+              }
+            }
+          ],
+          "meshes": [
+            {
+              "materialIndex": 0,
+              "meshIndex": -1,
+              "resource": "sam_model",
+              "type": "model"
+            }
+          ]
+        },
+        "AdTransformComponent": {
+          "position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation": [
+            -90.0,
+            0.0,
+            0.0
+          ],
+          "scale": [
+            5.0,
+            5.0,
+            5.0
+          ]
+        }
+      },
+      "name": "MiG-29",
+      "parent": null,
+      "uuid": 100001
+    },
+    {
+      "components": {
+        "AdDirectionalLightComponent": {
+          "color": [
+            1.0,
+            0.949999988079071,
+            0.8999999761581421
+          ],
+          "direction": [
+            0.010404984466731548,
+            -0.020809968933463097,
+            -0.999729335308075
+          ],
+          "enabled": true,
+          "intensity": 2.0
+        },
+        "AdPBRMaterialComponent": {
+          "materials": [
+            {
+              "aoFactor": 1.0,
+              "baseColorFactor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "emissiveFactor": 0.0,
+              "metallicFactor": 0.0,
+              "roughnessFactor": 0.5,
+              "textures": {
+                "ao": null,
+                "baseColor": null,
+                "emissive": null,
+                "metallicRoughness": null,
+                "normal": null
+              }
+            }
+          ],
+          "meshes": [
+            {
+              "materialIndex": 0,
+              "shape": "cube",
+              "type": "primitive"
+            }
+          ]
+        },
+        "AdTransformComponent": {
+          "position": [
+            2.0,
+            3.0,
+            1.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "scale": [
+            0.20000000298023224,
+            0.20000000298023224,
+            0.20000000298023224
+          ]
+        }
+      },
+      "name": "Directional Light",
+      "parent": null,
+      "uuid": 100002
+    },
+    {
+      "components": {
+        "AdPBRMaterialComponent": {
+          "materials": [
+            {
+              "aoFactor": 1.0,
+              "baseColorFactor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "emissiveFactor": 0.0,
+              "metallicFactor": 0.0,
+              "roughnessFactor": 0.5,
+              "textures": {
+                "ao": null,
+                "baseColor": null,
+                "emissive": null,
+                "metallicRoughness": null,
+                "normal": null
+              }
+            }
+          ],
+          "meshes": [
+            {
+              "materialIndex": 0,
+              "shape": "cube",
+              "type": "primitive"
+            }
+          ]
+        },
+        "AdPointLightComponent": {
+          "attenuation": {
+            "constant": 1.0,
+            "linear": 0.14000000059604645,
+            "quadratic": 0.07000000029802322
+          },
+          "color": [
+            1.0,
+            0.800000011920929,
+            0.6000000238418579
+          ],
+          "enabled": true,
+          "intensity": 50.0,
+          "range": 20.0
+        },
+        "AdTransformComponent": {
+          "position": [
+            -0.699999988079071,
+            7.800000190734863,
+            2.0
+          ],
+          "rotation": [
+            0.0,
+            1.100000023841858,
+            0.0
+          ],
+          "scale": [
+            0.20000000298023224,
+            0.20000000298023224,
+            0.20000000298023224
+          ]
+        }
+      },
+      "name": "Point Light",
+      "parent": null,
+      "uuid": 100003
+    },
+    {
+      "components": {
+        "AdPBRMaterialComponent": {
+          "materials": [
+            {
+              "aoFactor": 1.0,
+              "baseColorFactor": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+              ],
+              "emissiveFactor": 0.0,
+              "metallicFactor": 0.0,
+              "roughnessFactor": 0.5,
+              "textures": {
+                "ao": null,
+                "baseColor": null,
+                "emissive": null,
+                "metallicRoughness": null,
+                "normal": null
+              }
+            }
+          ],
+          "meshes": [
+            {
+              "materialIndex": 0,
+              "shape": "cube",
+              "type": "primitive"
+            }
+          ]
+        },
+        "AdTransformComponent": {
+          "position": [
+            -1.0,
+            0.5,
+            0.0
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "scale": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        }
+      },
+      "name": "Test Cube",
+      "parent": null,
+      "uuid": 100004
+    },
+    {
+      "components": {
+        "AdFirstPersonCameraComponent": {
+          "farPlane": 1000.0,
+          "fov": 65.0,
+          "moveSpeed": 3.0,
+          "nearPlane": 0.30000001192092896,
+          "pitch": -41.200103759765625,
+          "sensitivity": 0.20000000298023224,
+          "yaw": -93.59982299804688
+        },
+        "AdTransformComponent": {
+          "position": [
+            0.015814736485481262,
+            8.632134437561035,
+            5.3227338790893555
+          ],
+          "rotation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "scale": [
+            1.0,
+            1.0,
+            1.0
+          ]
+        }
+      },
+      "name": "Editor Camera",
+      "parent": null,
+      "uuid": 100005
+    }
+  ],
+  "resources": {
+    "body_tex": {
+      "path": "Texture/body_basecolor.jpg",
+      "type": "texture"
+    },
+    "sam_model": {
+      "path": "Model/SAM.fbx",
+      "type": "model"
+    }
+  },
+  "version": 1
+}

@@ -24,6 +24,8 @@
 #include "AdTimeStep.h"
 #include "AdLog.h"
 #include "Resource/AdModelResource.h"
+#include "Serialization/AdSceneSerializer.h"
+#include "Serialization/AdBuiltinComponentSerializers.h"
 
 
 /**
@@ -221,134 +223,71 @@ protected:
 		// 分配命令缓冲区
 		mCmdBuffers = device->GetDefaultCmdPool()->AllocateCommandBuffer(swapchain->GetImages().size());
 
-		// 创建立方体网格数据
+		// 创建立方体网格数据（用于编辑器 fallback）
 		std::vector<WuDu::AdVertex> vertices;
 		std::vector<uint32_t> indices;
 		WuDu::AdGeometryUtil::CreateCube(-0.3f, 0.3f, -0.3f, 0.3f, -0.3f, 0.3f, vertices, indices);
 		mCubeMesh = std::make_shared<WuDu::AdMesh>(vertices, indices);
 
-		// 加载模型
-		std::shared_ptr<WuDu::AdModelResource> model = std::make_shared<WuDu::AdModelResource>(AD_RES_MODEL_DIR"SAM.fbx");
-		if (model->Load()) {
-			const std::vector<WuDu::ModelMesh>& meshes = model->GetMeshes();
-			for (size_t i = 0; i < meshes.size(); i++) {
-				mModelMeshes.emplace_back(std::make_shared<WuDu::AdMesh>(meshes[i].Vertices, meshes[i].Indices));
-			}
-		}
-		else {
-			mModelMeshes.emplace_back(std::make_shared<WuDu::AdMesh>(vertices, indices));
-		}
-
-		// 创建 PBR 材质
-		mBaseMaterial = std::shared_ptr<WuDu::AdPBRMaterial>(WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdPBRMaterial>());
-		mTexture0 = std::make_shared<WuDu::AdTexture>(AD_RES_TEXTURE_DIR"body_basecolor.jpg");
-
-		WuDu::AdSampler::Settings samplerSettings{};
-		samplerSettings.minFilter = VK_FILTER_LINEAR;
-		samplerSettings.magFilter = VK_FILTER_LINEAR;
-		samplerSettings.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerSettings.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		mSampler = std::make_shared<WuDu::AdSampler>(samplerSettings);
-
-		mBaseMaterial->SetTextureView(WuDu::PBR_MAT_BASE_COLOR, mTexture0.get(), mSampler.get());
-		mBaseMaterial->SetMetallicFactor(0.8f);
-		mBaseMaterial->SetRoughnessFactor(0.2f);
-
-		// 灯光可视化用的独立材质（白色，无贴图）
-		mLightMaterial = std::shared_ptr<WuDu::AdPBRMaterial>(WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdPBRMaterial>());
-		mLightMaterial->SetMetallicFactor(0.0f);
-		mLightMaterial->SetRoughnessFactor(0.5f);
-
-		// 测试 cube 用的独立材质
-		mCubeMaterial = std::shared_ptr<WuDu::AdPBRMaterial>(WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdPBRMaterial>());
-		mCubeMaterial->SetMetallicFactor(0.0f);
-		mCubeMaterial->SetRoughnessFactor(0.5f);
+		// 创建编辑器 fallback 材质（用于 GUI 系统）
+		mEditorFallbackMaterial = std::shared_ptr<WuDu::AdPBRMaterial>(
+			WuDu::AdMaterialFactory::GetInstance()->CreateMaterial<WuDu::AdPBRMaterial>());
+		mEditorFallbackMaterial->SetMetallicFactor(0.0f);
+		mEditorFallbackMaterial->SetRoughnessFactor(0.5f);
 
 		// 初始化 GUI 系统
 		mGuiSystem = std::make_shared<WuDu::AdGuiSystem>();
 		mGuiSystem->OnInit();
+
+		// 注册内置组件序列化器
+		WuDu::AdBuiltinComponentSerializers::RegisterAll();
 	}
 
 	/**
 	 * @brief 初始化场景内容，创建摄像机、模型实体和光源。
 	 */
 	void OnSceneInit(WuDu::AdScene* scene) override {
-		// 创建摄像机实体并设置其组件
-		WuDu::AdEntity* camera = mScene->CreateEntity("Editor Camera");
-		auto& cameraComp = camera->AddComponent<WuDu::AdFirstPersonCameraComponent>();
+		// 从场景文件加载场景内容
+		uint32_t entityCount = 0;
+		uint32_t resourceCount = 0;
+		std::string sceneFilePath = std::string(AD_RES_ROOT_DIR) + "Scenes/default.scene.json";
+
+		if (!WuDu::AdSceneSerializer::Load(scene, sceneFilePath, &entityCount, &resourceCount)) {
+			LOG_W("Failed to load default scene file: {0}. Starting with empty scene.", sceneFilePath);
+		} else {
+			LOG_I("Loaded scene: {0} entities, {1} resources", entityCount, resourceCount);
+		}
+
+		// 查找或创建摄像机实体
+		WuDu::AdEntity* camera = nullptr;
+		auto& ecsRegistry = scene->GetEcsRegistry();
+		auto cameraView = ecsRegistry.view<WuDu::AdFirstPersonCameraComponent>();
+		for (auto enttEntity : cameraView) {
+			camera = scene->GetEntity(enttEntity);
+			if (camera) break;
+		}
+		if (!camera) {
+			camera = scene->CreateEntity("Editor Camera");
+			camera->AddComponent<WuDu::AdFirstPersonCameraComponent>();
+		}
+
 		m_CameraController = std::make_unique<WuDu::AdCameraControllerManager>(camera);
 		m_CameraController->SetAspect(1360.0f / 768.0f);
-
 		mRenderTarget->SetCamera(camera);
 
-		// 设置 GUI 系统所需资源
+		// 设置 GUI 系统所需资源（使用 fallback cube mesh 和材质）
 		mGuiSystem->SetResources(
 			mScene.get(),
 			camera,
 			mCubeMesh.get(),
-			mBaseMaterial.get()
+			mEditorFallbackMaterial.get()
 		);
 		mGuiSystem->AddSceneEditor();
-
-		// 创建模型实体
-		{
-			mCubes.emplace_back(scene->CreateEntity("MiG-29"));
-			auto& materialComp = mCubes[0]->AddComponent<WuDu::AdPBRMaterialComponent>();
-			for (size_t i = 0; i < mModelMeshes.size(); i++) {
-				materialComp.AddMesh(mModelMeshes[i].get(), mBaseMaterial.get());
-			}
-			auto& transComp = mCubes[0]->GetComponent<WuDu::AdTransformComponent>();
-			transComp.scale = { 0.4f, 0.4f, 0.4f };
-			transComp.position = { 0.f, 0.f, 0.0f };
-			transComp.rotation = { 0.f, 0.f, 0.f };
-		}
-
-		// 创建方向光实体（绑定 cube 以便在场景中可视化位置）
-		{
-			WuDu::AdEntity* directionalLight = scene->CreateEntity("Directional Light");
-			auto& dirLightComp = directionalLight->AddComponent<WuDu::AdDirectionalLightComponent>();
-			dirLightComp.SetDirection(glm::vec3(0.5f, -1.0f, 0.3f));
-			dirLightComp.SetColor(glm::vec3(1.0f, 0.95f, 0.9f));
-			dirLightComp.SetIntensity(2.0f);
-
-			auto& matComp = directionalLight->AddComponent<WuDu::AdPBRMaterialComponent>();
-			matComp.AddMesh(mCubeMesh.get(), mLightMaterial.get());
-			auto& transComp = directionalLight->GetComponent<WuDu::AdTransformComponent>();
-			transComp.position = { 2.0f, 3.0f, 1.0f };
-			transComp.scale = { 0.2f, 0.2f, 0.2f };
-		}
-
-		// 创建点光源实体（绑定 cube 以便在场景中可视化位置）
-		{
-			WuDu::AdEntity* pointLight = scene->CreateEntity("Point Light");
-
-			auto& transComp = pointLight->GetComponent<WuDu::AdTransformComponent>();
-			transComp.position = { 0.0f, 1.5f, 1.0f };
-			transComp.scale = { 0.2f, 0.2f, 0.2f };
-
-			auto& pointLightComp = pointLight->AddComponent<WuDu::AdPointLightComponent>();
-			pointLightComp.SetColor(glm::vec3(1.0f, 0.8f, 0.6f));
-			pointLightComp.SetIntensity(50.0f);
-			pointLightComp.SetRange(20.0f);
-
-			auto& matComp = pointLight->AddComponent<WuDu::AdPBRMaterialComponent>();
-			matComp.AddMesh(mCubeMesh.get(), mLightMaterial.get());
-		}
 
 		// 加载 IBL 资源（当前为 stub，仅记录日志）
 		auto* deferredSystem = mRenderTarget->GetMaterialSystem<WuDu::AdPBRDeferredMaterialSystem>();
 		if (deferredSystem) {
 			deferredSystem->LoadIBLResources("Resource/HDR/environment.hdr");
-		}
-
-		// 测试 cube
-		{
-			WuDu::AdEntity* testCube = scene->CreateEntity("Test Cube");
-			auto& matComp = testCube->AddComponent<WuDu::AdPBRMaterialComponent>();
-			matComp.AddMesh(mCubeMesh.get(), mCubeMaterial.get());
-			auto& transComp = testCube->GetComponent<WuDu::AdTransformComponent>();
-			transComp.position = { -1.0f, 0.5f, 0.0f };
-			transComp.scale = { 0.5f, 0.5f, 0.5f };
 		}
 	}
 
@@ -361,8 +300,6 @@ protected:
 	}
 
 	void OnSceneDestroy(WuDu::AdScene* scene) override {
-		mTexture0.reset();
-		mSampler.reset();
 	}
 
 	/**
@@ -418,6 +355,7 @@ protected:
 		mGuiSystem->OnDestroy();
 		mGuiSystem.reset();
 
+		mEditorFallbackMaterial.reset();
 		mCubeMesh.reset();
 		mCmdBuffers.clear();
 		mRenderTarget.reset();
@@ -432,16 +370,10 @@ private:
 
 	std::vector<VkCommandBuffer> mCmdBuffers;
 	std::shared_ptr<WuDu::AdMesh> mCubeMesh;
-	std::vector<std::shared_ptr<WuDu::AdMesh>> mModelMeshes;
-	std::vector<WuDu::AdEntity*> mCubes;
 
 	std::unique_ptr<WuDu::AdCameraControllerManager> m_CameraController;
 
-	std::shared_ptr<WuDu::AdTexture> mTexture0;
-	std::shared_ptr<WuDu::AdSampler> mSampler;
-	std::shared_ptr<WuDu::AdPBRMaterial> mBaseMaterial;
-	std::shared_ptr<WuDu::AdPBRMaterial> mLightMaterial;
-	std::shared_ptr<WuDu::AdPBRMaterial> mCubeMaterial;
+	std::shared_ptr<WuDu::AdPBRMaterial> mEditorFallbackMaterial;
 	std::shared_ptr<WuDu::AdGuiSystem> mGuiSystem;
 };
 

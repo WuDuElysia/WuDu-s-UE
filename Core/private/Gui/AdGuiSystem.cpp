@@ -5,6 +5,7 @@
 #include "AdApplication.h"
 #include "AdFileUtil.h"
 #include "Graphic/AdVKRenderPass.h"
+#include "Serialization/AdSceneSerializer.h"
 #include <Window/AdGlfwWindow.h>
 
 namespace WuDu {
@@ -137,9 +138,31 @@ namespace WuDu {
 	
 	// 设置全屏 Dockspace 和主菜单栏
 	void AdGuiSystem::SetupDockspace() {
+		// 检测 Ctrl+S 快捷键保存场景
+		if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_S)) {
+			if (mEditorContext.scene) {
+				std::string savePath = std::string(AD_RES_ROOT_DIR) + "Scenes/default.scene.json";
+				if (AdSceneSerializer::Save(mEditorContext.scene, savePath)) {
+					LOG_I("Scene saved to {0}", savePath);
+				} else {
+					LOG_E("Failed to save scene to {0}", savePath);
+				}
+			}
+		}
+
 		// 主菜单栏（必须在 DockSpace 之前）
 		if (ImGui::BeginMainMenuBar()) {
 			if (ImGui::BeginMenu("File")) {
+				if (ImGui::MenuItem("Save Scene", "Ctrl+S")) {
+					if (mEditorContext.scene) {
+						std::string savePath = std::string(AD_RES_ROOT_DIR) + "Scenes/default.scene.json";
+						if (AdSceneSerializer::Save(mEditorContext.scene, savePath)) {
+							LOG_I("Scene saved to {0}", savePath);
+						} else {
+							LOG_E("Failed to save scene to {0}", savePath);
+						}
+					}
+				}
 				ImGui::EndMenu();
 			}
 			if (ImGui::BeginMenu("View")) {
@@ -185,6 +208,36 @@ namespace WuDu {
 	// 添加场景编辑器UI
 	void AdGuiSystem::AddSceneEditor() {
 		AddGuiFunction([this]() {
+			// Ctrl+S 快捷键保存场景
+			if (ImGui::IsKeyChordPressed(ImGuiMod_Ctrl | ImGuiKey_S)) {
+				if (mEditorContext.scene) {
+					std::string savePath = std::string(AD_RES_ROOT_DIR) + "Scenes/default.scene.json";
+					if (AdSceneSerializer::Save(mEditorContext.scene, savePath)) {
+						LOG_I("Scene saved to {0}", savePath);
+					} else {
+						LOG_E("Failed to save scene to {0}", savePath);
+					}
+				}
+			}
+
+			// 主菜单栏
+			if (ImGui::BeginMainMenuBar()) {
+				if (ImGui::BeginMenu("File")) {
+					if (ImGui::MenuItem("Save Scene", "Ctrl+S")) {
+						if (mEditorContext.scene) {
+							std::string savePath = std::string(AD_RES_ROOT_DIR) + "Scenes/default.scene.json";
+							if (AdSceneSerializer::Save(mEditorContext.scene, savePath)) {
+								LOG_I("Scene saved to {0}", savePath);
+							} else {
+								LOG_E("Failed to save scene to {0}", savePath);
+							}
+						}
+					}
+					ImGui::EndMenu();
+				}
+				ImGui::EndMainMenuBar();
+			}
+
 			// 每帧验证选中实体的有效性
 			mEditorContext.ValidateSelection();
 

@@ -74,8 +74,15 @@ namespace WuDu {
 		void Update(float deltaTime)override;
 
 		// 获取相机参数
+		float GetFov() const { return mFov; }
+		float GetNearPlane() const { return mNearPlane; }
+		float GetFarPlane() const { return mFarPlane; }
 		float GetYaw() const { return mYaw; }
 		float GetPitch() const { return mPitch; }
+		float GetSensitivity() const { return mSensitivity; }
+		float GetMoveSpeed() const { return mMoveSpeed; }
+		void SetYaw(float yaw) { mYaw = yaw; mViewMatDirty = true; }
+		void SetPitch(float pitch) { mPitch = pitch; mViewMatDirty = true; }
 		void SetSensitivity(float sensitivity) { mSensitivity = sensitivity; }
 		void SetMoveSpeed(float speed)override { mMoveSpeed = speed; }
 

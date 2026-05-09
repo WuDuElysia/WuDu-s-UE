@@ -3,6 +3,7 @@
 
 #include "AdMaterialComponent.h"
 #include "Render/AdMaterial.h"
+#include "nlohmann/json.hpp"
 
 namespace WuDu {
 	// PBR材质纹理枚举
@@ -87,6 +88,13 @@ namespace WuDu {
 
 	// PBR材质组件类
 	class AdPBRMaterialComponent : public AdMaterialComponent<AdPBRMaterial> {
+	public:
+		// 序列化元数据：保存原始 JSON 描述，用于 Save 时保留模型/纹理资源引用
+		void SetSerializationMeta(const nlohmann::json& meta) { mSerializationMeta = meta; }
+		const nlohmann::json& GetSerializationMeta() const { return mSerializationMeta; }
+		bool HasSerializationMeta() const { return !mSerializationMeta.is_null(); }
+	private:
+		nlohmann::json mSerializationMeta;
 	};
 } // namespace WuDu
 
