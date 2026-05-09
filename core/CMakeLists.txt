@@ -23,8 +23,23 @@ add_library(WuDu_core
 	 "private/Gui/AdGuiRenderer.cpp"
 	 "private/Gui/AdGuiManager.cpp"
 	 "private/Gui/AdGuiEventHandler.cpp"
+	 "private/Gui/AdComponentRegistry.cpp"
+	 "private/Gui/AdEditorContext.cpp"
+	 "private/Gui/AdHierarchyPanel.cpp"
+	 "private/Gui/AdInspectorPanel.cpp"
+	 "private/Gui/AdBuiltinComponentRegistration.cpp"
+	 "private/Gui/AdResourceBrowserPanel.cpp"
 	 "private/Resource/AdModelLoader.cpp" 
-	 "private/Resource/AdModelResource.cpp" "private/ECS/System/AdPBRMaterialSystem.cpp" "public/ECS/System/AdPBRMaterialSystem.h" "public/ECS/Component/Material/AdPBRMaterialComponent.h")
+	 "private/Resource/AdModelResource.cpp"
+	 "private/Resource/AdResourceManager.cpp"
+	 "private/ECS/System/AdPBRForwardMaterialSystem.cpp"
+	 "private/ECS/System/AdPBRDeferredMaterialSystem.cpp"
+	 "private/ECS/System/AdGridMaterialSystem.cpp"
+	 "private/ECS/System/AdSkyboxMaterialSystem.cpp"
+	 "private/Serialization/AdComponentSerializerRegistry.cpp"
+	 "private/Serialization/AdBuiltinComponentSerializers.cpp"
+	 "private/Serialization/AdSceneSerializer.cpp"
+	 )
 
 target_include_directories(WuDu_core PUBLIC
 	${CMAKE_CURRENT_SOURCE_DIR}/public   

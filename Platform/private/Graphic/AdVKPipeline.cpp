@@ -196,14 +196,18 @@ namespace WuDu {
 			.maxDepthBounds = 0.0f
 		};
 
+		// 为多个颜色附件复制混合状态
+		std::vector<VkPipelineColorBlendAttachmentState> colorBlendAttachments(
+			mPipelineConfig.colorAttachmentCount, mPipelineConfig.colorBlendAttachmentState);
+
 		VkPipelineColorBlendStateCreateInfo colorBlendStateInfo = {
 			.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO,
 			.pNext = nullptr,
 			.flags = 0,
 			.logicOpEnable = VK_FALSE,
 			.logicOp = VK_LOGIC_OP_CLEAR,
-			.attachmentCount = 1,
-			.pAttachments = &mPipelineConfig.colorBlendAttachmentState,
+			.attachmentCount = mPipelineConfig.colorAttachmentCount,
+			.pAttachments = colorBlendAttachments.data(),
 		};
 		colorBlendStateInfo.blendConstants[0] = colorBlendStateInfo.blendConstants[1] = colorBlendStateInfo.blendConstants[2] = colorBlendStateInfo.blendConstants[3] = 0;
 
@@ -323,6 +327,11 @@ namespace WuDu {
 
 	void AdVKPipeline::SetSubPassIndex(uint32_t index) {
 		mSubPassIndex = index;
+	}
+
+	AdVKPipeline* AdVKPipeline::SetColorAttachmentCount(uint32_t count) {
+		mPipelineConfig.colorAttachmentCount = count;
+		return this;
 	}
 
 	void AdVKPipeline::Bind(VkCommandBuffer cmdBuffer) {

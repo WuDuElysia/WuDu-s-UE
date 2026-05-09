@@ -57,4 +57,12 @@ namespace WuDu {
 		return nullptr;
 	}
 
+	AdEntity* AdScene::GetEntity(entt::entity enttEntity) const {
+		auto it = mEntities.find(enttEntity);
+		if (it != mEntities.end()) {
+			return it->second.get();
+		}
+		return nullptr;
+	}
+
 }

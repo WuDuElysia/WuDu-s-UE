@@ -74,12 +74,17 @@ namespace WuDu {
 			}
 
 			// 提取法线
-			vertex.Normal.x = mesh->mNormals[i].x;
-			vertex.Normal.y = mesh->mNormals[i].y;
-			vertex.Normal.z = mesh->mNormals[i].z;
+			if (mesh->HasNormals()) {
+				vertex.Normal.x = mesh->mNormals[i].x;
+				vertex.Normal.y = mesh->mNormals[i].y;
+				vertex.Normal.z = mesh->mNormals[i].z;
+			} else {
+				// 如果没有法线，设置默认法线
+				vertex.Normal = glm::vec3(0.0f, 1.0f, 0.0f);
+			}
 
 			// 提取切线和副切线（如果存在）
-			if (mesh->mTangents && mesh->mBitangents) {
+			if (mesh->HasTangentsAndBitangents()) {
 				vertex.Tangent.x = mesh->mTangents[i].x;
 				vertex.Tangent.y = mesh->mTangents[i].y;
 				vertex.Tangent.z = mesh->mTangents[i].z;
@@ -87,6 +92,11 @@ namespace WuDu {
 				vertex.Bitangent.x = mesh->mBitangents[i].x;
 				vertex.Bitangent.y = mesh->mBitangents[i].y;
 				vertex.Bitangent.z = mesh->mBitangents[i].z;
+			} else {
+				// 如果没有切线和副切线，计算默认值
+				// 假设法线是Y轴，计算切线和副切线
+				vertex.Tangent = glm::vec3(1.0f, 0.0f, 0.0f);
+				vertex.Bitangent = glm::cross(vertex.Normal, vertex.Tangent);
 			}
 
 			result.Vertices.push_back(vertex);

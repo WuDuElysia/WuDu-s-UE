@@ -19,10 +19,12 @@ namespace WuDu {
 		mExtent(extent),
 		mFormat(format),
 		mUsage(usage) {
-		// 根据图像格式和采样数决定图像的内存布局（线性或最优）
+		// 根据图像格式、采样数和用途决定图像的内存布局（线性或最优）
+		// 作为附件使用的图像必须使用 OPTIMAL tiling，LINEAR tiling 对许多格式+附件组合不被支持
 		VkImageTiling tiling = VK_IMAGE_TILING_LINEAR;
 		bool isDepthStencilFormat = IsDepthStencilFormat(format);
-		if (isDepthStencilFormat || sampleCount > VK_SAMPLE_COUNT_1_BIT) {
+		bool isAttachmentUsage = (usage & (VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT | VK_IMAGE_USAGE_INPUT_ATTACHMENT_BIT)) != 0;
+		if (isDepthStencilFormat || sampleCount > VK_SAMPLE_COUNT_1_BIT || isAttachmentUsage) {
 			tiling = VK_IMAGE_TILING_OPTIMAL;
 		}
 
@@ -77,7 +79,7 @@ namespace WuDu {
 		}
 	}
 
-	/**
+/**
  * @brief 将缓冲区数据复制到图像
  *
  * 该函数将指定缓冲区中的数据复制到当前图像对象中，通常用于纹理加载等场景

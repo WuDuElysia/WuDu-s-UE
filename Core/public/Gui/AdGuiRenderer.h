@@ -21,6 +21,8 @@ namespace WuDu {
 		void OnInit();
 		// 渲染ImGui内容
 		void OnRender();
+		// 录制ImGui渲染命令到命令缓冲区（不做acquire/present，由外部渲染器统一提交）
+		VkCommandBuffer RecordGuiCommands(int32_t imageIndex);
 		// 清理渲染资源
 		void OnDestroy();
 		// 重建资源（窗口大小变化时调用）

@@ -6,8 +6,10 @@ set(SHADERS
 	01_hello_buffer.vert
 	03_unlit_material.frag
         03_unlit_material.vert
-	glsl_shader.vert
-        glsl_shader.frag
+	PBR_Forward.vert
+        PBR_Forward.frag
+	Skybox_Aurora.vert
+	Skybox_Aurora.frag
 )
 
 SPIRV_SHADERS(

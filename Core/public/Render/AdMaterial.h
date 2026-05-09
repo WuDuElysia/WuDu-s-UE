@@ -10,14 +10,29 @@ namespace WuDu {
 	// -------------------------------------------------------------------------------------------------
 	    // Shader Params
 	struct TextureParam {
-		bool enable;
+		int32_t enable;                                                      // 使用int32_t匹配GLSL的int
 		alignas(4) float uvRotation{ 0.0f };
 		alignas(16) glm::vec4 uvTransform{ 1.0f, 1.0f, 0.0f, 0.0f };   // x,y --> scale, z,w --> translation
 	};
 
+	// Push constant 中 mat3 需要按 std430 布局：每列对齐到 16 字节（vec4）
+	// glm::mat3 在 C++ 中是紧密排列的 3x3 float（36字节），
+	// 但 GLSL push constant 中 mat3 每列占 16 字节（48字节总计）
 	struct ModelPC {
-		alignas(16) glm::mat4 modelMat;
-		alignas(16) glm::mat3 normalMat;
+		alignas(16) glm::mat4 modelMat;       // 64 bytes
+		alignas(16) glm::vec4 normalMatCol0;  // 16 bytes (只用xyz)
+		alignas(16) glm::vec4 normalMatCol1;  // 16 bytes (只用xyz)
+		alignas(16) glm::vec4 normalMatCol2;  // 16 bytes (只用xyz)
+	};
+
+	struct FrameUbo {
+		glm::mat4  projMat{ 1.f };
+		glm::mat4  viewMat{ 1.f };
+		glm::vec3  camPos{ 0.f };
+		alignas(4) float _pad0;
+		alignas(8) glm::ivec2 resolution;
+		alignas(4) uint32_t frameId;
+		alignas(4) float time;
 	};
 
 	// -------------------------------------------------------------------------------------------------

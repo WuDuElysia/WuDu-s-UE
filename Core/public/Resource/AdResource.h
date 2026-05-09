@@ -66,6 +66,7 @@ namespace WuDu {
 		//virtual bool Reload();
 
 		const std::string& GetPath() const { return mPath; }
+		const UUID& GetUUID() const { return mUUID; }
 		ResourceState GetState() const { return mState; }
 		bool IsLoaded() const { return mState == ResourceState::Loaded; }
 

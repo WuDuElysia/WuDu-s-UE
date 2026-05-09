@@ -25,63 +25,65 @@ namespace WuDu {
 	}
 
 	void AdGuiRenderer::OnRender() {
+		// 旧版渲染方式（独立acquire/present），保留向后兼容
+		// 注意：此方法会导致双重present闪烁，推荐使用 RecordGuiCommands + 外部统一提交
 		WuDu::AdRenderContext* renderCxt = AdApplication::GetAppContext()->renderCxt;
 		WuDu::AdVKDevice* device = renderCxt->GetDevice();
 		WuDu::AdVKSwapchain* swapchain = renderCxt->GetSwapchain();
-		ImDrawData* draw_data = ImGui::GetDrawData();
 
-		// 检查窗口大小是否变化，如果变化了就重建资源
 		ImGuiIO& io = ImGui::GetIO();
 		if (io.DisplaySize.x != static_cast<float>(swapchain->GetWidth()) ||
 			io.DisplaySize.y != static_cast<float>(swapchain->GetHeight())) {
 			RebuildResources();
-			return; // 资源重建后，等待下一帧再渲染
+			return;
 		}
 
-		// 获取当前的交换链图像索引
 		int32_t imageIndex;
 		bool swapchainRebuilt = mGUIRenderer->Begin(&imageIndex);
-
-		// 如果交换链被重建，我们需要重建所有GUI资源
 		if (swapchainRebuilt) {
 			RebuildResources();
-			return; // 资源重建后，等待下一帧再渲染
+			return;
 		}
-
-		// 确保命令缓冲区数组足够大（安全检查）
 		if (imageIndex < 0 || imageIndex >= static_cast<int32_t>(mGUICmdBuffers.size())) {
-			// 索引无效，重建资源
 			RebuildResources();
 			return;
 		}
 
 		try {
-			VkCommandBuffer cmdBuffer = mGUICmdBuffers[imageIndex];
-			WuDu::AdVKCommandPool::BeginCommandBuffer(cmdBuffer);
-
-			// 使用GUI专用的渲染目标进行渲染
-			mGUIRenderTarget->Begin(cmdBuffer);
-
-			// 渲染ImGui
-			if (draw_data && draw_data->CmdListsCount > 0) {
-				ImGui_ImplVulkan_RenderDrawData(draw_data, cmdBuffer);
-			}
-
-			mGUIRenderTarget->End(cmdBuffer);
-
-			WuDu::AdVKCommandPool::EndCommandBuffer(cmdBuffer);
-
-			// 提交GUI渲染命令
-			if (mGUIRenderer->End(imageIndex, { cmdBuffer })) {
-				// 如果在End过程中交换链被重建，记录下来但不立即处理
-				// 下一帧的Begin()会检测到并处理
+			VkCommandBuffer cmdBuffer = RecordGuiCommands(imageIndex);
+			if (cmdBuffer != VK_NULL_HANDLE) {
+				if (mGUIRenderer->End(imageIndex, { cmdBuffer })) {
+				}
 			}
 		}
 		catch (const std::exception& e) {
-			// 捕获任何异常，避免程序崩溃
-			RebuildResources(); // 发生异常时重建资源
+			RebuildResources();
 			return;
 		}
+	}
+
+	VkCommandBuffer AdGuiRenderer::RecordGuiCommands(int32_t imageIndex) {
+		if (imageIndex < 0 || imageIndex >= static_cast<int32_t>(mGUICmdBuffers.size())) {
+			return VK_NULL_HANDLE;
+		}
+
+		ImDrawData* draw_data = ImGui::GetDrawData();
+		VkCommandBuffer cmdBuffer = mGUICmdBuffers[imageIndex];
+
+		WuDu::AdVKCommandPool::BeginCommandBuffer(cmdBuffer);
+
+		// 使用GUI专用的渲染目标进行渲染
+		mGUIRenderTarget->Begin(cmdBuffer);
+
+		// 渲染ImGui
+		if (draw_data && draw_data->CmdListsCount > 0) {
+			ImGui_ImplVulkan_RenderDrawData(draw_data, cmdBuffer);
+		}
+
+		mGUIRenderTarget->End(cmdBuffer);
+		WuDu::AdVKCommandPool::EndCommandBuffer(cmdBuffer);
+
+		return cmdBuffer;
 	}
 
 	void AdGuiRenderer::OnDestroy() {

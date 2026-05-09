@@ -7,10 +7,13 @@
 #include "ECS/AdEntity.h"
 #include "ECS/Component/AdTransformComponent.h"
 #include "ECS/Component/Material/AdUnlitMaterialComponent.h"
+#include "ECS/Component/Material/AdPBRMaterialComponent.h"
 #include "ECS/Component/AdFirstPersonCameraComponent.h"
 #include "ECS/AdScene.h"
 
 namespace WuDu {
+	class AdEditorContext;
+
 	class AdSceneEditor {
 	public:
 		AdSceneEditor();
@@ -21,7 +24,7 @@ namespace WuDu {
 			AdScene* scene,
 			AdEntity* activeCamera,
 			AdMesh* cubeMesh,
-			AdUnlitMaterial* defaultMaterial
+			AdMaterial* defaultMaterial
 		);
 
 		// 添加场景编辑器UI
@@ -34,6 +37,9 @@ namespace WuDu {
 		// 处理场景视口
 		void HandleSceneViewport();
 
+		// 设置编辑器上下文
+		void SetEditorContext(AdEditorContext* context) { mEditorContext = context; }
+
 		// 获取选中的实体
 		AdEntity* GetSelectedEntity() const { return mSelectedEntity; }
 		// 选择实体
@@ -44,6 +50,9 @@ namespace WuDu {
 		void HandleTransformDrag(const ImVec2& currentMousePos);
 
 	private:
+		// 编辑器上下文
+		AdEditorContext* mEditorContext = nullptr;
+
 		// 场景编辑模式
 		enum class TransformMode { Translate, Rotate, Scale };
 		TransformMode mCurrentTransformMode = TransformMode::Translate;
@@ -52,7 +61,7 @@ namespace WuDu {
 		AdScene* mScene = nullptr;
 		AdEntity* mActiveCamera = nullptr;
 		AdMesh* mCubeMesh = nullptr;
-		AdUnlitMaterial* mDefaultMaterial = nullptr;
+		AdMaterial* mDefaultMaterial = nullptr;
 
 		// 编辑状态
 		AdEntity* mSelectedEntity = nullptr;

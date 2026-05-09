@@ -62,6 +62,7 @@ namespace WuDu {
 		void Unload() override;
 
 		const std::vector<ModelMesh>& GetMeshes() const { return mMeshes;  }
+		const std::vector<ModelMaterial>& GetMaterials() const { return mMaterials; }
 
 	private:
 		std::string mModelPath;
